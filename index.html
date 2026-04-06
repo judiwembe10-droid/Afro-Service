@@ -3370,26 +3370,41 @@
     <script>
     // ============ GESTION BOUTON RETOUR ANDROID ============
     (function() {
-        // Empiler un état fictif dans l'historique à chaque ouverture de panneau
+
+        // Vérifie si un élément est ouvert via son style.transform
+        function isOpenByTransform(el, closedValue) {
+            if (!el) return false;
+            const t = el.style.transform || '';
+            // Ouvert = transform = translateX(0) ou translateX(0px) ou translateX(0%)
+            // Fermé  = translate-x-full (classe) OU translateX(100%) / translateX(-100%)
+            if (t === 'translateX(0)' || t === 'translateX(0px)' || t === 'translateX(0%)') return true;
+            if (t === closedValue) return false;
+            // Pas encore de style inline → vérifier la classe initiale
+            if (closedValue === 'translateX(100%)') return !el.classList.contains('translate-x-full');
+            if (closedValue === 'translateX(-100%)') return !el.classList.contains('-translate-x-full');
+            return false;
+        }
+
         function pushState(panel) {
             history.pushState({ panel: panel }, '');
         }
 
-        // Intercepter le bouton retour
-        window.addEventListener('popstate', function(e) {
+        // Masque l'overlay sombre à coup sûr
+        function hideOverlay() {
+            const overlay = document.getElementById('overlay');
+            if (overlay) overlay.classList.add('hidden');
+        }
 
-            // 1. Modal produit (détail)
+        // Intercepter le bouton retour
+        window.addEventListener('popstate', function() {
+
+            // 1. Modal produit (détail) — ouvert via style.transform = "translateX(0)"
             const detailModal = document.getElementById('detailModal');
-            if (detailModal) {
-                const t = detailModal.style.transform || '';
-                if (t === '' || t === 'translateX(0%)' || t === 'translateX(0px)' || t === 'none') {
-                    const isVisible = !detailModal.classList.contains('translate-x-full') && t !== 'translateX(100%)';
-                    if (isVisible) {
-                        if (window.closeDetail) { window.closeDetail(); }
-                        else { detailModal.style.transform = 'translateX(100%)'; }
-                        return;
-                    }
-                }
+            if (isOpenByTransform(detailModal, 'translateX(100%)')) {
+                if (window.closeDetail) { window.closeDetail(); }
+                else { detailModal.style.transform = 'translateX(100%)'; hideOverlay(); }
+                hideOverlay(); // sécurité : toujours cacher l'overlay
+                return;
             }
 
             // 2. Popup promo
@@ -3399,60 +3414,61 @@
                 return;
             }
 
-            // 3. Panier latéral
+            // 3. Panier latéral — ouvert via style.transform = "translateX(0)"
             const sideCart = document.getElementById('sideCart');
-            if (sideCart && !sideCart.classList.contains('translate-x-full')) {
+            if (isOpenByTransform(sideCart, 'translateX(100%)')) {
                 if (window.closeCart) { window.closeCart(); }
-                else { sideCart.classList.add('translate-x-full'); }
+                else { sideCart.style.transform = 'translateX(100%)'; hideOverlay(); }
+                hideOverlay();
                 return;
             }
 
-            // 4. Menu latéral (navigation)
+            // 4. Menu latéral — ouvert via style.transform = "translateX(0)"
             const sideNav = document.getElementById('sideNav');
-            if (sideNav && !sideNav.classList.contains('-translate-x-full')) {
+            if (isOpenByTransform(sideNav, 'translateX(-100%)')) {
                 if (window.closeNav) { window.closeNav(); }
-                else { sideNav.classList.add('-translate-x-full'); }
+                else { sideNav.style.transform = 'translateX(-100%)'; hideOverlay(); }
+                hideOverlay();
                 return;
             }
 
             // Rien d'ouvert → comportement normal (retour page précédente)
         });
 
-        // === Observer les panneaux pour empiler l'historique à leur ouverture ===
-        function watchClassPanel(id, closedClass) {
+        // === Observer les panneaux via MutationObserver sur le style ===
+        function watchTransformPanel(id) {
             const el = document.getElementById(id);
             if (!el) return;
-            let wasClosed = el.classList.contains(closedClass);
+            let prevTransform = el.style.transform;
             const observer = new MutationObserver(function() {
-                const isClosed = el.classList.contains(closedClass);
-                if (wasClosed && !isClosed) {
-                    // Panneau vient de s'ouvrir
+                const t = el.style.transform;
+                const isNowOpen = (t === 'translateX(0)' || t === 'translateX(0px)' || t === 'translateX(0%)');
+                const wasOpen   = (prevTransform === 'translateX(0)' || prevTransform === 'translateX(0px)' || prevTransform === 'translateX(0%)');
+                if (isNowOpen && !wasOpen) {
                     pushState(id);
                 }
-                wasClosed = isClosed;
+                prevTransform = t;
             });
-            observer.observe(el, { attributes: true, attributeFilter: ['class'] });
+            observer.observe(el, { attributes: true, attributeFilter: ['style'] });
         }
 
-        function watchStylePanel(id) {
+        function watchDisplayPanel(id) {
             const el = document.getElementById(id);
             if (!el) return;
-            let wasClosed = (el.style.display === 'none' || el.style.display === '');
+            let wasOpen = (el.style.display === 'flex' || el.style.display === 'block');
             const observer = new MutationObserver(function() {
                 const isOpen = (el.style.display === 'flex' || el.style.display === 'block');
-                if (wasClosed && isOpen) {
-                    pushState(id);
-                }
-                wasClosed = !isOpen;
+                if (isOpen && !wasOpen) { pushState(id); }
+                wasOpen = isOpen;
             });
             observer.observe(el, { attributes: true, attributeFilter: ['style'] });
         }
 
         function initWatchers() {
-            watchClassPanel('sideNav', '-translate-x-full');
-            watchClassPanel('sideCart', 'translate-x-full');
-            watchClassPanel('detailModal', 'translate-x-full');
-            watchStylePanel('promoPopup');
+            watchTransformPanel('detailModal');
+            watchTransformPanel('sideCart');
+            watchTransformPanel('sideNav');
+            watchDisplayPanel('promoPopup');
         }
 
         if (document.readyState === 'loading') {
