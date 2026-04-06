@@ -3301,8 +3301,9 @@
         (function() {
             const POPUP_DELAY = 5000; // 5 secondes après arrivée
 
-            // Clé session pour le message commande (1 fois par session)
-            const SESSION_KEY_ORDER = 'afroOrderPopupShown';
+            // Clés sessionStorage — réinitialisées à chaque fermeture du navigateur
+            const SESSION_KEY_ORDER  = 'afroOrderPopupShown';   // message commande (connectés)
+            const SESSION_KEY_SIGNUP = 'afroSignupPopupShown';  // message inscription (non-connectés)
 
             window.closePromoPopup = function() {
                 const popup = document.getElementById('promoPopup');
@@ -3330,11 +3331,15 @@
                 const user = window.currentUser;
 
                 if (!user) {
-                    // Non connecté → message inscription, se répète toutes les 2 min
-                    openPopup(1);
-                    setTimeout(tryShowPopup, 120000);
+                    // ✅ Non connecté → message inscription, 1 SEULE FOIS par session
+                    const alreadyShown = sessionStorage.getItem(SESSION_KEY_SIGNUP);
+                    if (!alreadyShown) {
+                        sessionStorage.setItem(SESSION_KEY_SIGNUP, '1');
+                        openPopup(1);
+                    }
+                    // Si déjà montré : on ne fait plus rien
                 } else {
-                    // Connecté → message commande, 1 seule fois par session
+                    // ✅ Connecté → message commande, 1 SEULE FOIS par session
                     const alreadyShown = sessionStorage.getItem(SESSION_KEY_ORDER);
                     if (!alreadyShown) {
                         sessionStorage.setItem(SESSION_KEY_ORDER, '1');
@@ -3356,6 +3361,5 @@
     </script>
 </body>
 </html>
-
 
 
