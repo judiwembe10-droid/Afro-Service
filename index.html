@@ -3249,36 +3249,48 @@
 
     <!-- ============ POPUP PROMOTIONNELLE ============ -->
     <div id="promoPopup" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;padding-bottom:0;">
-        <div id="promoPopupCard" style="width:100%;max-width:480px;border-radius:28px 28px 0 0;overflow:hidden;transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);box-shadow:0 -8px 40px rgba(0,0,0,0.35);">
+        <div id="promoPopupCard" style="width:100%;max-width:480px;border-radius:28px 28px 0 0;overflow:hidden;transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);box-shadow:0 -8px 40px rgba(0,0,0,0.35);position:relative;">
 
-            <!-- Message 1 : Inscription -->
-            <div id="promoMsg1" style="background:linear-gradient(160deg,#101944 0%,#1e3a8a 100%);padding:32px 24px 28px;text-align:center;">
-                <button onclick="window.closePromoPopup()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:34px;height:34px;color:white;font-size:18px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>
-                <div style="width:56px;height:56px;background:linear-gradient(135deg,#bd1e24,#ff4d4d);border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;">
-                    <svg width="28" height="28" fill="none" stroke="white" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <!-- Message 1 : Inscription (non-connectés uniquement) -->
+            <div id="promoMsg1" style="background:linear-gradient(160deg,#101944 0%,#1e3a8a 100%);padding:36px 24px 30px;text-align:center;">
+                <button onclick="window.closePromoPopup()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.2);border-radius:50%;width:34px;height:34px;color:white;font-size:18px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>
+                <!-- Icône cadeau SVG -->
+                <div style="width:60px;height:60px;background:linear-gradient(135deg,#bd1e24,#ff4d4d);border-radius:18px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(189,30,36,0.4);">
+                    <svg width="30" height="30" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2H12zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
                 </div>
-                <p style="font-size:11px;font-weight:900;color:#f97316;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">🎁 Offre de bienvenue</p>
-                <h2 style="font-size:22px;font-weight:900;color:white;line-height:1.3;margin-bottom:8px;">Inscris-toi et reçois<br><span style="color:#f97316;">une réduction exclusive</span><br>sur ta 1<sup style="font-size:14px;">ère</sup> commande !</h2>
-                <p style="font-size:12px;color:#94a3b8;margin-bottom:22px;">Rejoins des centaines de clients satisfaits chez Afro Service 🛍️</p>
-                <button onclick="window.closePromoPopup(); window.openAuth && window.openAuth();" style="width:100%;background:linear-gradient(135deg,#bd1e24,#ff4d4d);color:white;border:none;border-radius:16px;padding:16px;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:0.02em;box-shadow:0 6px 20px rgba(189,30,36,0.4);transition:transform 0.15s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
-                    Je m'inscris 👍
+                <!-- Badge label -->
+                <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.35);border-radius:20px;padding:5px 12px;margin-bottom:14px;">
+                    <svg width="13" height="13" fill="none" stroke="#f97316" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                    <span style="font-size:10px;font-weight:900;color:#f97316;text-transform:uppercase;letter-spacing:0.08em;">Offre de bienvenue</span>
+                </div>
+                <h2 style="font-size:21px;font-weight:900;color:white;line-height:1.35;margin-bottom:10px;">Inscris-toi et reçois<br><span style="color:#f97316;">une réduction exclusive</span><br>sur ta 1<sup style="font-size:13px;">ère</sup> commande !</h2>
+                <p style="font-size:12px;color:#94a3b8;margin-bottom:24px;line-height:1.6;">Rejoins des centaines de clients satisfaits<br>chez Afro Service — La boutique qui vous respecte.</p>
+                <button onclick="window.closePromoPopup(); setTimeout(() => window.openAuth && window.openAuth(), 300);" style="width:100%;background:linear-gradient(135deg,#bd1e24,#ff4d4d);color:white;border:none;border-radius:16px;padding:16px;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:0.02em;box-shadow:0 6px 20px rgba(189,30,36,0.4);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform 0.15s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
+                    <svg width="18" height="18" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Je m'inscris maintenant
                 </button>
-                <p onclick="window.closePromoPopup()" style="font-size:10px;color:#64748b;margin-top:12px;cursor:pointer;text-decoration:underline;">Non merci, continuer sans s'inscrire</p>
+                <p onclick="window.closePromoPopup()" style="font-size:10px;color:#475569;margin-top:14px;cursor:pointer;text-decoration:underline;">Non merci, continuer sans m'inscrire</p>
             </div>
 
-            <!-- Message 2 : Commander -->
-            <div id="promoMsg2" style="display:none;background:linear-gradient(160deg,#7c2d12 0%,#bd1e24 100%);padding:32px 24px 28px;text-align:center;">
-                <button onclick="window.closePromoPopup()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:34px;height:34px;color:white;font-size:18px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>
-                <div style="width:56px;height:56px;background:rgba(255,255,255,0.15);border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;">
-                    <svg width="28" height="28" fill="none" stroke="white" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            <!-- Message 2 : Commander (connectés, 1 fois par session) -->
+            <div id="promoMsg2" style="display:none;background:linear-gradient(160deg,#7c2d12 0%,#bd1e24 100%);padding:36px 24px 30px;text-align:center;">
+                <button onclick="window.closePromoPopup()" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.2);border-radius:50%;width:34px;height:34px;color:white;font-size:18px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>
+                <!-- Icône livraison SVG -->
+                <div style="width:60px;height:60px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.25);border-radius:18px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;">
+                    <svg width="30" height="30" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
                 </div>
-                <p style="font-size:11px;font-weight:900;color:#fcd34d;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">🚀 Livraison rapide</p>
-                <h2 style="font-size:22px;font-weight:900;color:white;line-height:1.3;margin-bottom:8px;">Commande maintenant,<br><span style="color:#fcd34d;">reçois demain</span><br>à Bafoussam ! 📦</h2>
-                <p style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:22px;">Paiement à la livraison · Zéro risque · Produits authentiques ✅</p>
-                <button onclick="window.closePromoPopup(); document.getElementById('fastSearch') && document.getElementById('fastSearch').focus();" style="width:100%;background:white;color:#bd1e24;border:none;border-radius:16px;padding:16px;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:0.02em;box-shadow:0 6px 20px rgba(0,0,0,0.2);transition:transform 0.15s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
-                    Voir les articles 🛒
+                <!-- Badge label -->
+                <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(252,211,77,0.15);border:1px solid rgba(252,211,77,0.35);border-radius:20px;padding:5px 12px;margin-bottom:14px;">
+                    <svg width="13" height="13" fill="none" stroke="#fcd34d" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <span style="font-size:10px;font-weight:900;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;">Livraison rapide</span>
+                </div>
+                <h2 style="font-size:21px;font-weight:900;color:white;line-height:1.35;margin-bottom:10px;">Commandez maintenant,<br><span style="color:#fcd34d;">recevez demain</span><br>à Bafoussam et partout<br>au Cameroun !</h2>
+                <p style="font-size:12px;color:rgba(255,255,255,0.65);margin-bottom:24px;line-height:1.6;">Paiement à la livraison · Zéro risque · Produits 100% authentiques<br>avec garantie constructeur.</p>
+                <button onclick="window.closePromoPopup(); window.scrollTo({top: document.getElementById('temuGridSection')?.offsetTop || 400, behavior:'smooth'});" style="width:100%;background:white;color:#bd1e24;border:none;border-radius:16px;padding:16px;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:0.02em;box-shadow:0 6px 20px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform 0.15s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
+                    <svg width="18" height="18" fill="none" stroke="#bd1e24" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    Voir les articles
                 </button>
-                <p onclick="window.closePromoPopup()" style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:12px;cursor:pointer;text-decoration:underline;">Fermer</p>
+                <p onclick="window.closePromoPopup()" style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:14px;cursor:pointer;text-decoration:underline;">Fermer</p>
             </div>
 
         </div>
@@ -3287,38 +3299,10 @@
     <script>
         // ============ LOGIQUE POPUP PROMO ============
         (function() {
-            const POPUP_DELAY    = 5000;   // 5 secondes après arrivée
-            const POPUP_INTERVAL = 120000; // réapparaît toutes les 2 minutes
-            const STORAGE_KEY    = 'afroPromoSeen';
-            let   _popupMsg      = 1;      // alterne entre 1 et 2
+            const POPUP_DELAY = 5000; // 5 secondes après arrivée
 
-            function showPopup() {
-                // Ne pas afficher si l'utilisateur est connecté
-                if (window.currentUser) return;
-
-                const popup = document.getElementById('promoPopup');
-                const card  = document.getElementById('promoPopupCard');
-                const msg1  = document.getElementById('promoMsg1');
-                const msg2  = document.getElementById('promoMsg2');
-                if (!popup || !card) return;
-
-                // Alterner les messages
-                if (_popupMsg === 1) {
-                    msg1.style.display = 'block';
-                    msg2.style.display = 'none';
-                } else {
-                    msg1.style.display = 'none';
-                    msg2.style.display = 'block';
-                }
-                _popupMsg = _popupMsg === 1 ? 2 : 1;
-
-                popup.style.display = 'flex';
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        card.style.transform = 'translateY(0)';
-                    });
-                });
-            }
+            // Clé session pour le message commande (1 fois par session)
+            const SESSION_KEY_ORDER = 'afroOrderPopupShown';
 
             window.closePromoPopup = function() {
                 const popup = document.getElementById('promoPopup');
@@ -3328,17 +3312,47 @@
                 setTimeout(() => { popup.style.display = 'none'; }, 450);
             };
 
+            function openPopup(msgNum) {
+                const popup = document.getElementById('promoPopup');
+                const card  = document.getElementById('promoPopupCard');
+                const msg1  = document.getElementById('promoMsg1');
+                const msg2  = document.getElementById('promoMsg2');
+                if (!popup || !card) return;
+                msg1.style.display = msgNum === 1 ? 'block' : 'none';
+                msg2.style.display = msgNum === 2 ? 'block' : 'none';
+                popup.style.display = 'flex';
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    card.style.transform = 'translateY(0)';
+                }));
+            }
+
+            function tryShowPopup() {
+                const user = window.currentUser;
+
+                if (!user) {
+                    // Non connecté → message inscription, se répète toutes les 2 min
+                    openPopup(1);
+                    setTimeout(tryShowPopup, 120000);
+                } else {
+                    // Connecté → message commande, 1 seule fois par session
+                    const alreadyShown = sessionStorage.getItem(SESSION_KEY_ORDER);
+                    if (!alreadyShown) {
+                        sessionStorage.setItem(SESSION_KEY_ORDER, '1');
+                        openPopup(2);
+                    }
+                    // Si déjà montré : on ne fait plus rien
+                }
+            }
+
             // Fermer en cliquant sur le fond
             document.getElementById('promoPopup').addEventListener('click', function(e) {
                 if (e.target === this) window.closePromoPopup();
             });
 
             // Première apparition après 5s
-            setTimeout(showPopup, POPUP_DELAY);
-
-            // Réapparition toutes les 2 minutes
-            setInterval(showPopup, POPUP_INTERVAL);
+            setTimeout(tryShowPopup, POPUP_DELAY);
         })();
+    </script>
     </script>
 </body>
 </html>
