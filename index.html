@@ -1458,12 +1458,7 @@
                             ${cfg.ctaLabel} ${cfg.ctaIcon}
                         </span>
                     </div>
-                    <!-- Mini dots image -->
-                    <div id="${bannerId}_dots" class="absolute bottom-3 right-4" style="z-index:5;display:flex;gap:3px;">
-                        ${cfg.pool.slice(0, Math.min(cfg.pool.length, 6)).map((_, i) => 
-                            `<span style="display:inline-block;width:${i===0?'14px':'5px'};height:5px;border-radius:9999px;background:${i===0?'white':'rgba(255,255,255,0.4)'};transition:all 0.4s ease;" id="${bannerId}_dot_${i}"></span>`
-                        ).join('')}
-                    </div>
+
                 </div>`;
             });
 
@@ -1648,15 +1643,7 @@
                     }
                     showingA = !showingA;
 
-                    // Mini-dots
-                    const maxDots = Math.min(cfg.pool.length, 6);
-                    for (let i = 0; i < maxDots; i++) {
-                        const dot = document.getElementById(`${bannerId}_dot_${i}`);
-                        if (dot) {
-                            dot.style.width      = i === imgIdx % maxDots ? '14px' : '5px';
-                            dot.style.background = i === imgIdx % maxDots ? 'white' : 'rgba(255,255,255,0.4)';
-                        }
-                    }
+
                 }, 12000);
 
                 _bannerImgIntervals.push(interval);
@@ -1671,7 +1658,7 @@
             const dotsContainer = document.getElementById('bannerDots');
             if (dotsContainer) {
                 dotsContainer.innerHTML = Array.from({length: _total}, (_, i) =>
-                    `<span style="display:inline-block;height:3px;border-radius:2px;transition:all 0.4s ease;background:${i===0?'#bd1e24':'#cbd5e1'};width:${i===0?'24px':'10px'}"></span>`
+                    `<span style="display:inline-block;height:3px;border-radius:3px;transition:all 0.4s ease;background:${i===0?'#bd1e24':'#cbd5e1'};width:${i===0?'32px':'8px'}"></span>`
                 ).join('');
             }
             const _dotsLive = dotsContainer ? dotsContainer.querySelectorAll('span') : [];
@@ -1681,7 +1668,7 @@
                 const itemW = _bannerItems[0]?.offsetWidth + 12 || container.clientWidth * 0.88 + 12;
                 container.scrollTo({ left: _bannerIdx * itemW, behavior: 'smooth' });
                 _dotsLive.forEach((d, i) => {
-                    d.style.width      = i === _bannerIdx ? '24px' : '10px';
+                    d.style.width      = i === _bannerIdx ? '32px' : '8px';
                     d.style.background = i === _bannerIdx ? '#bd1e24' : '#cbd5e1';
                 });
             }
@@ -1694,7 +1681,7 @@
                 if (idx !== _bannerIdx) {
                     _bannerIdx = idx;
                     _dotsLive.forEach((d, i) => {
-                        d.style.width      = i === _bannerIdx ? '24px' : '10px';
+                        d.style.width      = i === _bannerIdx ? '32px' : '8px';
                         d.style.background = i === _bannerIdx ? '#bd1e24' : '#cbd5e1';
                     });
                 }
@@ -2831,7 +2818,7 @@
             const msg = `${header}\n\n*${currentLang === 'fr' ? 'Client' : 'Customer'}:* ${name}\n*${currentLang === 'fr' ? 'Tél' : 'Phone'}:* ${tel}\n*${currentLang === 'fr' ? 'Lieu' : 'Location'}:* ${loc}\n\n*${currentLang === 'fr' ? 'Articles' : 'Items'}:*\n${itemsList}\n\n*TOTAL: ${total.toLocaleString()} F*`;
             // ✅ FIX : ouvrir WhatsApp AVANT tout await pour éviter le blocage navigateur
             const waUrl = `https://wa.me/237658562104?text=${encodeURIComponent(msg)}`;
-            window.location.href = waUrl;
+            window.open(waUrl, '_blank');
             // Enregistrer commande Firebase en arrière-plan
             if (currentUser) {
                 try {
@@ -3506,5 +3493,4 @@
 
 </body>
 </html>
-
 
