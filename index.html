@@ -516,7 +516,7 @@
     <!-- BANNIÈRES DYNAMIQUES -->
     <section class="pt-4 pb-3 bg-[#f0f4ff]">
         <div id="dynamicBanners" class="banner-container no-scrollbar">
-            <div class="banner-item relative rounded-2xl overflow-hidden bg-slate-200 animate-pulse" style="height:260px;margin-left:16px;"></div>
+            <div class="banner-item relative rounded-none overflow-hidden bg-slate-200 animate-pulse" style="height:260px;margin-left:16px;"></div>
         </div>
         <!-- Indicateurs points -->
         <div id="bannerDots" class="flex justify-center gap-1.5 mt-2.5">
@@ -1354,7 +1354,7 @@
         function updateDynamicBanners(products) {
             const container = document.getElementById('dynamicBanners');
             if (!container || !products || products.length === 0) {
-                if (container) container.innerHTML = `<div class="banner-item relative rounded-[22px] overflow-hidden shadow-2xl bg-slate-200 animate-pulse" style="height:260px"></div>`;
+                if (container) container.innerHTML = `<div class="banner-item relative overflow-hidden shadow-2xl bg-slate-200 animate-pulse" style="height:260px"></div>`;
                 return;
             }
 
@@ -1437,7 +1437,7 @@
                 <div class="banner-item relative overflow-hidden cursor-pointer" 
                      id="${bannerId}"
                      onclick="window.showDetail('${cfg.anchorId}')"
-                     style="height:260px;border-radius:22px;box-shadow:0 8px 32px rgba(16,25,68,0.18);">
+                     style="height:260px;border-radius:0px;box-shadow:0 8px 32px rgba(16,25,68,0.18);">
                     <!-- Image A — Ken Burns dès le départ -->
                     <img id="${bannerId}_imgA" src="${firstImg}" 
                          class="banner-bg-img visible-img kb${(bi % 3) + 1}" 
@@ -1476,7 +1476,7 @@
             const cashBanner = `
                 <div class="banner-item relative overflow-hidden"
                      id="cashAnimBanner"
-                     style="height:260px;border-radius:22px;margin-right:16px;overflow:hidden;
+                     style="height:260px;border-radius:0px;margin-right:16px;overflow:hidden;
                             box-shadow:0 8px 32px rgba(192,57,43,0.4);cursor:pointer;">
 
                     <!-- SCÈNE A : LE PROBLÈME — fond rouge -->
@@ -3287,7 +3287,7 @@
                     <svg width="13" height="13" fill="none" stroke="#fcd34d" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     <span style="font-size:10px;font-weight:900;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;">Livraison rapide</span>
                 </div>
-                <h2 style="font-size:21px;font-weight:900;color:white;line-height:1.35;margin-bottom:10px;">Commandez maintenant,<br><span style="color:#fcd34d;">recevez demain</span><br>à Bafoussam et partout<br>au Cameroun !</h2>
+                <h2 style="font-size:21px;font-weight:900;color:white;line-height:1.35;margin-bottom:10px;">Commandez maintenant,<br><span style="color:#fcd34d;">recevez demain</span><br>à Bafoussam, Yaoundé,<br>Douala et partout au Cameroun !</h2>
                 <p style="font-size:12px;color:rgba(255,255,255,0.65);margin-bottom:24px;line-height:1.6;">Paiement à la livraison · Zéro risque · Produits 100% authentiques<br>avec garantie constructeur.</p>
                 <button onclick="window.closePromoPopup(); window.scrollTo({top: document.getElementById('temuGridSection')?.offsetTop || 400, behavior:'smooth'});" style="width:100%;background:white;color:#bd1e24;border:none;border-radius:16px;padding:16px;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:0.02em;box-shadow:0 6px 20px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;gap:10px;transition:transform 0.15s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
                     <svg width="18" height="18" fill="none" stroke="#bd1e24" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
@@ -3332,12 +3332,16 @@
             function tryShowPopup(user) {
                 if (!user) {
                     // Non connecté → message inscription, 1 seule fois par session
+                    // Nettoyer la clé commande au cas où (changement d'état)
+                    sessionStorage.removeItem(SESSION_KEY_ORDER);
                     if (!sessionStorage.getItem(SESSION_KEY_SIGNUP)) {
                         sessionStorage.setItem(SESSION_KEY_SIGNUP, '1');
                         openPopup(1);
                     }
                 } else {
                     // Connecté → message commande, 1 seule fois par session
+                    // Nettoyer la clé inscription au cas où (l'utilisateur vient de se connecter)
+                    sessionStorage.removeItem(SESSION_KEY_SIGNUP);
                     if (!sessionStorage.getItem(SESSION_KEY_ORDER)) {
                         sessionStorage.setItem(SESSION_KEY_ORDER, '1');
                         openPopup(2);
@@ -3354,6 +3358,7 @@
             // _promoAuthReady est appelé par onAuthStateChanged dans le module Firebase
             window._promoAuthReady = function(user) {
                 window._promoAuthReady = null; // ne s'exécute qu'une seule fois
+                // ✅ FIX : si déjà connecté → forcer popup 2, sinon popup 1
                 setTimeout(() => tryShowPopup(user), POPUP_DELAY);
             };
 
