@@ -3395,39 +3395,53 @@
             if (overlay) overlay.classList.add('hidden');
         }
 
+        // Vérifie si un panneau est visible via classList 'hidden'
+        function isVisibleByClass(el) {
+            if (!el) return false;
+            return !el.classList.contains('hidden');
+        }
+
         // Intercepter le bouton retour
         window.addEventListener('popstate', function() {
 
-            // 1. Modal produit (détail) — ouvert via style.transform = "translateX(0)"
-            const detailModal = document.getElementById('detailModal');
-            if (isOpenByTransform(detailModal, 'translateX(100%)')) {
-                if (window.closeDetail) { window.closeDetail(); }
-                else { detailModal.style.transform = 'translateX(100%)'; hideOverlay(); }
-                hideOverlay(); // sécurité : toujours cacher l'overlay
+            // 1. Panneau Admin (gestion stock) — visible = pas de classe 'hidden'
+            const adminModal = document.getElementById('adminModal');
+            if (isVisibleByClass(adminModal)) {
+                if (window.closeAdmin) { window.closeAdmin(); }
+                else { adminModal.classList.add('hidden'); }
                 return;
             }
 
-            // 2. Popup promo
+            // 2. Modal produit (détail) — ouvert via style.transform = "translateX(0)"
+            const detailModal = document.getElementById('detailModal');
+            if (isOpenByTransform(detailModal, 'translateX(100%)')) {
+                if (window.closeDetail) { window.closeDetail(); }
+                else { detailModal.style.transform = 'translateX(100%)'; }
+                hideOverlay();
+                return;
+            }
+
+            // 3. Popup promo
             const promoPopup = document.getElementById('promoPopup');
             if (promoPopup && promoPopup.style.display === 'flex') {
                 window.closePromoPopup && window.closePromoPopup();
                 return;
             }
 
-            // 3. Panier latéral — ouvert via style.transform = "translateX(0)"
+            // 4. Panier latéral — ouvert via style.transform = "translateX(0)"
             const sideCart = document.getElementById('sideCart');
             if (isOpenByTransform(sideCart, 'translateX(100%)')) {
                 if (window.closeCart) { window.closeCart(); }
-                else { sideCart.style.transform = 'translateX(100%)'; hideOverlay(); }
+                else { sideCart.style.transform = 'translateX(100%)'; }
                 hideOverlay();
                 return;
             }
 
-            // 4. Menu latéral — ouvert via style.transform = "translateX(0)"
+            // 5. Menu latéral — ouvert via style.transform = "translateX(0)"
             const sideNav = document.getElementById('sideNav');
             if (isOpenByTransform(sideNav, 'translateX(-100%)')) {
                 if (window.closeNav) { window.closeNav(); }
-                else { sideNav.style.transform = 'translateX(-100%)'; hideOverlay(); }
+                else { sideNav.style.transform = 'translateX(-100%)'; }
                 hideOverlay();
                 return;
             }
@@ -3469,6 +3483,17 @@
             watchTransformPanel('sideCart');
             watchTransformPanel('sideNav');
             watchDisplayPanel('promoPopup');
+
+            // Admin panel — ouvert via classList.remove('hidden')
+            const adminModal = document.getElementById('adminModal');
+            if (adminModal) {
+                let wasHidden = adminModal.classList.contains('hidden');
+                new MutationObserver(function() {
+                    const isHidden = adminModal.classList.contains('hidden');
+                    if (wasHidden && !isHidden) { pushState('adminModal'); }
+                    wasHidden = isHidden;
+                }).observe(adminModal, { attributes: true, attributeFilter: ['class'] });
+            }
         }
 
         if (document.readyState === 'loading') {
