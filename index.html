@@ -2850,6 +2850,9 @@
         // ==================== AUTH ====================
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
+            window.currentUser = user; // ✅ Expose pour le popup
+            window._authReady = true;  // ✅ Signale que Firebase a répondu
+            if (window._promoAuthReady) window._promoAuthReady(user);
             const adminBtn   = document.getElementById('adminBtn');
             const dot        = document.getElementById('authStatusDot');
             const verifyBanner = document.getElementById('emailVerifyBanner');
@@ -3298,12 +3301,11 @@
 
     <script>
         // ============ LOGIQUE POPUP PROMO ============
+        // ✅ CORRECTION : on attend la réponse de Firebase avant de décider quel popup afficher
         (function() {
-            const POPUP_DELAY = 5000; // 5 secondes après arrivée
-
-            // Clés sessionStorage — réinitialisées à chaque fermeture du navigateur
-            const SESSION_KEY_ORDER  = 'afroOrderPopupShown';   // message commande (connectés)
-            const SESSION_KEY_SIGNUP = 'afroSignupPopupShown';  // message inscription (non-connectés)
+            const POPUP_DELAY = 5000; // 5 secondes après arrivée sur la page
+            const SESSION_KEY_ORDER  = 'afroOrderPopupShown';  // message commande (connectés)
+            const SESSION_KEY_SIGNUP = 'afroSignupPopupShown'; // message inscription (non-connectés)
 
             window.closePromoPopup = function() {
                 const popup = document.getElementById('promoPopup');
@@ -3327,25 +3329,19 @@
                 }));
             }
 
-            function tryShowPopup() {
-                const user = window.currentUser;
-
+            function tryShowPopup(user) {
                 if (!user) {
-                    // ✅ Non connecté → message inscription, 1 SEULE FOIS par session
-                    const alreadyShown = sessionStorage.getItem(SESSION_KEY_SIGNUP);
-                    if (!alreadyShown) {
+                    // Non connecté → message inscription, 1 seule fois par session
+                    if (!sessionStorage.getItem(SESSION_KEY_SIGNUP)) {
                         sessionStorage.setItem(SESSION_KEY_SIGNUP, '1');
                         openPopup(1);
                     }
-                    // Si déjà montré : on ne fait plus rien
                 } else {
-                    // ✅ Connecté → message commande, 1 SEULE FOIS par session
-                    const alreadyShown = sessionStorage.getItem(SESSION_KEY_ORDER);
-                    if (!alreadyShown) {
+                    // Connecté → message commande, 1 seule fois par session
+                    if (!sessionStorage.getItem(SESSION_KEY_ORDER)) {
                         sessionStorage.setItem(SESSION_KEY_ORDER, '1');
                         openPopup(2);
                     }
-                    // Si déjà montré : on ne fait plus rien
                 }
             }
 
@@ -3354,8 +3350,20 @@
                 if (e.target === this) window.closePromoPopup();
             });
 
-            // Première apparition après 5s
-            setTimeout(tryShowPopup, POPUP_DELAY);
+            // ✅ Attendre que Firebase confirme l'état de connexion, puis déclencher le popup après POPUP_DELAY
+            // _promoAuthReady est appelé par onAuthStateChanged dans le module Firebase
+            window._promoAuthReady = function(user) {
+                window._promoAuthReady = null; // ne s'exécute qu'une seule fois
+                setTimeout(() => tryShowPopup(user), POPUP_DELAY);
+            };
+
+            // Sécurité : si Firebase ne répond pas dans 8s, on affiche quand même (utilisateur non connecté)
+            setTimeout(function() {
+                if (window._promoAuthReady) {
+                    window._promoAuthReady = null;
+                    tryShowPopup(null);
+                }
+            }, 8000);
         })();
     </script>
     </script>
