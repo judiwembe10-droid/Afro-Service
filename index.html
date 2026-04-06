@@ -3366,7 +3366,103 @@
             }, 8000);
         })();
     </script>
+
+    <script>
+    // ============ GESTION BOUTON RETOUR ANDROID ============
+    (function() {
+        // Empiler un état fictif dans l'historique à chaque ouverture de panneau
+        function pushState(panel) {
+            history.pushState({ panel: panel }, '');
+        }
+
+        // Intercepter le bouton retour
+        window.addEventListener('popstate', function(e) {
+
+            // 1. Modal produit (détail)
+            const detailModal = document.getElementById('detailModal');
+            if (detailModal) {
+                const t = detailModal.style.transform || '';
+                if (t === '' || t === 'translateX(0%)' || t === 'translateX(0px)' || t === 'none') {
+                    const isVisible = !detailModal.classList.contains('translate-x-full') && t !== 'translateX(100%)';
+                    if (isVisible) {
+                        if (window.closeDetail) { window.closeDetail(); }
+                        else { detailModal.style.transform = 'translateX(100%)'; }
+                        return;
+                    }
+                }
+            }
+
+            // 2. Popup promo
+            const promoPopup = document.getElementById('promoPopup');
+            if (promoPopup && promoPopup.style.display === 'flex') {
+                window.closePromoPopup && window.closePromoPopup();
+                return;
+            }
+
+            // 3. Panier latéral
+            const sideCart = document.getElementById('sideCart');
+            if (sideCart && !sideCart.classList.contains('translate-x-full')) {
+                if (window.closeCart) { window.closeCart(); }
+                else { sideCart.classList.add('translate-x-full'); }
+                return;
+            }
+
+            // 4. Menu latéral (navigation)
+            const sideNav = document.getElementById('sideNav');
+            if (sideNav && !sideNav.classList.contains('-translate-x-full')) {
+                if (window.closeNav) { window.closeNav(); }
+                else { sideNav.classList.add('-translate-x-full'); }
+                return;
+            }
+
+            // Rien d'ouvert → comportement normal (retour page précédente)
+        });
+
+        // === Observer les panneaux pour empiler l'historique à leur ouverture ===
+        function watchClassPanel(id, closedClass) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            let wasClosed = el.classList.contains(closedClass);
+            const observer = new MutationObserver(function() {
+                const isClosed = el.classList.contains(closedClass);
+                if (wasClosed && !isClosed) {
+                    // Panneau vient de s'ouvrir
+                    pushState(id);
+                }
+                wasClosed = isClosed;
+            });
+            observer.observe(el, { attributes: true, attributeFilter: ['class'] });
+        }
+
+        function watchStylePanel(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            let wasClosed = (el.style.display === 'none' || el.style.display === '');
+            const observer = new MutationObserver(function() {
+                const isOpen = (el.style.display === 'flex' || el.style.display === 'block');
+                if (wasClosed && isOpen) {
+                    pushState(id);
+                }
+                wasClosed = !isOpen;
+            });
+            observer.observe(el, { attributes: true, attributeFilter: ['style'] });
+        }
+
+        function initWatchers() {
+            watchClassPanel('sideNav', '-translate-x-full');
+            watchClassPanel('sideCart', 'translate-x-full');
+            watchClassPanel('detailModal', 'translate-x-full');
+            watchStylePanel('promoPopup');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initWatchers);
+        } else {
+            initWatchers();
+        }
+    })();
     </script>
+
 </body>
 </html>
 
