@@ -554,6 +554,9 @@
             <div id="productScrollTrack" style="display:none"></div>
         </div>
 
+        <!-- BARRE DE PROGRESSION CAROUSEL — multi-lignes automatiques -->
+        <div id="carouselProgressBar" style="display:none;padding:4px 16px 10px;display:flex;flex-direction:column;gap:5px;"></div>
+
         <!-- ============ GRILLE ARTICLES STYLE TEMU ============ -->
         <section id="temuGridSection" class="mt-6 mb-2" style="display:none;">
             <div class="flex items-center justify-between px-4 mb-3">
@@ -1751,6 +1754,62 @@
         }
 
         // Déplace le track vers la carte d'index absolu i (sans transition = téléportation)
+        // ==================== BARRE DE PROGRESSION CAROUSEL ====================
+        const CAR_BAR_SIZE = 50; // articles par ligne
+
+        function buildCarouselBars() {
+            const bar = document.getElementById('carouselProgressBar');
+            if (!bar) return;
+            const lineCount = Math.ceil(_carTotal / CAR_BAR_SIZE);
+            bar.innerHTML = '';
+            for (let i = 0; i < lineCount; i++) {
+                bar.innerHTML += `
+                    <div style="position:relative;width:100%;height:3px;background:#e2e8f0;border-radius:9999px;">
+                        <div id="carouselThumb_${i}" style="position:absolute;top:0;height:100%;width:30px;background:#1e293b;border-radius:9999px;transition:left 0.45s cubic-bezier(0.25,0.46,0.45,0.94);left:0;opacity:0.25;"></div>
+                    </div>`;
+            }
+            bar.style.display = _carTotal > 1 ? 'flex' : 'none';
+        }
+
+        function updateCarouselProgress() {
+            if (_carTotal === 0) return;
+            const realIdx  = ((_carIdx % _carTotal) + _carTotal) % _carTotal;
+            const lineCount = Math.ceil(_carTotal / CAR_BAR_SIZE);
+            const activeLine = Math.floor(realIdx / CAR_BAR_SIZE);
+            const idxInLine  = realIdx % CAR_BAR_SIZE;
+            const sizeOfLine = activeLine === lineCount - 1
+                ? ((_carTotal - 1) % CAR_BAR_SIZE) + 1  // dernière ligne peut être incomplète
+                : CAR_BAR_SIZE;
+
+            const bar = document.getElementById('carouselProgressBar');
+            if (!bar) return;
+            const barW   = bar.clientWidth - 32;
+            const thumbW = 30;
+            const trackW = barW - thumbW;
+
+            for (let i = 0; i < lineCount; i++) {
+                const thumb = document.getElementById('carouselThumb_' + i);
+                if (!thumb) continue;
+                if (i === activeLine) {
+                    // Ligne active : tiret se déplace
+                    const left = sizeOfLine > 1 ? (idxInLine / (sizeOfLine - 1)) * trackW : 0;
+                    thumb.style.left    = Math.round(left) + 'px';
+                    thumb.style.opacity = '1';
+                    thumb.style.background = '#1e293b';
+                } else if (i < activeLine) {
+                    // Lignes déjà parcourues : tiret à droite, grisé
+                    thumb.style.left    = Math.round(trackW) + 'px';
+                    thumb.style.opacity = '0.3';
+                    thumb.style.background = '#94a3b8';
+                } else {
+                    // Lignes pas encore atteintes : tiret à gauche, grisé
+                    thumb.style.left    = '0px';
+                    thumb.style.opacity = '0.25';
+                    thumb.style.background = '#cbd5e1';
+                }
+            }
+        }
+
         function jumpToCard(i, withTransition) {
             const track = document.getElementById('productScrollTrack');
             if (!track) return;
@@ -1765,6 +1824,7 @@
                 track.style.transition = `transform ${CAR_SLIDE_MS}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
                 track.style.transform  = `translateX(${offset}px)`;
             }
+            updateCarouselProgress();
         }
 
         function advanceCard() {
@@ -1889,6 +1949,7 @@
             const grid    = document.getElementById('productGrid');
             const track   = document.getElementById('productScrollTrack');
             const wrapper = document.getElementById('productScrollWrapper');
+            const progBar = document.getElementById('carouselProgressBar');
             if (!grid || !track || !wrapper) return;
 
             stopScroll();
@@ -1905,6 +1966,12 @@
             track.style.transition = 'none';
             track.style.transform  = 'translateX(16px)';
             grid.style.display  = 'none';
+
+            // Afficher la barre de progression
+            if (progBar) {
+                buildCarouselBars();
+                updateCarouselProgress();
+            }
 
             setTimeout(() => {
                 initCarouselInteraction();
@@ -2466,11 +2533,11 @@
             document.getElementById('productScrollWrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
 
-        // ── Catégories & Recherche : grille statique bien organisée ──
         function renderStaticGrid(data) {
             const grid    = document.getElementById('productGrid');
             const track   = document.getElementById('productScrollTrack');
             const wrapper = document.getElementById('productScrollWrapper');
+            const progBar = document.getElementById('carouselProgressBar');
             if (!grid || !track || !wrapper) return;
 
             // Stopper le carousel et réinitialiser
@@ -2481,6 +2548,9 @@
 
             track.style.display = 'none';
             track.innerHTML = '';
+
+            // Cacher la barre de progression
+            if (progBar) progBar.style.display = 'none';
 
             if (!data || data.length === 0) {
                 grid.innerHTML = `<p class="col-span-2 text-center text-slate-400 text-[11px] italic py-10">${currentLang === 'fr' ? 'Aucun article trouvé.' : 'No items found.'}</p>`;
@@ -3175,6 +3245,100 @@
             if (editor.innerHTML === '' || editor.innerHTML === '<br>') editor.setAttribute('data-empty','true');
             else editor.removeAttribute('data-empty');
         };
+    </script>
+
+    <!-- ============ POPUP PROMOTIONNELLE ============ -->
+    <div id="promoPopup" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;padding-bottom:0;">
+        <div id="promoPopupCard" style="width:100%;max-width:480px;border-radius:28px 28px 0 0;overflow:hidden;transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);box-shadow:0 -8px 40px rgba(0,0,0,0.35);">
+
+            <!-- Message 1 : Inscription -->
+            <div id="promoMsg1" style="background:linear-gradient(160deg,#101944 0%,#1e3a8a 100%);padding:32px 24px 28px;text-align:center;">
+                <button onclick="window.closePromoPopup()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:34px;height:34px;color:white;font-size:18px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>
+                <div style="width:56px;height:56px;background:linear-gradient(135deg,#bd1e24,#ff4d4d);border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;">
+                    <svg width="28" height="28" fill="none" stroke="white" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                </div>
+                <p style="font-size:11px;font-weight:900;color:#f97316;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">🎁 Offre de bienvenue</p>
+                <h2 style="font-size:22px;font-weight:900;color:white;line-height:1.3;margin-bottom:8px;">Inscris-toi et reçois<br><span style="color:#f97316;">une réduction exclusive</span><br>sur ta 1<sup style="font-size:14px;">ère</sup> commande !</h2>
+                <p style="font-size:12px;color:#94a3b8;margin-bottom:22px;">Rejoins des centaines de clients satisfaits chez Afro Service 🛍️</p>
+                <button onclick="window.closePromoPopup(); window.openAuth && window.openAuth();" style="width:100%;background:linear-gradient(135deg,#bd1e24,#ff4d4d);color:white;border:none;border-radius:16px;padding:16px;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:0.02em;box-shadow:0 6px 20px rgba(189,30,36,0.4);transition:transform 0.15s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
+                    Je m'inscris 👍
+                </button>
+                <p onclick="window.closePromoPopup()" style="font-size:10px;color:#64748b;margin-top:12px;cursor:pointer;text-decoration:underline;">Non merci, continuer sans s'inscrire</p>
+            </div>
+
+            <!-- Message 2 : Commander -->
+            <div id="promoMsg2" style="display:none;background:linear-gradient(160deg,#7c2d12 0%,#bd1e24 100%);padding:32px 24px 28px;text-align:center;">
+                <button onclick="window.closePromoPopup()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:34px;height:34px;color:white;font-size:18px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>
+                <div style="width:56px;height:56px;background:rgba(255,255,255,0.15);border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;">
+                    <svg width="28" height="28" fill="none" stroke="white" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                </div>
+                <p style="font-size:11px;font-weight:900;color:#fcd34d;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">🚀 Livraison rapide</p>
+                <h2 style="font-size:22px;font-weight:900;color:white;line-height:1.3;margin-bottom:8px;">Commande maintenant,<br><span style="color:#fcd34d;">reçois demain</span><br>à Bafoussam ! 📦</h2>
+                <p style="font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:22px;">Paiement à la livraison · Zéro risque · Produits authentiques ✅</p>
+                <button onclick="window.closePromoPopup(); document.getElementById('fastSearch') && document.getElementById('fastSearch').focus();" style="width:100%;background:white;color:#bd1e24;border:none;border-radius:16px;padding:16px;font-size:14px;font-weight:900;cursor:pointer;letter-spacing:0.02em;box-shadow:0 6px 20px rgba(0,0,0,0.2);transition:transform 0.15s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
+                    Voir les articles 🛒
+                </button>
+                <p onclick="window.closePromoPopup()" style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:12px;cursor:pointer;text-decoration:underline;">Fermer</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ============ LOGIQUE POPUP PROMO ============
+        (function() {
+            const POPUP_DELAY    = 5000;   // 5 secondes après arrivée
+            const POPUP_INTERVAL = 120000; // réapparaît toutes les 2 minutes
+            const STORAGE_KEY    = 'afroPromoSeen';
+            let   _popupMsg      = 1;      // alterne entre 1 et 2
+
+            function showPopup() {
+                // Ne pas afficher si l'utilisateur est connecté
+                if (window.currentUser) return;
+
+                const popup = document.getElementById('promoPopup');
+                const card  = document.getElementById('promoPopupCard');
+                const msg1  = document.getElementById('promoMsg1');
+                const msg2  = document.getElementById('promoMsg2');
+                if (!popup || !card) return;
+
+                // Alterner les messages
+                if (_popupMsg === 1) {
+                    msg1.style.display = 'block';
+                    msg2.style.display = 'none';
+                } else {
+                    msg1.style.display = 'none';
+                    msg2.style.display = 'block';
+                }
+                _popupMsg = _popupMsg === 1 ? 2 : 1;
+
+                popup.style.display = 'flex';
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        card.style.transform = 'translateY(0)';
+                    });
+                });
+            }
+
+            window.closePromoPopup = function() {
+                const popup = document.getElementById('promoPopup');
+                const card  = document.getElementById('promoPopupCard');
+                if (!popup || !card) return;
+                card.style.transform = 'translateY(100%)';
+                setTimeout(() => { popup.style.display = 'none'; }, 450);
+            };
+
+            // Fermer en cliquant sur le fond
+            document.getElementById('promoPopup').addEventListener('click', function(e) {
+                if (e.target === this) window.closePromoPopup();
+            });
+
+            // Première apparition après 5s
+            setTimeout(showPopup, POPUP_DELAY);
+
+            // Réapparition toutes les 2 minutes
+            setInterval(showPopup, POPUP_INTERVAL);
+        })();
     </script>
 </body>
 </html>
