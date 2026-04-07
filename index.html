@@ -518,8 +518,8 @@
         <div id="dynamicBanners" class="banner-container no-scrollbar">
             <div class="banner-item relative rounded-none overflow-hidden bg-slate-200 animate-pulse" style="height:260px;margin-left:16px;"></div>
         </div>
-        <!-- Indicateurs tirets — mis à jour par JS -->
-        <div id="bannerDots" class="flex justify-center gap-1.5 mt-2.5"></div>
+        <!-- Barre de progression identique au carousel articles -->
+        <div id="bannerDots" style="padding:6px 16px 2px;display:flex;flex-direction:column;gap:5px;"></div>
     </section>
 
     <!-- CATÉGORIES BULLES -->
@@ -670,6 +670,150 @@
             }
             .temu-trending-chip svg { width: 9px; height: 9px; }
         </style>
+
+        <style>
+            /* ===== LISTE STYLE PINDUODUO — refonte complète ===== */
+            .pdd-section-header {
+                display: flex; align-items: center; justify-content: space-between;
+                padding: 14px 14px 8px;
+                border-bottom: 2px solid #f1f5f9;
+                background: white;
+            }
+            .pdd-title-wrap { display: flex; align-items: center; gap: 7px; }
+            .pdd-title-icon {
+                width: 26px; height: 26px;
+                background: linear-gradient(135deg, #bd1e24, #ff4d4d);
+                border-radius: 7px;
+                display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            }
+            .pdd-title-text { font-size: 13px; font-weight: 900; color: #101944; text-transform: uppercase; letter-spacing: 0.04em; }
+            .pdd-count-badge { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; }
+
+            /* Carte principale */
+            .pdd-card {
+                display: flex; gap: 0;
+                background: white;
+                border-bottom: 1px solid #f1f5f9;
+                cursor: pointer;
+                transition: background 0.12s;
+                position: relative;
+                overflow: hidden;
+            }
+            .pdd-card:last-child { border-bottom: none; }
+            .pdd-card:active { background: #fafbfc; }
+
+            /* Image — grande, carrée, plein côté gauche */
+            .pdd-card-img-wrap {
+                width: 120px; height: 140px;
+                flex-shrink: 0;
+                position: relative;
+                overflow: hidden;
+                background: #f4f6fa;
+            }
+            .pdd-card-img-wrap img {
+                width: 100%; height: 100%; object-fit: cover;
+                display: block;
+            }
+            /* Badge promo sur l'image */
+            .pdd-img-badge {
+                position: absolute; bottom: 0; left: 0; right: 0;
+                background: linear-gradient(0deg, rgba(189,30,36,0.82) 0%, transparent 100%);
+                color: white; font-size: 10px; font-weight: 900;
+                padding: 8px 8px 4px;
+                text-align: center; letter-spacing: 0.04em;
+            }
+
+            /* Colonne droite */
+            .pdd-card-right {
+                flex: 1; min-width: 0;
+                display: flex; flex-direction: column;
+                padding: 10px 10px 0 10px;
+                gap: 0;
+            }
+
+            /* Tags en haut — compacts, inline */
+            .pdd-tags-row { display: flex; flex-wrap: wrap; gap: 3px; margin-bottom: 5px; }
+            .pdd-tag {
+                display: inline-flex; align-items: center; gap: 2px;
+                padding: 1px 6px; border-radius: 3px;
+                font-size: 8.5px; font-weight: 900;
+                text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.6;
+            }
+            .pdd-tag svg { width: 8px; height: 8px; flex-shrink: 0; }
+            .pdd-tag-hot  { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+            .pdd-tag-new  { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+            .pdd-tag-promo{ background: #fefce8; color: #a16207; border: 1px solid #fde68a; }
+            .pdd-tag-auth { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+            /* Titre produit */
+            .pdd-card-name {
+                font-size: 12px; font-weight: 700; color: #1e293b; line-height: 1.4;
+                display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+                margin-bottom: 5px;
+            }
+
+            /* Barre de vente */
+            .pdd-sold-wrap { margin-bottom: 6px; }
+            .pdd-sold-meta {
+                font-size: 8.5px; font-weight: 700; color: #94a3b8;
+                display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px;
+            }
+            .pdd-sold-meta-hot { color: #be123c; font-weight: 900; }
+            .pdd-sold-bar { height: 3px; background: #f1f5f9; border-radius: 9999px; overflow: hidden; }
+            .pdd-sold-fill { height: 100%; background: linear-gradient(90deg, #bd1e24, #ff6b6b); border-radius: 9999px; }
+
+            /* Bloc prix Pinduoduo — fond crème/jaune pâle, prix rouge, bouton rouge séparé */
+            .pdd-price-block {
+                display: flex; align-items: stretch;
+                background: #fff8f0;
+                border-top: 1px solid #fde8cc;
+                margin-top: auto;
+            }
+            .pdd-price-left {
+                flex: 1; padding: 7px 8px;
+                display: flex; flex-direction: column; justify-content: center; gap: 1px;
+            }
+            .pdd-price-label {
+                font-size: 7.5px; font-weight: 900; color: #b45309;
+                text-transform: uppercase; letter-spacing: 0.1em; line-height: 1;
+            }
+            .pdd-price-main {
+                display: flex; align-items: baseline; gap: 1px; line-height: 1;
+            }
+            .pdd-price-curr { font-size: 10px; font-weight: 900; color: #bd1e24; }
+            .pdd-price-num  { font-size: 22px; font-weight: 900; color: #bd1e24; letter-spacing: -1px; line-height: 1; }
+            .pdd-price-unit { font-size: 9px;  font-weight: 900; color: #bd1e24; }
+            .pdd-old-price  { font-size: 9px; color: #b45309; text-decoration: line-through; opacity: 0.55; line-height: 1; margin-top: 1px; }
+
+            /* Bouton commander — rouge vif, même hauteur que le bloc prix */
+            .pdd-buy-btn {
+                background: linear-gradient(180deg, #e8302c 0%, #bd1e24 100%);
+                display: flex; flex-direction: column; align-items: center; justify-content: center;
+                padding: 0 14px; gap: 3px;
+                border: none; cursor: pointer;
+                transition: filter 0.15s, transform 0.1s;
+                min-width: 60px;
+            }
+            .pdd-buy-btn:active { filter: brightness(0.9); transform: scale(0.97); }
+            .pdd-buy-btn svg { width: 18px; height: 18px; stroke: white; fill: none; stroke-width: 2; flex-shrink: 0; }
+            .pdd-buy-btn-label { font-size: 8px; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 0.08em; line-height: 1; white-space: nowrap; }
+        </style>
+
+        <!-- ===== SECTION LISTE STYLE PINDUODUO ===== -->
+        <section id="pddListSection" class="mt-0 mb-0" style="display:none;">
+            <div class="pdd-section-header" style="padding-top:18px;padding-bottom:4px;">
+                <div class="pdd-title-wrap">
+                    <div class="pdd-title-icon">
+                        <svg width="16" height="16" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <span class="pdd-title-text" data-fr="Sélection du Jour" data-en="Today's Picks">Sélection du Jour</span>
+                </div>
+                <span id="pddListCount" class="pdd-count-badge"></span>
+            </div>
+            <div style="background:white;border-radius:0;overflow:hidden;border-top:1px solid #f1f5f9;border-bottom:1px solid #f1f5f9;margin-top:8px;">
+                <div id="pddListContainer"></div>
+            </div>
+        </section>
 
         <section class="py-3 mt-4 border-t border-slate-200">
             <h3 class="font-black text-[10px] uppercase tracking-widest text-[#101944] mb-3 flex items-center gap-1.5">
@@ -1657,20 +1801,24 @@
 
             const dotsContainer = document.getElementById('bannerDots');
             if (dotsContainer) {
-                dotsContainer.innerHTML = Array.from({length: _total}, (_, i) =>
-                    `<span style="display:inline-block;height:3px;border-radius:3px;transition:all 0.4s ease;background:${i===0?'#bd1e24':'#cbd5e1'};width:${i===0?'32px':'8px'}"></span>`
-                ).join('');
+                dotsContainer.innerHTML = `<div style="position:relative;width:100%;height:3px;background:#cbd5e1;border-radius:9999px;"><div id="bannerProgressThumb" style="position:absolute;top:0;height:100%;background:#bd1e24;border-radius:9999px;transition:left 0.45s cubic-bezier(0.25,0.46,0.45,0.94);left:0;width:32px;"></div></div>`;
             }
-            const _dotsLive = dotsContainer ? dotsContainer.querySelectorAll('span') : [];
+
+            function _updateBannerThumb(idx) {
+                const thumb = document.getElementById('bannerProgressThumb');
+                if (!thumb || !dotsContainer) return;
+                const barW  = dotsContainer.clientWidth - 32;
+                const trackW = barW - 30;
+                const left = _total > 1 ? (idx / (_total - 1)) * trackW : 0;
+                thumb.style.left = Math.round(left) + 'px';
+            }
+            _updateBannerThumb(0);
 
             function _gotoSlide(idx) {
                 _bannerIdx = (idx + _total) % _total;
                 const itemW = _bannerItems[0]?.offsetWidth + 12 || container.clientWidth * 0.88 + 12;
                 container.scrollTo({ left: _bannerIdx * itemW, behavior: 'smooth' });
-                _dotsLive.forEach((d, i) => {
-                    d.style.width      = i === _bannerIdx ? '32px' : '8px';
-                    d.style.background = i === _bannerIdx ? '#bd1e24' : '#cbd5e1';
-                });
+                _updateBannerThumb(_bannerIdx);
             }
 
             window._bannerAutoSlide = setInterval(() => _gotoSlide(_bannerIdx + 1), 12000);
@@ -1680,10 +1828,7 @@
                 const idx = Math.round(container.scrollLeft / itemW);
                 if (idx !== _bannerIdx) {
                     _bannerIdx = idx;
-                    _dotsLive.forEach((d, i) => {
-                        d.style.width      = i === _bannerIdx ? '32px' : '8px';
-                        d.style.background = i === _bannerIdx ? '#bd1e24' : '#cbd5e1';
-                    });
+                    _updateBannerThumb(_bannerIdx);
                 }
             }, { passive: true });
         }
@@ -1746,8 +1891,8 @@
             bar.innerHTML = '';
             for (let i = 0; i < lineCount; i++) {
                 bar.innerHTML += `
-                    <div style="position:relative;width:100%;height:3px;background:#e2e8f0;border-radius:9999px;">
-                        <div id="carouselThumb_${i}" style="position:absolute;top:0;height:100%;width:30px;background:#1e293b;border-radius:9999px;transition:left 0.45s cubic-bezier(0.25,0.46,0.45,0.94);left:0;opacity:0.25;"></div>
+                    <div style="position:relative;width:100%;height:3px;background:#cbd5e1;border-radius:9999px;">
+                        <div id="carouselThumb_${i}" style="position:absolute;top:0;height:100%;width:32px;background:#bd1e24;border-radius:9999px;transition:left 0.45s cubic-bezier(0.25,0.46,0.45,0.94);left:0;"></div>
                     </div>`;
             }
             bar.style.display = _carTotal > 1 ? 'flex' : 'none';
@@ -1773,20 +1918,17 @@
                 const thumb = document.getElementById('carouselThumb_' + i);
                 if (!thumb) continue;
                 if (i === activeLine) {
-                    // Ligne active : tiret se déplace
                     const left = sizeOfLine > 1 ? (idxInLine / (sizeOfLine - 1)) * trackW : 0;
                     thumb.style.left    = Math.round(left) + 'px';
                     thumb.style.opacity = '1';
-                    thumb.style.background = '#1e293b';
+                    thumb.style.background = '#bd1e24';
                 } else if (i < activeLine) {
-                    // Lignes déjà parcourues : tiret à droite, grisé
                     thumb.style.left    = Math.round(trackW) + 'px';
-                    thumb.style.opacity = '0.3';
-                    thumb.style.background = '#94a3b8';
+                    thumb.style.opacity = '0.4';
+                    thumb.style.background = '#cbd5e1';
                 } else {
-                    // Lignes pas encore atteintes : tiret à gauche, grisé
                     thumb.style.left    = '0px';
-                    thumb.style.opacity = '0.25';
+                    thumb.style.opacity = '0.4';
                     thumb.style.background = '#cbd5e1';
                 }
             }
@@ -2011,6 +2153,98 @@
             colLeft.innerHTML  = leftHTML;
             colRight.innerHTML = rightHTML;
         }
+
+        // ==================== LISTE STYLE PINDUODUO ====================
+        // SVG inline strings réutilisables
+        var SVG_STAR   = '<svg viewBox="0 0 24 24" fill="currentColor" width="8" height="8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+        var SVG_FLASH  = '<svg viewBox="0 0 24 24" fill="currentColor" width="8" height="8"><path d="M13 2L4.09 12.26 11 12.26 11 22 19.91 11.74 13 11.74z"/></svg>';
+        var SVG_CHECK  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="8" height="8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
+        var SVG_TAG    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="8" height="8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>';
+        var SVG_CART   = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>';
+
+        function renderPddList(data) {
+            var section   = document.getElementById('pddListSection');
+            var container = document.getElementById('pddListContainer');
+            var counter   = document.getElementById('pddListCount');
+            if (!section || !container) return;
+            if (!data || data.length === 0) { section.style.display = 'none'; return; }
+
+            section.style.display = 'block';
+            if (counter) counter.textContent = data.length + ' article' + (data.length > 1 ? 's' : '');
+
+            var html = '';
+            data.slice().reverse().forEach(function(p, idx) {
+                var img      = p.imgs && p.imgs[0] ? p.imgs[0] : 'https://via.placeholder.com/300';
+                var promo    = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
+                var soldPct  = Math.min(92, 28 + ((idx * 17 + 41) % 55));
+                var soldCount= Math.floor(soldPct * 1.4 + idx * 3);
+                var isNew    = idx < 4;
+                var isHot    = soldPct > 60;
+                var hasPromo = promo > 0;
+
+                // --- Carte ---
+                html += '<div class="pdd-card" onclick="window.showDetail(\'' + p.id + '\')">';
+
+                // Image gauche + badge promo en bas de l'image
+                html += '<div class="pdd-card-img-wrap">';
+                html += '<img src="' + img + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300\'">';
+                if (hasPromo) html += '<div class="pdd-img-badge">-' + promo + '%</div>';
+                html += '</div>';
+
+                // Colonne droite
+                html += '<div class="pdd-card-right">';
+
+                // Tags SVG — pas d'emojis
+                html += '<div class="pdd-tags-row">';
+                if (isNew)    html += '<span class="pdd-tag pdd-tag-new">'    + SVG_STAR  + ' Nouveau</span>';
+                if (isHot)    html += '<span class="pdd-tag pdd-tag-hot">'    + SVG_FLASH + ' Populaire</span>';
+                if (hasPromo) html += '<span class="pdd-tag pdd-tag-promo">'  + SVG_TAG   + ' Promo</span>';
+                html += '<span class="pdd-tag pdd-tag-auth">' + SVG_CHECK + ' Authentique</span>';
+                html += '</div>';
+
+                // Nom
+                html += '<div class="pdd-card-name">' + p.name + '</div>';
+
+                // Barre de vente
+                html += '<div class="pdd-sold-wrap">';
+                html += '<div class="pdd-sold-meta">';
+                html += '<span' + (isHot ? ' class="pdd-sold-meta-hot"' : '') + '>' + soldCount + ' commandes ce mois</span>';
+                html += '<span>' + soldPct + '%</span>';
+                html += '</div>';
+                html += '<div class="pdd-sold-bar"><div class="pdd-sold-fill" style="width:' + soldPct + '%"></div></div>';
+                html += '</div>';
+
+                // Bloc prix Pinduoduo : fond crème + bouton rouge
+                html += '<div class="pdd-price-block">';
+                html += '<div class="pdd-price-left">';
+                html += '<span class="pdd-price-label">Prix Afro Service</span>';
+                html += '<div class="pdd-price-main">';
+                html += '<span class="pdd-price-num">' + parseInt(p.price).toLocaleString('fr-FR') + '</span>';
+                html += '<span class="pdd-price-unit">&thinsp;FCFA</span>';
+                html += '</div>';
+                if (p.old) html += '<span class="pdd-old-price">' + parseInt(p.old).toLocaleString('fr-FR') + ' FCFA</span>';
+                html += '</div>';
+                html += '<button class="pdd-buy-btn" onclick="event.stopPropagation();window._pddQuickAdd(\'' + p.id + '\')">';
+                html += SVG_CART;
+                html += '<span class="pdd-buy-btn-label">Ajouter</span>';
+                html += '</button>';
+                html += '</div>'; // price-block
+
+                html += '</div>'; // card-right
+                html += '</div>'; // card
+            });
+
+            container.innerHTML = html;
+        }
+
+        window._pddQuickAdd = function(id) {
+            var p = stock.find(function(x){ return x.id === id; });
+            if (!p) return;
+            cart.push({ name: p.name, price: p.price, img: p.imgs && p.imgs[0] ? p.imgs[0] : '' });
+            updateCart();
+            var badge = document.getElementById('badge');
+            if (badge) { badge.style.transform = 'scale(1.6)'; setTimeout(function(){ badge.style.transform = 'scale(1)'; }, 300); }
+        };
 
         window._temuQuickAdd = function(id) {
             var p = stock.find(function(x){ return x.id === id; });
@@ -2959,6 +3193,7 @@
                 renderCategoryBubbles();
                 renderHeroCards();
                 renderTemuGrid(stock);
+                renderPddList(stock);
             } else {
                 updateDynamicBanners(stock);
                 const adminOpen = document.getElementById('adminModal') && !document.getElementById('adminModal').classList.contains('hidden');
@@ -2966,6 +3201,7 @@
                 renderCategoryBubbles();
                 renderHeroCards();
                 renderTemuGrid(stock);
+                renderPddList(stock);
             }
 
             const adminModal    = document.getElementById('adminModal');
