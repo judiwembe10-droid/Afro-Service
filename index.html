@@ -407,8 +407,11 @@
 
     <div id="overlay" onclick="window.closeMenus && window.closeMenus()" class="hidden fixed inset-0 bg-black/70 z-[90]"></div>
 
+    <!-- WRAPPER STICKY UNIQUE (promo bar + header collés ensemble) -->
+    <div id="stickyShell" class="sticky top-0 z-[101]">
+
     <!-- BARRE PROMO DYNAMIQUE -->
-    <div id="promoTopBar" class="sticky top-0 z-[101] bg-gradient-to-r from-[#bd1e24] via-[#e02020] to-[#bd1e24] text-white flex items-stretch overflow-hidden shadow-lg">
+    <div id="promoTopBar" class="bg-gradient-to-r from-[#bd1e24] via-[#e02020] to-[#bd1e24] text-white flex items-stretch overflow-hidden shadow-lg">
         <div class="flex-1 overflow-hidden flex items-center px-3 relative" style="min-width:0">
             <div id="promoMsg" class="text-[10px] font-black uppercase tracking-wide w-full text-center" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
         </div>
@@ -420,7 +423,7 @@
     </div>
 
     <!-- HEADER PRINCIPAL -->
-    <header class="bg-[#101944] text-white sticky top-[38px] z-[100] shadow-2xl">
+    <header class="bg-[#101944] text-white shadow-2xl">
         <!-- LIGNE 1 : Menu + Logo + Actions -->
         <div class="px-3 pt-3 pb-2 flex items-center gap-2">
 
@@ -501,6 +504,7 @@
         </div>
 
     </header>
+    </div><!-- /stickyShell -->
 
     <!-- BANDEAU VÉRIFICATION EMAIL -->
     <div id="emailVerifyBanner" style="display:none;background:linear-gradient(90deg,#ea580c,#f97316);color:white;padding:10px 16px;text-align:center;z-index:200;position:relative;">
@@ -3729,4 +3733,3 @@
 
 </body>
 </html>
-
