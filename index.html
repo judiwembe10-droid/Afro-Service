@@ -21,33 +21,57 @@
 </head>
 <body class="text-slate-900 overflow-x-hidden">
 
-<!-- LOADER INITIAL — masqué dès que Firebase répond -->
-<div id="pageLoader" style="position:fixed;inset:0;background:white;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
- <img src="https://i.postimg.cc/9QB2XQRM/20260329-213515.png" style="width:72px;height:72px;border-radius:18px;box-shadow:0 8px 24px rgba(16,25,68,0.15);">
- <div style="display:flex;gap:7px;align-items:center;">
- <div style="width:8px;height:8px;background:#bd1e24;border-radius:50%;animation:ldot 1s ease-in-out infinite;"></div>
- <div style="width:8px;height:8px;background:#bd1e24;border-radius:50%;animation:ldot 1s ease-in-out 0.2s infinite;"></div>
- <div style="width:8px;height:8px;background:#bd1e24;border-radius:50%;animation:ldot 1s ease-in-out 0.4s infinite;"></div>
- </div>
- <p id="loaderMsg" style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.1em;">Chargement...</p>
-</div>
-<style>@keyframes ldot{0%,100%{opacity:0.3;transform:scale(0.8);}50%{opacity:1;transform:scale(1.2);}}</style>
+<!-- ══ LOADING SCREEN ══ -->
+<div id="afroLoadingScreen" style="
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,#101944 0%,#1a2a6c 50%,#101944 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+  transition:opacity 0.6s ease, transform 0.6s ease;
+">
+  <!-- Cercles décoratifs -->
+  <div style="position:absolute;top:-80px;right:-80px;width:260px;height:260px;border-radius:50%;background:rgba(189,30,36,0.12);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:-60px;left:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none;"></div>
 
-<script>
- // Timeout 8s : si Firebase ne répond pas, afficher un message d'erreur
- setTimeout(function() {
- const loader = document.getElementById('pageLoader');
- if (loader && loader.style.display !== 'none') {
- const msg = document.getElementById('loaderMsg');
- if (msg) msg.textContent = 'Vérifiez votre connexion internet';
- loader.querySelector('img').style.opacity = '0.4';
- // Après 4s de plus, masquer quand même le loader
- setTimeout(function() {
- if (loader) loader.style.display = 'none';
- }, 4000);
- }
- }, 8000);
-</script>
+  <!-- Logo -->
+  <div style="position:relative;margin-bottom:28px;">
+    <div style="width:110px;height:110px;border-radius:28px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.5);border:3px solid rgba(255,255,255,0.15);animation:afroLogoPulse 2s ease-in-out infinite;">
+      <img src="https://i.postimg.cc/KYpsH5PR/20260328-090141.jpg" style="width:100%;height:100%;object-fit:cover;" alt="Afro Service">
+    </div>
+    <!-- Halo rouge tournant -->
+    <div style="position:absolute;inset:-6px;border-radius:34px;border:2.5px solid transparent;border-top-color:#bd1e24;border-right-color:#bd1e24;animation:afroSpin 1.2s linear infinite;"></div>
+  </div>
+
+  <!-- Nom -->
+  <div style="margin-bottom:4px;">
+    <span style="font-family:'Inter',sans-serif;font-size:22px;font-weight:900;color:white;letter-spacing:-0.5px;">Afro Service</span>
+  </div>
+  <div style="margin-bottom:32px;">
+    <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:#f87171;letter-spacing:0.15em;text-transform:uppercase;font-style:italic;">Le Commerce Vous Ouvre Son Cœur</span>
+  </div>
+
+  <!-- Barre de chargement -->
+  <div style="width:160px;height:3px;background:rgba(255,255,255,0.12);border-radius:9999px;overflow:hidden;">
+    <div id="afroLoadBar" style="height:100%;width:0%;background:linear-gradient(90deg,#bd1e24,#ff4d4d);border-radius:9999px;transition:width 0.3s ease;animation:afroLoadFill 2s ease-out forwards;"></div>
+  </div>
+  <span style="margin-top:12px;font-family:'Inter',sans-serif;font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;">Chargement...</span>
+</div>
+
+<style>
+@keyframes afroLogoPulse {
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.04);}
+}
+@keyframes afroSpin {
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
+@keyframes afroLoadFill {
+  0%{width:0%;}
+  60%{width:75%;}
+  85%{width:90%;}
+  100%{width:100%;}
+}
+</style>
 
 <div id="overlay" onclick="window.closeMenus && window.closeMenus()" class="hidden fixed inset-0 bg-black/70 z-[90]"></div>
 
@@ -1269,10 +1293,13 @@ Importer tout
 
  // Déplace le track vers la carte d'index absolu i (sans transition = téléportation)
 
+ // Barre unique sans segmentation de 50
+
  function buildCarouselBars() {
  const bar = document.getElementById('carouselProgressBar');
  if (!bar) return;
- bar.innerHTML = `<div style="position:relative;width:100%;height:3px;background:#cbd5e1;border-radius:9999px;">
+ bar.innerHTML = `
+ <div style="position:relative;width:100%;height:3px;background:#cbd5e1;border-radius:9999px;">
  <div id="carouselThumb_0" style="position:absolute;top:0;height:100%;width:32px;background:#bd1e24;border-radius:9999px;transition:left 0.45s cubic-bezier(0.25,0.46,0.45,0.94);left:0;"></div>
  </div>`;
  bar.style.display = _carTotal > 1 ? 'flex' : 'none';
@@ -1281,13 +1308,12 @@ Importer tout
  function updateCarouselProgress() {
  if (_carTotal === 0) return;
  const realIdx = ((_carIdx % _carTotal) + _carTotal) % _carTotal;
- const bar = document.getElementById('carouselProgressBar');
- if (!bar) return;
  const thumb = document.getElementById('carouselThumb_0');
- if (!thumb) return;
- const barW  = bar.clientWidth - 32;
- const trackW = barW - 30;
- const left  = _carTotal > 1 ? (realIdx / (_carTotal - 1)) * trackW : 0;
+ const bar = document.getElementById('carouselProgressBar');
+ if (!thumb || !bar) return;
+ const barW = bar.clientWidth - 32;
+ const trackW = Math.max(0, barW - 30);
+ const left = _carTotal > 1 ? (realIdx / (_carTotal - 1)) * trackW : 0;
  thumb.style.left = Math.round(left) + 'px';
  }
 
@@ -1636,38 +1662,7 @@ Importer tout
  <p class="text-[9px] font-black text-slate-400 uppercase mb-6 italic underline">${p.cat} / ${p.sub} / ${p.subsub || ''}</p>
 
  <div class="space-y-6">
- ${p.colors ? `<div class="space-y-3">
- <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">${lang === 'fr' ? 'Couleur du produit' : 'Product Color'}</label>
- <div id="colorSwatches" class="flex flex-wrap gap-3 px-1">
- ${p.colors.split(',').map((c, i) => {
- const name = c.trim();
- const CSS_COLORS = {
- 'noir':'#1a1a1a','black':'#1a1a1a','blanc':'#f5f5f5','white':'#f5f5f5',
- 'rouge':'#e03030','red':'#e03030','bleu':'#2563eb','blue':'#2563eb',
- 'vert':'#16a34a','green':'#16a34a','jaune':'#eab308','yellow':'#eab308',
- 'orange':'#f97316','rose':'#ec4899','pink':'#ec4899','violet':'#7c3aed','purple':'#7c3aed',
- 'gris':'#6b7280','grey':'#6b7280','gray':'#6b7280','marron':'#92400e','brown':'#92400e',
- 'or':'#d97706','gold':'#d97706','argent':'#9ca3af','silver':'#9ca3af',
- 'titane':'#8b8fa8','titan':'#8b8fa8','titanium':'#8b8fa8','noir titan':'#3d3d4a',
- 'beige':'#d4b896','creme':'#fef3c7','cream':'#fef3c7','turquoise':'#06b6d4',
- 'bordeaux':'#881337','marine':'#1e3a5f','navy':'#1e3a5f','kaki':'#65793a','khaki':'#65793a'
- };
- const key = name.toLowerCase();
- const bg = CSS_COLORS[key] || ('#' + [...key].reduce((h,c2)=>(h*31+c2.charCodeAt(0))>>>0,0).toString(16).padStart(6,'0').slice(0,6));
- const isLight = bg === '#f5f5f5' || bg === '#fef3c7' || bg === '#d4b896' || bg === '#eab308';
- return \`<button type="button" onclick="window._selectColor(this,'${name}')"
- data-color="${name}"
- title="${name}"
- style="width:42px;height:42px;border-radius:50%;background:${bg};border:${isLight?'2px solid #d1d5db':'2px solid transparent'};box-shadow:0 2px 8px rgba(0,0,0,0.15);transition:all 0.2s;position:relative;cursor:pointer;"
- ${i===0 ? 'id="colorSwatch_active"' : ''}
- >${i===0 ? \`<span style="position:absolute;inset:0;border-radius:50%;border:3px solid #bd1e24;pointer-events:none;"></span>\` : ''}</button>\`;
- }).join('')}
- </div>
- <div id="colorSelectedLabel" style="font-size:10px;font-weight:900;color:#475569;text-transform:uppercase;letter-spacing:0.08em;margin-top:2px;padding-left:4px;">
- ${p.colors.split(',')[0].trim()}
- </div>
- <input type="hidden" id="vCol" value="${p.colors.split(',')[0].trim()}">
- </div>` : ''}
+ ${p.colors ? `<div class="space-y-2"><label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">${lang === 'fr' ? 'Couleur disponible' : 'Available Color'}</label><select id="vCol" class="w-full border-2 border-slate-100 p-4 rounded-2xl text-xs font-bold uppercase tracking-wider bg-slate-50 focus:border-red-600 outline-none transition-all">${p.colors.split(',').map(c => `<option>${c.trim()}</option>`).join('')}</select></div>` : ''}
  ${p.memory ? `<div class="space-y-2"><label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">${lang === 'fr' ? 'Capacité / Mémoire' : 'Capacity / Memory'}</label><select id="vMem" class="w-full border-2 border-slate-100 p-4 rounded-2xl text-xs font-bold uppercase tracking-wider bg-slate-50 focus:border-red-600 outline-none transition-all">${p.memory.split(',').map(m => `<option>${m.trim()}</option>`).join('')}</select></div>` : ''}
  <div class="space-y-2"><label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">${lang === 'fr' ? 'Quantité souhaitée' : 'Desired Quantity'}</label><input id="vQty" type="number" value="1" min="1" class="w-full border-2 border-slate-100 p-4 rounded-2xl font-black text-sm bg-slate-50 focus:border-red-600 outline-none transition-all"></div>
  </div>
@@ -1829,27 +1824,10 @@ Importer tout
  if (track) track.style.transform = `translateX(-${window.currentSlide * 100}%)`;
  };
 
- window._selectColor = function(btn, colorName) {
- document.querySelectorAll('#colorSwatches button').forEach(b => {
- b.style.border = b.style.background === 'rgb(245, 245, 245)' || b.style.background === '#f5f5f5' ? '2px solid #d1d5db' : '2px solid transparent';
- b.innerHTML = '';
- });
- btn.style.border = '2px solid transparent';
- btn.innerHTML = '<span style="position:absolute;inset:0;border-radius:50%;border:3px solid #bd1e24;pointer-events:none;"></span>';
- const label = document.getElementById('colorSelectedLabel');
- if (label) label.textContent = colorName;
- const input = document.getElementById('vCol');
- if (input) input.value = colorName;
- };
-
  window.addToCart = function(id) {
  const p = stock.find(x => x.id === id);
  const qty = parseInt(document.getElementById('vQty')?.value || 1);
- const col = document.getElementById('vCol')?.value;
- const mem = document.getElementById('vMem')?.value;
- const suffix = [col, mem].filter(Boolean).join(' / ');
- const name = suffix ? `${p.name} (${suffix})` : p.name;
- for (let i = 0; i < qty; i++) { cart.push({ id: p.id, name, price: p.price, img: p.imgs[0] }); }
+ for (let i = 0; i < qty; i++) { cart.push({ id: p.id, name: p.name, price: p.price, img: p.imgs[0] }); }
  updateCart();
  closeDetail();
  openCart();
@@ -2540,10 +2518,6 @@ Importer tout
  if (newJSON === _lastStockJSON) return;
  _lastStockJSON = newJSON;
 
- // Masquer le spinner de chargement si présent
- const loader = document.getElementById('pageLoader');
- if (loader) loader.style.display = 'none';
-
  stock        = data ? Object.keys(data).map(key => ({ ...data[key], id: key })) : [];
  window.stock = stock;
 
@@ -2555,6 +2529,15 @@ Importer tout
  renderHeroCards();
  renderTemuGrid(stock);
  renderPddList(stock);
+ // ── Masquer l'écran de chargement ──
+ setTimeout(function() {
+ const loader = document.getElementById('afroLoadingScreen');
+ if (loader) {
+ loader.style.opacity = '0';
+ loader.style.transform = 'scale(1.04)';
+ setTimeout(function() { loader.style.display = 'none'; }, 650);
+ }
+ }, 900);
  } else {
  updateDynamicBanners(stock);
  const adminOpen = document.getElementById('adminModal') && !document.getElementById('adminModal').classList.contains('hidden');
