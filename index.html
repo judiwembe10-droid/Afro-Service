@@ -78,8 +78,10 @@
 <div id="stickyShell" class="sticky top-0 z-[101]">
 
 <div id="promoTopBar" class="bg-gradient-to-r from-[#bd1e24] via-[#e02020] to-[#bd1e24] text-white flex items-stretch overflow-hidden shadow-lg">
-<div class="flex-1 overflow-hidden flex items-center px-3 relative" style="min-width:0">
-<div id="promoMsg" class="text-[10px] font-black uppercase tracking-wide w-full text-center" style="overflow:hidden;line-height:1.3;padding:2px 4px;"></div>
+<div class="flex-1 flex items-center px-2 relative" style="min-width:0;overflow:hidden;height:100%;">
+<div id="promoMsgWrap" style="position:relative;width:100%;overflow:hidden;height:100%;display:flex;align-items:center;">
+<div id="promoMsg" style="width:100%;text-align:center;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;font-size:clamp(8px,2.4vw,11px);line-height:1.2;padding:0 2px;will-change:transform;"></div>
+</div>
 </div>
 <div class="shrink-0 bg-white/15 border-l border-white/30 flex flex-col items-center justify-center px-3 py-1" style="min-width:110px">
 <span id="promoPhoneLabel" class="text-[7px] font-bold uppercase tracking-widest opacity-80"
@@ -731,15 +733,23 @@ Importer tout
  const msgs = PROMO_MESSAGES[currentLang] || PROMO_MESSAGES.fr;
  const el = document.getElementById('promoMsg');
  if (!el) return;
+ // Sortie vers le haut
+ el.style.transition = 'transform 0.35s cubic-bezier(0.4,0,1,1), opacity 0.35s ease';
+ el.style.transform = 'translateY(-110%)';
  el.style.opacity = '0';
- el.style.transform = 'translateY(6px)';
  setTimeout(() => {
  promoMsgIndex = (promoMsgIndex + 1) % msgs.length;
  el.textContent = msgs[promoMsgIndex];
- el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
- el.style.opacity = '1';
+ // Entrée depuis le bas (sans transition)
+ el.style.transition = 'none';
+ el.style.transform = 'translateY(110%)';
+ el.style.opacity = '0';
+ requestAnimationFrame(() => requestAnimationFrame(() => {
+ el.style.transition = 'transform 0.4s cubic-bezier(0,0,0.2,1), opacity 0.4s ease';
  el.style.transform = 'translateY(0)';
- }, 350);
+ el.style.opacity = '1';
+ }));
+ }, 380);
  }
 
  function applyLang(lang) {
@@ -2631,8 +2641,8 @@ Importer tout
 
  const msgs = PROMO_MESSAGES[currentLang];
  const pm   = document.getElementById('promoMsg');
- if (pm) { pm.textContent = msgs[0]; pm.style.opacity = '1'; }
- setInterval(rotatePromoMsg, 4000);
+ if (pm) { pm.textContent = msgs[0]; pm.style.opacity = '1'; pm.style.transform = 'translateY(0)'; }
+ setInterval(rotatePromoMsg, 3500);
 
  const scrollBtn  = document.getElementById('scrollToggleBtn');
  const scrollIcon = document.getElementById('scrollToggleIcon');
