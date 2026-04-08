@@ -79,7 +79,7 @@
 
 <div id="promoTopBar" class="bg-gradient-to-r from-[#bd1e24] via-[#e02020] to-[#bd1e24] text-white flex items-stretch overflow-hidden shadow-lg">
 <div class="flex-1 overflow-hidden flex items-center px-3 relative" style="min-width:0">
-<div id="promoMsg" class="text-[10px] font-black uppercase tracking-wide w-full text-center" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+<div id="promoMsg" class="text-[10px] font-black uppercase tracking-wide w-full text-center" style="overflow:hidden;line-height:1.3;padding:2px 4px;"></div>
 </div>
 <div class="shrink-0 bg-white/15 border-l border-white/30 flex flex-col items-center justify-center px-3 py-1" style="min-width:110px">
 <span id="promoPhoneLabel" class="text-[7px] font-bold uppercase tracking-widest opacity-80"
@@ -680,28 +680,48 @@ Importer tout
 
  const PROMO_MESSAGES = {
  fr: [
- "Bienvenue chez Afro Service — Le Commerce Vous Ouvre Son Cœur !",
- "Offres exclusives disponibles maintenant — Ne manquez pas ça !",
- "Livraison rapide à domicile à Bafoussam et environs",
- "Produits 100% authentiques avec garantie constructeur",
- "Commandez aujourd'hui et recevez demain — C'est notre promesse !",
- "Plus de 500 clients satisfaits nous font confiance chaque mois",
- "Stock limité sur certains articles — Commandez vite !",
- "Paiement à la livraison — Zéro risque pour vous !",
- "Le Commerce qui vous respecte et vous sert avec amour",
- "Nouveaux arrivages chaque semaine — Restez connectés !",
+ "Bienvenue chez Afro Service —",
+ "... Le Commerce Vous Ouvre Son Cœur !",
+ "Offres exclusives disponibles maintenant —",
+ "... Ne manquez pas ça !",
+ "Livraison rapide à domicile",
+ "... à Bafoussam et environs",
+ "Produits 100% authentiques",
+ "... avec garantie constructeur",
+ "Commandez aujourd'hui et recevez demain —",
+ "... C'est notre promesse !",
+ "Plus de 500 clients satisfaits",
+ "... nous font confiance chaque mois",
+ "Stock limité sur certains articles —",
+ "... Commandez vite !",
+ "Paiement à la livraison —",
+ "... Zéro risque pour vous !",
+ "Le Commerce qui vous respecte",
+ "... et vous sert avec amour",
+ "Nouveaux arrivages chaque semaine —",
+ "... Restez connectés !",
  ],
  en: [
- "Welcome to Afro Service — Commerce Opens Its Heart To You!",
- "Exclusive deals available now — Don't miss out!",
- "Fast home delivery in Bafoussam and surroundings",
- "100% authentic products with manufacturer warranty",
- "Order today, receive tomorrow — That's our promise!",
- "Over 500 satisfied customers trust us every month",
- "Limited stock on some items — Order fast!",
- "Pay on delivery — Zero risk for you!",
- "Commerce that respects and serves you with love",
- "New arrivals every week — Stay connected!",
+ "Welcome to Afro Service —",
+ "... Commerce Opens Its Heart To You!",
+ "Exclusive deals available now —",
+ "... Don't miss out!",
+ "Fast home delivery",
+ "... in Bafoussam and surroundings",
+ "100% authentic products",
+ "... with manufacturer warranty",
+ "Order today, receive tomorrow —",
+ "... That's our promise!",
+ "Over 500 satisfied customers",
+ "... trust us every month",
+ "Limited stock on some items —",
+ "... Order fast!",
+ "Pay on delivery —",
+ "... Zero risk for you!",
+ "Commerce that respects",
+ "... and serves you with love",
+ "New arrivals every week —",
+ "... Stay connected!",
  ]
  };
 
@@ -2535,7 +2555,7 @@ Importer tout
  if (loader) {
  loader.style.opacity = '0';
  loader.style.transform = 'scale(1.04)';
- setTimeout(function() { loader.style.display = 'none'; }, 650);
+ setTimeout(function() { loader.style.display = 'none'; window._afroLoadingDone = true; if (window._promoAfterLoading) { window._promoAfterLoading(); window._promoAfterLoading = null; } }, 650);
  }
  }, 900);
  } else {
@@ -2903,16 +2923,36 @@ Voir les articles
 
  // ✅ Attendre que Firebase confirme l'état de connexion, puis déclencher le popup après POPUP_DELAY
 
- window._promoAuthReady = function(user) {
- window._promoAuthReady = null; // ne s'exécute qu'une seule fois
-
+ // Lancer le popup UNIQUEMENT après la fin du loading screen
+ function schedulePopup(user) {
+ if (window._afroLoadingDone) {
+ // Loading déjà terminé → attendre POPUP_DELAY puis afficher
+ setTimeout(() => tryShowPopup(user), POPUP_DELAY);
+ } else {
+ // Loading pas encore fini → enregistrer un callback pour après
+ window._promoAfterLoading = function() {
  setTimeout(() => tryShowPopup(user), POPUP_DELAY);
  };
+ }
+ }
 
+ window._promoAuthReady = function(user) {
+ window._promoAuthReady = null; // ne s'exécute qu'une seule fois
+ schedulePopup(user);
+ };
+
+ // Fallback si Firebase tarde trop (>8s depuis le début)
  setTimeout(function() {
  if (window._promoAuthReady) {
  window._promoAuthReady = null;
+ // Attendre quand même la fin du loading
+ if (window._afroLoadingDone) {
  tryShowPopup(null);
+ } else {
+ window._promoAfterLoading = function() {
+ setTimeout(() => tryShowPopup(null), POPUP_DELAY);
+ };
+ }
  }
  }, 8000);
  })();
