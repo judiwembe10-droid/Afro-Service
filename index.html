@@ -2882,8 +2882,11 @@ Voir les articles
 
  (function() {
  const POPUP_DELAY = 5000;
- const SESSION_KEY_ORDER  = 'afroOrderPopupShown';
- const SESSION_KEY_SIGNUP = 'afroSignupPopupShown';
+ // Clés localStorage : compteur de visites séparé par statut
+ const LS_VISITS_GUEST  = 'afroVisitsGuest';  // visites sans compte
+ const LS_VISITS_USER   = 'afroVisitsUser';   // visites avec compte
+ // Le popup s'affiche toutes les 3 à 4 visites (on choisit aléatoirement entre 3 et 4)
+ function getThreshold() { return Math.random() < 0.5 ? 3 : 4; }
 
  window.closePromoPopup = function() {
  const popup = document.getElementById('promoPopup');
@@ -2908,21 +2911,32 @@ Voir les articles
  }
 
  function tryShowPopup(user) {
- if (!user) {
+ // Chaque visite est comptée UNE SEULE FOIS par session (évite double-comptage)
+ if (sessionStorage.getItem('afroVisitCounted')) return;
+ sessionStorage.setItem('afroVisitCounted', '1');
 
- // Nettoyer la clé commande au cas où (changement d'état)
- sessionStorage.removeItem(SESSION_KEY_ORDER);
- if (!sessionStorage.getItem(SESSION_KEY_SIGNUP)) {
- sessionStorage.setItem(SESSION_KEY_SIGNUP, '1');
- openPopup(1);
+ if (!user) {
+ // ── Client non inscrit ──
+ let visits = parseInt(localStorage.getItem(LS_VISITS_GUEST) || '0') + 1;
+ localStorage.setItem(LS_VISITS_GUEST, visits);
+ const threshold = parseInt(localStorage.getItem('afroThresholdGuest') || getThreshold());
+ localStorage.setItem('afroThresholdGuest', threshold);
+ if (visits >= threshold) {
+ // Réinitialiser le compteur + générer un nouveau seuil pour la prochaine fois
+ localStorage.setItem(LS_VISITS_GUEST, '0');
+ localStorage.setItem('afroThresholdGuest', getThreshold());
+ openPopup(1); // Popup inscription
  }
  } else {
-
- // Nettoyer la clé inscription au cas où (l'utilisateur vient de se connecter)
- sessionStorage.removeItem(SESSION_KEY_SIGNUP);
- if (!sessionStorage.getItem(SESSION_KEY_ORDER)) {
- sessionStorage.setItem(SESSION_KEY_ORDER, '1');
- openPopup(2);
+ // ── Client inscrit ──
+ let visits = parseInt(localStorage.getItem(LS_VISITS_USER) || '0') + 1;
+ localStorage.setItem(LS_VISITS_USER, visits);
+ const threshold = parseInt(localStorage.getItem('afroThresholdUser') || getThreshold());
+ localStorage.setItem('afroThresholdUser', threshold);
+ if (visits >= threshold) {
+ localStorage.setItem(LS_VISITS_USER, '0');
+ localStorage.setItem('afroThresholdUser', getThreshold());
+ openPopup(2); // Popup fidélité/commande
  }
  }
  }
@@ -2931,15 +2945,10 @@ Voir les articles
  if (e.target === this) window.closePromoPopup();
  });
 
- // ✅ Attendre que Firebase confirme l'état de connexion, puis déclencher le popup après POPUP_DELAY
-
- // Lancer le popup UNIQUEMENT après la fin du loading screen
  function schedulePopup(user) {
  if (window._afroLoadingDone) {
- // Loading déjà terminé → attendre POPUP_DELAY puis afficher
  setTimeout(() => tryShowPopup(user), POPUP_DELAY);
  } else {
- // Loading pas encore fini → enregistrer un callback pour après
  window._promoAfterLoading = function() {
  setTimeout(() => tryShowPopup(user), POPUP_DELAY);
  };
@@ -2947,22 +2956,15 @@ Voir les articles
  }
 
  window._promoAuthReady = function(user) {
- window._promoAuthReady = null; // ne s'exécute qu'une seule fois
+ window._promoAuthReady = null;
  schedulePopup(user);
  };
 
- // Fallback si Firebase tarde trop (>8s depuis le début)
+ // Fallback si Firebase tarde trop (>8s)
  setTimeout(function() {
  if (window._promoAuthReady) {
  window._promoAuthReady = null;
- // Attendre quand même la fin du loading
- if (window._afroLoadingDone) {
- tryShowPopup(null);
- } else {
- window._promoAfterLoading = function() {
- setTimeout(() => tryShowPopup(null), POPUP_DELAY);
- };
- }
+ schedulePopup(null);
  }
  }, 8000);
  })();
