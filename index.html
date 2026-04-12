@@ -21,57 +21,6 @@
 </head>
 <body class="text-slate-900 overflow-x-hidden">
 
-<!-- ══ LOADING SCREEN ══ -->
-<div id="afroLoadingScreen" style="
-  position:fixed;inset:0;z-index:9999;
-  background:linear-gradient(135deg,#101944 0%,#1a2a6c 50%,#101944 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
-  transition:opacity 0.6s ease, transform 0.6s ease;
-">
-  <!-- Cercles décoratifs -->
-  <div style="position:absolute;top:-80px;right:-80px;width:260px;height:260px;border-radius:50%;background:rgba(189,30,36,0.12);pointer-events:none;"></div>
-  <div style="position:absolute;bottom:-60px;left:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none;"></div>
-
-  <!-- Logo -->
-  <div style="position:relative;margin-bottom:28px;">
-    <div style="width:110px;height:110px;border-radius:28px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.5);border:3px solid rgba(255,255,255,0.15);animation:afroLogoPulse 2s ease-in-out infinite;">
-      <img src="https://i.postimg.cc/KYpsH5PR/20260328-090141.jpg" style="width:100%;height:100%;object-fit:cover;" alt="Afro Service">
-    </div>
-    <!-- Halo rouge tournant -->
-    <div style="position:absolute;inset:-6px;border-radius:34px;border:2.5px solid transparent;border-top-color:#bd1e24;border-right-color:#bd1e24;animation:afroSpin 1.2s linear infinite;"></div>
-  </div>
-
-  <!-- Nom -->
-  <div style="margin-bottom:4px;">
-    <span style="font-family:'Inter',sans-serif;font-size:22px;font-weight:900;color:white;letter-spacing:-0.5px;">Afro Service</span>
-  </div>
-  <div style="margin-bottom:32px;">
-    <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:#f87171;letter-spacing:0.15em;text-transform:uppercase;font-style:italic;">Le Commerce Vous Ouvre Son Cœur</span>
-  </div>
-
-  <!-- Barre de chargement -->
-  <div style="width:160px;height:3px;background:rgba(255,255,255,0.12);border-radius:9999px;overflow:hidden;">
-    <div id="afroLoadBar" style="height:100%;width:0%;background:linear-gradient(90deg,#bd1e24,#ff4d4d);border-radius:9999px;transition:width 0.3s ease;animation:afroLoadFill 2s ease-out forwards;"></div>
-  </div>
-  <span style="margin-top:12px;font-family:'Inter',sans-serif;font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;">Chargement...</span>
-</div>
-
-<style>
-@keyframes afroLogoPulse {
-  0%,100%{transform:scale(1);}
-  50%{transform:scale(1.04);}
-}
-@keyframes afroSpin {
-  0%{transform:rotate(0deg);}
-  100%{transform:rotate(360deg);}
-}
-@keyframes afroLoadFill {
-  0%{width:0%;}
-  60%{width:75%;}
-  85%{width:90%;}
-  100%{width:100%;}
-}
-</style>
 
 <div id="overlay" onclick="window.closeMenus && window.closeMenus()" class="hidden fixed inset-0 bg-black/70 z-[90]"></div>
 
@@ -2937,15 +2886,8 @@ Importer tout
  renderHeroCards();
  renderTemuGrid(stock);
  renderPddList(stock);
- // ── Masquer l'écran de chargement ──
- setTimeout(function() {
- const loader = document.getElementById('afroLoadingScreen');
- if (loader) {
- loader.style.opacity = '0';
- loader.style.transform = 'scale(1.04)';
- setTimeout(function() { loader.style.display = 'none'; window._afroLoadingDone = true; if (window._promoAfterLoading) { window._promoAfterLoading(); window._promoAfterLoading = null; } }, 650);
- }
- }, 900);
+ window._afroLoadingDone = true;
+ if (window._promoAfterLoading) { window._promoAfterLoading(); window._promoAfterLoading = null; }
  } else {
  updateDynamicBanners(stock);
  const adminOpen = document.getElementById('adminModal') && !document.getElementById('adminModal').classList.contains('hidden');
