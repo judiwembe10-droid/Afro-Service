@@ -2337,8 +2337,7 @@ Importer tout
  </div>`;
  }).join('');
 
- section.style.display = 'block';
- }
+ if (!section.dataset.hiddenBySearch) section.style.display = 'block';
 
  function renderMenu() {
  const menu = document.getElementById('categoryMenu');
@@ -2548,7 +2547,7 @@ Importer tout
  if (!name || !price) return alert(currentLang === "fr" ? "Nom et prix requis" : "Name and price required");
  const inStock = document.getElementById('admInStock').value !== 'false';
  const productData = { name, price: parseInt(price), old: oldPrice ? parseInt(oldPrice) : null, desc: description || "", cat: category, sub: subCategory, subsub: subSubCategory || "", imgs: images.length ? images : ['https://via.placeholder.com/300'], colors: colors || "", memory: memory || "", inStock: inStock };
- if (editId) { update(ref(db, 'stock/' + editId), productData).then(() => { alert(currentLang === "fr" ? "Article mis à jour !" : "Item updated!"); editId = null; document.getElementById('admTitle').textContent = currentLang === "fr" ? "Ajouter un article" : "Add an item"; resetAdminForm(); }).catch(e => alert("Erreur: " + e.message)); }
+ if (editId) { update(ref(db, 'stock/' + editId), productData).then(() => { alert(currentLang === "fr" ? "Article mis à jour !" : "Item updated!"); window.closeAdmin(); }).catch(e => alert("Erreur: " + e.message)); }
  else { push(stockRef, productData).then(() => { alert(currentLang === "fr" ? "Article ajouté !" : "Item added!"); resetAdminForm(); }).catch(e => alert("Erreur: " + e.message)); }
  };
  window.setAdmStock = function(isIn) {
@@ -2909,7 +2908,7 @@ Importer tout
  if (tabName === 'categories') renderVisualManager();
  if (tabName === 'products')   renderAdminStock();
  };
- window.openAdmin  = function() { document.getElementById('adminModal').classList.remove('hidden'); window.switchAdminTab('products'); renderAdminStock(); };
+ window.openAdmin  = function() { window.closeMenus && window.closeMenus(); document.getElementById('adminModal').classList.remove('hidden'); window.switchAdminTab('products'); renderAdminStock(); };
  window.closeAdmin = function() { document.getElementById('adminModal').classList.add('hidden'); editId = null; document.getElementById('admTitle').textContent = currentLang === 'fr' ? "Ajouter un article" : "Add an item"; resetAdminForm(); };
  window.renderProducts = renderProducts;
  window.stock = stock;
