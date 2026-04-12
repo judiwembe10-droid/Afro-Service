@@ -3146,5 +3146,196 @@ Voir les articles
  })();
  </script>
 
+<!-- ══════════════════════════════════════════ -->
+<!-- ══  POPUP BLACK FRIDAY                  ══ -->
+<!-- ══════════════════════════════════════════ -->
+<div id="bfOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9000;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px);">
+  <div id="bfModal" style="width:100%;max-width:420px;background:#0a0a0a;border-radius:24px;overflow:hidden;position:relative;box-shadow:0 30px 80px rgba(0,0,0,0.8);border:1px solid rgba(255,215,0,0.2);">
+
+    <!-- Bouton fermer -->
+    <button onclick="window.closeBF()" style="position:absolute;top:12px;right:12px;z-index:10;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">✕</button>
+
+    <!-- Header Black Friday -->
+    <div style="background:linear-gradient(135deg,#1a0000 0%,#2d0000 40%,#1a0000 100%);padding:28px 20px 20px;text-align:center;position:relative;overflow:hidden;">
+      <!-- Étoiles déco -->
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,215,0,0.15) 0%,transparent 70%);pointer-events:none;"></div>
+
+      <div style="display:inline-block;background:linear-gradient(135deg,#FFD700,#FFA500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:11px;font-weight:900;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:6px;">✦ Afro Service ✦</div>
+
+      <div style="font-size:42px;font-weight:900;color:white;line-height:0.9;letter-spacing:-2px;text-transform:uppercase;text-shadow:0 0 40px rgba(255,50,50,0.8);">
+        BLACK<br><span style="color:#FFD700;font-size:48px;letter-spacing:-3px;">FRIDAY</span>
+      </div>
+
+      <div style="margin-top:10px;display:inline-flex;align-items:center;gap:8px;background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.3);border-radius:50px;padding:6px 16px;">
+        <span style="font-size:28px;font-weight:900;color:#FFD700;letter-spacing:-1px;">-10%</span>
+        <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.8);text-transform:uppercase;letter-spacing:0.05em;">sur 5 articles<br>sélectionnés</span>
+      </div>
+
+      <div style="margin-top:12px;font-size:10px;color:rgba(255,255,255,0.5);font-weight:600;text-transform:uppercase;letter-spacing:0.1em;">Offre valable ce vendredi uniquement</div>
+    </div>
+
+    <!-- Compte à rebours -->
+    <div style="background:#111;padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:6px;border-bottom:1px solid #222;">
+      <svg width="14" height="14" fill="none" stroke="#FFD700" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 7v5l3 3"/></svg>
+      <span style="font-size:11px;font-weight:700;color:#FFD700;text-transform:uppercase;letter-spacing:0.08em;">Expire dans :</span>
+      <span id="bfCountdown" style="font-size:13px;font-weight:900;color:white;font-variant-numeric:tabular-nums;">--:--:--</span>
+    </div>
+
+    <!-- Liste des 5 articles -->
+    <div style="padding:16px;max-height:340px;overflow-y:auto;" id="bfProductList">
+      <!-- Chargement -->
+      <div style="text-align:center;padding:24px;color:rgba(255,255,255,0.4);font-size:12px;">Chargement des offres...</div>
+    </div>
+
+    <!-- Footer CTA -->
+    <div style="padding:12px 16px 20px;background:#0a0a0a;border-top:1px solid #1a1a1a;">
+      <button onclick="window.closeBF()" style="width:100%;background:linear-gradient(135deg,#FFD700,#FFA500);color:#0a0a0a;border:none;border-radius:14px;padding:14px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;">
+        🛒 Je profite des offres
+      </button>
+      <p style="text-align:center;margin-top:8px;font-size:9px;color:rgba(255,255,255,0.3);">*Réduction appliquée automatiquement au prix affiché</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ── Utilitaires ──
+  function isFriday() {
+    return new Date().getDay() === 5;
+  }
+
+  // Clé unique par vendredi (année + numéro de semaine)
+  function getFridayKey() {
+    const d = new Date();
+    const startOfYear = new Date(d.getFullYear(), 0, 1);
+    const week = Math.ceil(((d - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
+    return `bf_${d.getFullYear()}_w${week}`;
+  }
+
+  // Sélectionner 5 articles aléatoires — seed fixe par vendredi
+  function pickFridayProducts(products) {
+    if (!products || products.length === 0) return [];
+    const key = getFridayKey();
+    // Seed déterministe basé sur la clé du vendredi
+    let seed = 0;
+    for (let i = 0; i < key.length; i++) seed += key.charCodeAt(i);
+
+    // Mélange pseudo-aléatoire déterministe (même résultat toute la journée)
+    const arr = [...products];
+    for (let i = arr.length - 1; i > 0; i--) {
+      seed = (seed * 1664525 + 1013904223) & 0xffffffff;
+      const j = Math.abs(seed) % (i + 1);
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr.slice(0, Math.min(5, arr.length));
+  }
+
+  function applyDiscount(price) {
+    return Math.round(price * 0.9);
+  }
+
+  function formatPrice(n) {
+    return n ? n.toLocaleString('fr-FR') + ' FCFA' : '';
+  }
+
+  function renderBFProducts(products) {
+    const container = document.getElementById('bfProductList');
+    if (!container) return;
+    if (!products.length) {
+      container.innerHTML = '<div style="text-align:center;padding:24px;color:rgba(255,255,255,0.4);font-size:12px;">Aucun article disponible</div>';
+      return;
+    }
+    container.innerHTML = products.map((p, i) => {
+      const imgs = p.images ? p.images.split(',') : (p.image ? [p.image] : []);
+      const img = imgs[0] || '';
+      const origPrice = parseInt(p.price) || 0;
+      const newPrice = applyDiscount(origPrice);
+      const oldPrice = parseInt(p.oldPrice) || origPrice;
+      return `
+        <div onclick="window.openDetail && window.openDetail('${p.id}'); window.closeBF();"
+          style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #1e1e1e;cursor:pointer;align-items:center;${i === products.length - 1 ? 'border-bottom:none;' : ''}">
+          <div style="position:relative;flex-shrink:0;">
+            <img src="${img}" alt="${p.name}" style="width:64px;height:64px;border-radius:10px;object-fit:cover;background:#1a1a1a;">
+            <div style="position:absolute;top:-5px;left:-5px;background:#FFD700;color:#0a0a0a;font-size:8px;font-weight:900;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;letter-spacing:-0.5px;">-10%</div>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:11px;font-weight:700;color:white;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px;">${p.name || ''}</div>
+            <div style="display:flex;align-items:baseline;gap:6px;">
+              <span style="font-size:14px;font-weight:900;color:#FFD700;">${formatPrice(newPrice)}</span>
+              <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.35);text-decoration:line-through;">${formatPrice(origPrice)}</span>
+            </div>
+          </div>
+          <div style="flex-shrink:0;">
+            <svg width="18" height="18" fill="none" stroke="rgba(255,255,255,0.3)" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Compte à rebours jusqu'à minuit vendredi ──
+  function updateCountdown() {
+    const el = document.getElementById('bfCountdown');
+    if (!el) return;
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(23, 59, 59, 999);
+    const diff = midnight - now;
+    if (diff <= 0) { el.textContent = '00:00:00'; return; }
+    const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+    const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+    el.textContent = `${h}:${m}:${s}`;
+  }
+
+  window.closeBF = function() {
+    const overlay = document.getElementById('bfOverlay');
+    if (overlay) { overlay.style.opacity = '0'; setTimeout(() => { overlay.style.display = 'none'; }, 300); }
+    sessionStorage.setItem('bfSeen_' + getFridayKey(), '1');
+  };
+
+  function showBF() {
+    if (!isFriday()) return;
+    const key = 'bfSeen_' + getFridayKey();
+    if (sessionStorage.getItem(key)) return;
+
+    const overlay = document.getElementById('bfOverlay');
+    if (!overlay) return;
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.4s ease';
+    setTimeout(() => { overlay.style.opacity = '1'; }, 50);
+
+    // Compte à rebours
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // Attendre les produits
+    function tryRender() {
+      const products = window.stock || [];
+      if (products.length > 0) {
+        renderBFProducts(pickFridayProducts(products));
+      } else {
+        setTimeout(tryRender, 500);
+      }
+    }
+    tryRender();
+  }
+
+  // Lancer après chargement de la page
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => setTimeout(showBF, 2500));
+  } else {
+    setTimeout(showBF, 2500);
+  }
+
+  // Fermer en cliquant sur l'overlay
+  document.addEventListener('click', function(e) {
+    if (e.target.id === 'bfOverlay') window.closeBF();
+  });
+})();
+</script>
+
 </body>
 </html>
