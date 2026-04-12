@@ -548,6 +548,28 @@ Importer tout
 <input id="admMem" type="text" data-placeholder-fr="Mémoire" data-placeholder-en="Memory" placeholder="Mémoire" class="border p-3 rounded-xl text-xs">
 </div>
 
+<!-- ══ TOGGLE STOCK ══ -->
+<div class="md:col-span-2" style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:16px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div id="admStockDot" style="width:10px;height:10px;border-radius:50%;background:#22c55e;flex-shrink:0;transition:background 0.3s;"></div>
+    <div>
+      <p style="font-size:11px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:0.06em;">Disponibilité</p>
+      <p id="admStockLabel" style="font-size:10px;font-weight:700;color:#22c55e;margin-top:1px;transition:color 0.3s;">En Stock</p>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button type="button" id="admStockBtnIn" onclick="window.setAdmStock(true)"
+      style="padding:8px 16px;border-radius:20px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.2s;border:2px solid #22c55e;background:#dcfce7;color:#15803d;">
+      ✓ En Stock
+    </button>
+    <button type="button" id="admStockBtnOut" onclick="window.setAdmStock(false)"
+      style="padding:8px 16px;border-radius:20px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.2s;border:2px solid #e2e8f0;background:#f8fafc;color:#94a3b8;">
+      ✕ Rupture
+    </button>
+  </div>
+  <input type="hidden" id="admInStock" value="true">
+</div>
+
 <div class="md:col-span-2" id="richEditorWrap" style="border:2px solid #e2e8f0;border-radius:16px;overflow:hidden;background:white;">
 <div style="display:flex;flex-wrap:wrap;gap:4px;padding:8px 10px;background:#f8fafc;border-bottom:1.5px solid #e2e8f0;align-items:center;">
 <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-right:4px;">MISE EN FORME</span>
@@ -1787,7 +1809,12 @@ Importer tout
  </span>`;
 
  let stockStatusHtml = stockBadgeHtml;
- if (p.badgeLabel) {
+ // Priorité au champ inStock dédié
+ if (p.inStock === false) {
+   stockStatusHtml = outStockBadge;
+ } else if (p.inStock === true) {
+   stockStatusHtml = stockBadgeHtml;
+ } else if (p.badgeLabel) {
    const bl = p.badgeLabel.toLowerCase();
    if (bl.includes('rupture')) stockStatusHtml = outStockBadge;
    else if (bl.includes('bientôt') || bl.includes('bientot')) stockStatusHtml = bientotBadge;
@@ -2502,6 +2529,7 @@ Importer tout
  catSelect.value = p.cat;
  window.updateAdminSubs();
  setTimeout(() => { document.getElementById('admSub').value = p.sub; window.updateAdminSubSubs(); if (p.subsub) document.getElementById('admSubSub').value = p.subsub; }, 50);
+ window.setAdmStock(p.inStock !== false);
  document.getElementById('admTitle').textContent = `${currentLang === 'fr' ? 'Édition' : 'Edit'} : ${p.name}`;
  document.getElementById('adminModal').scrollTo({ top: 0, behavior: 'smooth' });
  };
@@ -2518,10 +2546,33 @@ Importer tout
  const colors = document.getElementById('admColors').value.trim();
  const memory = document.getElementById('admMem').value.trim();
  if (!name || !price) return alert(currentLang === "fr" ? "Nom et prix requis" : "Name and price required");
- const productData = { name, price: parseInt(price), old: oldPrice ? parseInt(oldPrice) : null, desc: description || "", cat: category, sub: subCategory, subsub: subSubCategory || "", imgs: images.length ? images : ['https://via.placeholder.com/300'], colors: colors || "", memory: memory || "" };
+ const inStock = document.getElementById('admInStock').value !== 'false';
+ const productData = { name, price: parseInt(price), old: oldPrice ? parseInt(oldPrice) : null, desc: description || "", cat: category, sub: subCategory, subsub: subSubCategory || "", imgs: images.length ? images : ['https://via.placeholder.com/300'], colors: colors || "", memory: memory || "", inStock: inStock };
  if (editId) { update(ref(db, 'stock/' + editId), productData).then(() => { alert(currentLang === "fr" ? "Article mis à jour !" : "Item updated!"); editId = null; document.getElementById('admTitle').textContent = currentLang === "fr" ? "Ajouter un article" : "Add an item"; resetAdminForm(); }).catch(e => alert("Erreur: " + e.message)); }
  else { push(stockRef, productData).then(() => { alert(currentLang === "fr" ? "Article ajouté !" : "Item added!"); resetAdminForm(); }).catch(e => alert("Erreur: " + e.message)); }
  };
+ window.setAdmStock = function(isIn) {
+   const hiddenInput = document.getElementById('admInStock');
+   const dot    = document.getElementById('admStockDot');
+   const label  = document.getElementById('admStockLabel');
+   const btnIn  = document.getElementById('admStockBtnIn');
+   const btnOut = document.getElementById('admStockBtnOut');
+   if (!hiddenInput) return;
+   hiddenInput.value = isIn ? 'true' : 'false';
+   if (dot)   dot.style.background   = isIn ? '#22c55e' : '#ef4444';
+   if (label) { label.textContent = isIn ? 'En Stock' : 'Rupture de Stock'; label.style.color = isIn ? '#22c55e' : '#ef4444'; }
+   if (btnIn)  { btnIn.style.background  = isIn ? '#dcfce7' : '#f8fafc'; btnIn.style.borderColor  = isIn ? '#22c55e' : '#e2e8f0'; btnIn.style.color  = isIn ? '#15803d' : '#94a3b8'; }
+   if (btnOut) { btnOut.style.background = isIn ? '#f8fafc' : '#fee2e2'; btnOut.style.borderColor = isIn ? '#e2e8f0' : '#ef4444'; btnOut.style.color = isIn ? '#94a3b8' : '#dc2626'; }
+ };
+
+ window.toggleStockQuick = function(id) {
+   const p = stock.find(x => x.id === id);
+   if (!p || !currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
+   const newVal = p.inStock === false ? true : false;
+   update(ref(db, 'stock/' + id), { inStock: newVal })
+     .catch(e => alert("Erreur: " + e.message));
+ };
+
  window.deleteProductFromFirebase = function(id) { if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return; if (confirm(currentLang === "fr" ? "Supprimer définitivement ?" : "Delete permanently?")) remove(ref(db, 'stock/' + id)); };
 
  function badgeSelectOptions(currentLabel) {
@@ -2594,7 +2645,12 @@ Importer tout
  <span class="text-red-600 font-bold text-xs mt-0.5">${parseInt(p.price).toLocaleString()} FCFA</span>
  ${hasB ? `<div class="flex items-center gap-1 mt-1"><svg width="11" height="11" fill="none" stroke="#16a34a" viewBox="0 0 24 24" style="flex-shrink:0">${BADGE_ICONS[currentBadgeIcon] || ''}</svg><span class="text-[9px] font-black text-green-700 uppercase truncate">${currentBadgeLabel}</span></div>` : ''}
  </div>
- <div class="flex gap-2 shrink-0">
+ <div class="flex flex-col items-end gap-1.5 shrink-0">
+ <button onclick="window.toggleStockQuick('${p.id}')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;transition:all 0.2s;border:1.5px solid ${p.inStock === false ? '#fca5a5' : '#86efac'};background:${p.inStock === false ? '#fee2e2' : '#dcfce7'};color:${p.inStock === false ? '#dc2626' : '#15803d'};">
+ <span style="width:7px;height:7px;border-radius:50%;background:${p.inStock === false ? '#ef4444' : '#22c55e'};display:inline-block;flex-shrink:0;"></span>
+ ${p.inStock === false ? 'Rupture' : 'En Stock'}
+ </button>
+ <div class="flex gap-2">
  <button onclick="window.editItem('${p.id}')" class="bg-blue-50 text-blue-600 px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1">
  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
  ${currentLang === 'fr' ? 'Modifier' : 'Edit'}
@@ -2603,6 +2659,7 @@ Importer tout
  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
  ${currentLang === 'fr' ? 'Suppr.' : 'Del.'}
  </button>
+ </div>
  </div>
  </div>
  <div class="px-4 pb-4 pt-0 border-t border-slate-50 bg-slate-50/50">
