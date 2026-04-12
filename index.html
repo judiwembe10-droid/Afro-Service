@@ -2949,11 +2949,13 @@ Importer tout
  } else {
  updateDynamicBanners(stock);
  const adminOpen = document.getElementById('adminModal') && !document.getElementById('adminModal').classList.contains('hidden');
- if (!adminOpen) renderProducts(stock);
- renderCategoryBubbles();
- renderHeroCards();
- renderTemuGrid(stock);
- renderPddList(stock);
+ const _dm = document.getElementById('detailModal');
+ const detailOpen = _dm && (_dm.style.transform === 'translateX(0)' || _dm.style.transform === 'translateX(0px)' || _dm.style.transform === 'translateX(0%)');
+ if (!adminOpen && !detailOpen) renderProducts(stock);
+ if (!detailOpen) renderCategoryBubbles();
+ if (!detailOpen) renderHeroCards();
+ if (!detailOpen) renderTemuGrid(stock);
+ if (!detailOpen) renderPddList(stock);
  }
 
  const adminModal    = document.getElementById('adminModal');
