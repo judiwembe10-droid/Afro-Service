@@ -2569,21 +2569,27 @@ Importer tout
    const p = stock.find(x => x.id === id);
    if (!p || !currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
    const newVal = p.inStock === false ? true : false;
-   const btn = document.querySelector("button[onclick=\"window.toggleStockQuick('" + id + "')\"]");
-   if (btn) { btn.style.opacity = '0.5'; btn.innerHTML = '<span>⏳</span>'; }
+   const btn = document.getElementById('stockBtn_' + id);
+   if (btn) {
+     btn.style.opacity = '0.5';
+     btn.style.pointerEvents = 'none';
+     btn.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#94a3b8;display:inline-block;flex-shrink:0;"></span> Sauvegarde...';
+   }
    update(ref(db, 'stock/' + id), { inStock: newVal })
      .then(() => {
-       if (btn) {
-         btn.style.opacity = '1';
-         const dot = '<span style="width:7px;height:7px;border-radius:50%;background:' + (newVal ? '#22c55e' : '#ef4444') + ';display:inline-block;flex-shrink:0;margin-right:4px;"></span>';
-         btn.innerHTML = dot + (newVal ? 'En Stock' : 'Rupture');
-         btn.style.background  = newVal ? '#dcfce7' : '#fee2e2';
-         btn.style.color       = newVal ? '#15803d' : '#dc2626';
-         btn.style.borderColor = newVal ? '#86efac' : '#fca5a5';
+       const b = document.getElementById('stockBtn_' + id);
+       if (b) {
+         b.style.opacity = '1';
+         b.style.pointerEvents = 'auto';
+         b.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:' + (newVal ? '#22c55e' : '#ef4444') + ';display:inline-block;flex-shrink:0;"></span> ' + (newVal ? 'En Stock ✓' : 'Rupture ✓');
+         b.style.background  = newVal ? '#dcfce7' : '#fee2e2';
+         b.style.color       = newVal ? '#15803d' : '#dc2626';
+         b.style.borderColor = newVal ? '#86efac' : '#fca5a5';
        }
      })
      .catch(e => {
-       if (btn) btn.style.opacity = '1';
+       const b = document.getElementById('stockBtn_' + id);
+       if (b) { b.style.opacity = '1'; b.style.pointerEvents = 'auto'; }
        alert('Erreur sauvegarde : ' + e.message);
      });
  };
@@ -2661,7 +2667,7 @@ Importer tout
  ${hasB ? `<div class="flex items-center gap-1 mt-1"><svg width="11" height="11" fill="none" stroke="#16a34a" viewBox="0 0 24 24" style="flex-shrink:0">${BADGE_ICONS[currentBadgeIcon] || ''}</svg><span class="text-[9px] font-black text-green-700 uppercase truncate">${currentBadgeLabel}</span></div>` : ''}
  </div>
  <div class="flex flex-col items-end gap-1.5 shrink-0">
- <button onclick="window.toggleStockQuick('${p.id}')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;transition:all 0.2s;border:1.5px solid ${p.inStock === false ? '#fca5a5' : '#86efac'};background:${p.inStock === false ? '#fee2e2' : '#dcfce7'};color:${p.inStock === false ? '#dc2626' : '#15803d'};">
+ <button id="stockBtn_${p.id}" onclick="window.toggleStockQuick('${p.id}')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;transition:all 0.2s;border:1.5px solid ${p.inStock === false ? '#fca5a5' : '#86efac'};background:${p.inStock === false ? '#fee2e2' : '#dcfce7'};color:${p.inStock === false ? '#dc2626' : '#15803d'};">
  <span style="width:7px;height:7px;border-radius:50%;background:${p.inStock === false ? '#ef4444' : '#22c55e'};display:inline-block;flex-shrink:0;"></span>
  ${p.inStock === false ? 'Rupture' : 'En Stock'}
  </button>
