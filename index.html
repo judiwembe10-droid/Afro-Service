@@ -2569,8 +2569,23 @@ Importer tout
    const p = stock.find(x => x.id === id);
    if (!p || !currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
    const newVal = p.inStock === false ? true : false;
+   const btn = document.querySelector("button[onclick=\"window.toggleStockQuick('" + id + "')\"]");
+   if (btn) { btn.style.opacity = '0.5'; btn.innerHTML = '<span>⏳</span>'; }
    update(ref(db, 'stock/' + id), { inStock: newVal })
-     .catch(e => alert("Erreur: " + e.message));
+     .then(() => {
+       if (btn) {
+         btn.style.opacity = '1';
+         const dot = '<span style="width:7px;height:7px;border-radius:50%;background:' + (newVal ? '#22c55e' : '#ef4444') + ';display:inline-block;flex-shrink:0;margin-right:4px;"></span>';
+         btn.innerHTML = dot + (newVal ? 'En Stock' : 'Rupture');
+         btn.style.background  = newVal ? '#dcfce7' : '#fee2e2';
+         btn.style.color       = newVal ? '#15803d' : '#dc2626';
+         btn.style.borderColor = newVal ? '#86efac' : '#fca5a5';
+       }
+     })
+     .catch(e => {
+       if (btn) btn.style.opacity = '1';
+       alert('Erreur sauvegarde : ' + e.message);
+     });
  };
 
  window.deleteProductFromFirebase = function(id) { if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return; if (confirm(currentLang === "fr" ? "Supprimer définitivement ?" : "Delete permanently?")) remove(ref(db, 'stock/' + id)); };
