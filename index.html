@@ -17,7 +17,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 
-<style>:root{--afro-blue:#101944;--afro-red:#bd1e24;--bg-body:#f8fafc;}body{font-family:'Inter',sans-serif;background-color:var(--bg-body);color:#0f172a;}.no-scrollbar::-webkit-scrollbar{display:none;}#sideNav,#sideCart,#detailModal{transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);}.promo-badge{background:linear-gradient(45deg,#bd1e24,#ff4d4d);box-shadow:0 4px 10px rgba(189,30,36,0.3);}.ticker-wrap{width:100%;overflow:hidden;background:#bd1e24;color:white;padding:8px 0;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;}.ticker{display:inline-block;white-space:nowrap;padding-right:100%;animation:ticker 25s linear infinite;}.ticker__item{display:inline-block;padding:0 30px;}@keyframes ticker{0%{transform:translate3d(0,0,0);}100%{transform:translate3d(-100%,0,0);}}@keyframes taglineScroll{0%{transform:translateX(100%);}100%{transform:translateX(-100%);}}.whatsapp-float{position:fixed;bottom:25px;right:20px;background-color:#25d366;color:#fff;border-radius:50px;width:65px;height:65px;display:flex;align-items:center;justify-content:center;z-index:500;box-shadow:0 10px 25px rgba(0,0,0,0.3);transition:all 0.3s ease;animation:pulse-whatsapp 2s infinite;}@keyframes pulse-whatsapp{0%{box-shadow:0 0 0 0 rgba(37,211,102,0.5);}70%{box-shadow:0 0 0 15px rgba(37,211,102,0);}100%{box-shadow:0 0 0 0 rgba(37,211,102,0);}}.badge-new{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#dbeafe;color:#1e40af;gap:0.2rem;vertical-align:middle;line-height:1;}.badge-regular{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#f3e8ff;color:#6b21a5;gap:0.2rem;vertical-align:middle;line-height:1;}.badge-loyal{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#fef3c7;color:#b45309;gap:0.2rem;vertical-align:middle;line-height:1;}.admin-profile-badge{display:inline-flex;align-items:center;gap:0.45rem;background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:9999px;padding:0.45rem 0.85rem;box-shadow:0 4px 14px rgba(0,0,0,0.25);}.admin-profile-badge .admin-name{font-weight:900;color:white;font-size:0.875rem;letter-spacing:0.01em;line-height:1;}.product-card-container{position:relative;border-radius:16px;background:white;border:1px solid #e8edf5;box-shadow:0 2px 10px rgba(16,25,68,0.06);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);cursor:pointer;overflow:hidden;}.product-card-container:active{transform:scale(0.97);box-shadow:0 4px 18px rgba(16,25,68,0.13);}.product-card-inner{position:relative;background:white;border-radius:16px;padding:0;display:flex;flex-direction:column;height:100%;}.product-card-img-wrap{position:relative;background:#f8f9fc;border-radius:16px 16px 0 0;overflow:hidden;aspect-ratio:1/1;}.product-card-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;}.product-card-container:active .product-card-img-wrap img{transform:scale(1.05);}.product-card-promo{position:absolute;bottom:8px;right:8px;background:linear-gradient(135deg,#bd1e24,#e03030);color:white;font-size:10px;font-weight:900;padding:4px 10px;border-radius:8px;box-shadow:0 2px 8px rgba(189,30,36,0.45);white-space:nowrap;z-index:2;letter-spacing:0.03em;}.product-card-body{padding:10px 11px 12px;display:flex;flex-direction:column;gap:5px;}.product-card-name{font-size:11.5px;font-weight:700;color:#1e293b;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px;}.product-card-price-row{display:flex;flex-direction:column;gap:2px;}.product-card-price{color:#111827;font-weight:900;font-size:0.95rem;letter-spacing:-0.3px;line-height:1;}.product-card-oldprice{color:#94a3b8;font-size:9px;font-weight:600;text-decoration:line-through;line-height:1;}.category-bubble{flex:0 0 auto;width:105px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:transform 0.2s ease;}.category-bubble:active{transform:scale(0.95);}.bubble-img-container{width:96px;height:96px;border-radius:20px;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,0.10);border:1.5px solid #f0f0f5;transition:all 0.25s ease;overflow:hidden;}.category-bubble:active .bubble-img-container{box-shadow:0 2px 8px rgba(0,0,0,0.13);}.bubble-img-container img{width:88%;height:88%;object-fit:contain;border-radius:0;}.bubble-text{font-size:12px;font-weight:700;text-align:center;color:#1d1d1f;line-height:1.3;letter-spacing:-0.01em;}.price-tag{color:var(--afro-red);font-weight:900;font-size:1.1rem;letter-spacing:-0.5px;}#productScrollWrapper{overflow:hidden;position:relative;touch-action:pan-y;}#productScrollWrapper::after{content:'';position:absolute;top:0;right:0;bottom:0;width:52px;background:linear-gradient(to right,transparent,rgba(248,250,252,0.94));pointer-events:none;z-index:2;}#productScrollTrack{display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;padding:8px 16px 16px;width:max-content;transition:transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);will-change:transform;cursor:grab;}#productScrollTrack:active{cursor:grabbing;}#productScrollTrack .product-card-container{flex:0 0 auto;width:155px;}@media (min-width:480px){#productScrollTrack .product-card-container{width:170px;}}#categoryBubbles{display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 16px 16px;}@keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}.animate-marquee{display:flex;width:max-content;animation:marquee 28s linear infinite;}.animate-marquee:hover{animation-play-state:paused;}.banner-container{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:12px;}.banner-item{flex:0 0 88%;scroll-snap-align:start;}.banner-item:first-child{margin-left:16px;}.banner-item:last-child{margin-right:16px;}@media (min-width:768px){.banner-item{flex:0 0 55%;}}#langBtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.35);border-radius:22px;padding:6px 10px 6px 8px;font-size:11px;font-weight:900;color:white;cursor:pointer;transition:background 0.2s;white-space:nowrap;height:36px;}#langBtn:active{transform:scale(0.95);}#langBtn:hover{background:rgba(255,255,255,0.25);}#langBtn .lang-arrow{width:12px;height:12px;opacity:0.75;flex-shrink:0;transition:transform 0.2s;}#authBtn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.65);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;position:relative;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,0.15);}#authBtn:hover{background:rgba(255,255,255,0.28);border-color:white;}#authBtn:active{transform:scale(0.95);}#authBtn svg{width:20px;height:20px;stroke:white;fill:none;stroke-width:2;}.scroll-nav-btn{width:38px;height:38px;border-radius:50%;background:rgba(16,25,68,0.88);border:1.5px solid rgba(255,255,255,0.20);box-shadow:0 4px 14px rgba(0,0,0,0.30);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s,transform 0.15s,opacity 0.3s;color:white;}.scroll-nav-btn:hover{background:rgba(189,30,36,0.88);}.scroll-nav-btn:active{transform:scale(0.88);}.badge-select-box{width:100%;appearance:none;-webkit-appearance:none;background:#f8fafc;border:2px solid #e2e8f0;border-radius:18px;padding:14px 44px 14px 16px;font-size:11px;font-weight:800;color:#0f172a;outline:none;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;font-family:inherit;letter-spacing:0.01em;}.badge-select-box:focus{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.15);}.badge-preview-strip{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 14px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:14px;min-height:42px;}.badge-preview-icon{width:22px;height:22px;color:#16a34a;flex-shrink:0;}.badge-preview-text{font-size:11px;font-weight:900;color:#15803d;text-transform:uppercase;letter-spacing:0.04em;}.badge-save-btn{width:100%;margin-top:8px;background:linear-gradient(135deg,#16a34a,#22c55e);color:white;border:none;border-radius:14px;padding:11px 0;font-size:9px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity 0.2s,transform 0.1s;font-family:inherit;}.badge-save-btn:active{transform:scale(0.97);opacity:0.9;}.product-badge-chip{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:20px;padding:5px 10px;font-size:10px;font-weight:900;color:#15803d;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;}.product-badge-chip svg{width:14px;height:14px;color:#16a34a;flex-shrink:0;}.card-badge-chip{display:inline-flex;align-items:center;gap:3px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:2px 6px;font-size:8px;font-weight:900;color:#15803d;text-transform:uppercase;margin-top:4px;}.card-badge-chip svg{width:10px;height:10px;}#promoTopBar{height:38px;min-height:38px;}#promoMsg{transition:opacity 0.5s ease,transform 0.5s ease;text-align:center;display:flex;align-items:center;justify-content:center;width:100%;}@keyframes kb1{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.14) translate(-2.5%,-2%);}100%{transform:scale(1.00) translate(0%,0%);}}@keyframes kb2{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.12) translate(2.5%,-1.5%);}100%{transform:scale(1.00) translate(0%,0%);}}@keyframes kb3{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.10) translate(0%,2.5%);}100%{transform:scale(1.00) translate(0%,0%);}}.banner-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:center center;transition:opacity 1s ease;}.banner-bg-img.hidden-img{opacity:0;animation:none !important;}.banner-bg-img.visible-img{opacity:1;}.banner-bg-img.kb1{animation:kb1 9s ease-in-out infinite;}.banner-bg-img.kb2{animation:kb2 9s ease-in-out infinite;}.banner-bg-img.kb3{animation:kb3 9s ease-in-out infinite;}#admDescEditor[data-empty='true']:before{content:attr(data-placeholder);color:#94a3b8;pointer-events:none;font-size:11px;}#admDescEditor[data-empty='true']{}#admDescEditor{min-height:200px;height:auto;}#admDescEditor h3{font-size:14px;font-weight:900;color:#101944;margin:8px 0 4px;}#admDescEditor ul{list-style:disc;padding-left:18px;margin:4px 0;}#admDescEditor b,#admDescEditor strong{font-weight:900;color:#0f172a;}#admDescEditor i,#admDescEditor em{font-style:italic;}.rich-desc h3{font-size:15px;font-weight:900;color:#101944;margin:14px 0 6px;line-height:1.3;}.rich-desc p{font-size:12px;color:#475569;line-height:1.7;margin:4px 0;}.rich-desc ul{list-style:disc;padding-left:18px;margin:6px 0;font-size:12px;color:#475569;}.rich-desc li{margin:2px 0;line-height:1.6;}.rich-desc b,.rich-desc strong{font-weight:900;color:#0f172a;}.rich-desc img{max-width:100%;border-radius:14px;margin:10px 0;display:block;}.rich-desc div{margin:0;}</style>
+<style>:root{--afro-blue:#101944;--afro-red:#bd1e24;--bg-body:#f8fafc;}body{font-family:'Inter',sans-serif;background-color:var(--bg-body);color:#0f172a;}.no-scrollbar::-webkit-scrollbar{display:none;}#sideNav,#sideCart,#detailModal{transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);}.promo-badge{background:linear-gradient(45deg,#bd1e24,#ff4d4d);box-shadow:0 4px 10px rgba(189,30,36,0.3);}.ticker-wrap{width:100%;overflow:hidden;background:#bd1e24;color:white;padding:8px 0;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;}.ticker{display:inline-block;white-space:nowrap;padding-right:100%;animation:ticker 25s linear infinite;}.ticker__item{display:inline-block;padding:0 30px;}@keyframes ticker{0%{transform:translate3d(0,0,0);}100%{transform:translate3d(-100%,0,0);}}@keyframes taglineScroll{0%{transform:translateX(100%);}100%{transform:translateX(-100%);}}.whatsapp-float{position:fixed;bottom:25px;right:20px;background-color:#25d366;color:#fff;border-radius:50px;width:65px;height:65px;display:flex;align-items:center;justify-content:center;z-index:500;box-shadow:0 10px 25px rgba(0,0,0,0.3);transition:all 0.3s ease;animation:pulse-whatsapp 2s infinite;}@keyframes pulse-whatsapp{0%{box-shadow:0 0 0 0 rgba(37,211,102,0.5);}70%{box-shadow:0 0 0 15px rgba(37,211,102,0);}100%{box-shadow:0 0 0 0 rgba(37,211,102,0);}}.badge-new{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#dbeafe;color:#1e40af;gap:0.2rem;vertical-align:middle;line-height:1;}.badge-regular{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#f3e8ff;color:#6b21a5;gap:0.2rem;vertical-align:middle;line-height:1;}.badge-loyal{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#fef3c7;color:#b45309;gap:0.2rem;vertical-align:middle;line-height:1;}.admin-profile-badge{display:inline-flex;align-items:center;gap:0.45rem;background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:9999px;padding:0.45rem 0.85rem;box-shadow:0 4px 14px rgba(0,0,0,0.25);}.admin-profile-badge .admin-name{font-weight:900;color:white;font-size:0.875rem;letter-spacing:0.01em;line-height:1;}.product-card-container{position:relative;border-radius:16px;background:white;border:1px solid #e8edf5;box-shadow:0 2px 10px rgba(16,25,68,0.06);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);cursor:pointer;overflow:hidden;}.product-card-container:active{transform:scale(0.97);box-shadow:0 4px 18px rgba(16,25,68,0.13);}.product-card-inner{position:relative;background:white;border-radius:16px;padding:0;display:flex;flex-direction:column;height:100%;}.product-card-img-wrap{position:relative;background:#f8f9fc;border-radius:16px 16px 0 0;overflow:hidden;aspect-ratio:1/1;}.product-card-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;}.product-card-container:active .product-card-img-wrap img{transform:scale(1.05);}.product-card-promo{position:absolute;bottom:8px;right:8px;background:linear-gradient(135deg,#bd1e24,#e03030);color:white;font-size:10px;font-weight:900;padding:4px 10px;border-radius:8px;box-shadow:0 2px 8px rgba(189,30,36,0.45);white-space:nowrap;z-index:2;letter-spacing:0.03em;}.product-card-body{padding:10px 11px 12px;display:flex;flex-direction:column;gap:5px;}.product-card-name{font-size:11.5px;font-weight:700;color:#1e293b;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px;}.product-card-price-row{display:flex;flex-direction:column;gap:2px;}.product-card-price{color:#111827;font-weight:900;font-size:0.95rem;letter-spacing:-0.3px;line-height:1;}.product-card-oldprice{color:#94a3b8;font-size:9px;font-weight:600;text-decoration:line-through;line-height:1;}.category-bubble{flex:0 0 auto;width:105px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:transform 0.2s ease;}.category-bubble:active{transform:scale(0.95);}.bubble-img-container{width:96px;height:96px;border-radius:20px;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,0.10);border:1.5px solid #f0f0f5;transition:all 0.25s ease;overflow:hidden;}.category-bubble:active .bubble-img-container{box-shadow:0 2px 8px rgba(0,0,0,0.13);}.bubble-img-container img{width:88%;height:88%;object-fit:contain;border-radius:0;}.bubble-text{font-size:12px;font-weight:700;text-align:center;color:#1d1d1f;line-height:1.3;letter-spacing:-0.01em;}.price-tag{color:var(--afro-red);font-weight:900;font-size:1.1rem;letter-spacing:-0.5px;}#productScrollWrapper{overflow:hidden;position:relative;touch-action:pan-y;}#productScrollWrapper::after{content:'';position:absolute;top:0;right:0;bottom:0;width:52px;background:linear-gradient(to right,transparent,rgba(248,250,252,0.94));pointer-events:none;z-index:2;}#productScrollTrack{display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;padding:8px 16px 16px;width:max-content;transition:transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);will-change:transform;cursor:grab;}#productScrollTrack:active{cursor:grabbing;}#productScrollTrack .product-card-container{flex:0 0 auto;width:155px;}@media (min-width:480px){#productScrollTrack .product-card-container{width:170px;}}#categoryBubbles{display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 16px 16px;}@keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}.animate-marquee{display:flex;width:max-content;animation:marquee 28s linear infinite;}.animate-marquee:hover{animation-play-state:paused;}.banner-container{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:12px;}.banner-item{flex:0 0 88%;scroll-snap-align:start;}.banner-item:first-child{margin-left:16px;}.banner-item:last-child{margin-right:16px;}@media (min-width:768px){.banner-item{flex:0 0 55%;}}#langBtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.35);border-radius:22px;padding:6px 10px 6px 8px;font-size:11px;font-weight:900;color:white;cursor:pointer;transition:background 0.2s;white-space:nowrap;height:36px;}#langBtn:active{transform:scale(0.95);}#langBtn:hover{background:rgba(255,255,255,0.25);}#langBtn .lang-arrow{width:12px;height:12px;opacity:0.75;flex-shrink:0;transition:transform 0.25s;}.lang-arrow.open{transform:rotate(180deg);}.lang-option{display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:white;border:none;cursor:pointer;transition:background 0.15s;font-family:'Inter',sans-serif;}.lang-option:hover{background:#f8fafc;}.lang-option:active{background:#f0f4ff;}#authBtn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.65);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;position:relative;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,0.15);}#authBtn:hover{background:rgba(255,255,255,0.28);border-color:white;}#authBtn:active{transform:scale(0.95);}#authBtn svg{width:20px;height:20px;stroke:white;fill:none;stroke-width:2;}.scroll-nav-btn{width:38px;height:38px;border-radius:50%;background:rgba(16,25,68,0.88);border:1.5px solid rgba(255,255,255,0.20);box-shadow:0 4px 14px rgba(0,0,0,0.30);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s,transform 0.15s,opacity 0.3s;color:white;}.scroll-nav-btn:hover{background:rgba(189,30,36,0.88);}.scroll-nav-btn:active{transform:scale(0.88);}.badge-select-box{width:100%;appearance:none;-webkit-appearance:none;background:#f8fafc;border:2px solid #e2e8f0;border-radius:18px;padding:14px 44px 14px 16px;font-size:11px;font-weight:800;color:#0f172a;outline:none;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;font-family:inherit;letter-spacing:0.01em;}.badge-select-box:focus{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.15);}.badge-preview-strip{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 14px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:14px;min-height:42px;}.badge-preview-icon{width:22px;height:22px;color:#16a34a;flex-shrink:0;}.badge-preview-text{font-size:11px;font-weight:900;color:#15803d;text-transform:uppercase;letter-spacing:0.04em;}.badge-save-btn{width:100%;margin-top:8px;background:linear-gradient(135deg,#16a34a,#22c55e);color:white;border:none;border-radius:14px;padding:11px 0;font-size:9px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity 0.2s,transform 0.1s;font-family:inherit;}.badge-save-btn:active{transform:scale(0.97);opacity:0.9;}.product-badge-chip{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:20px;padding:5px 10px;font-size:10px;font-weight:900;color:#15803d;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;}.product-badge-chip svg{width:14px;height:14px;color:#16a34a;flex-shrink:0;}.card-badge-chip{display:inline-flex;align-items:center;gap:3px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:2px 6px;font-size:8px;font-weight:900;color:#15803d;text-transform:uppercase;margin-top:4px;}.card-badge-chip svg{width:10px;height:10px;}#promoTopBar{height:38px;min-height:38px;}#promoMsg{transition:opacity 0.5s ease,transform 0.5s ease;text-align:center;display:flex;align-items:center;justify-content:center;width:100%;}@keyframes kb1{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.14) translate(-2.5%,-2%);}100%{transform:scale(1.00) translate(0%,0%);}}@keyframes kb2{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.12) translate(2.5%,-1.5%);}100%{transform:scale(1.00) translate(0%,0%);}}@keyframes kb3{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.10) translate(0%,2.5%);}100%{transform:scale(1.00) translate(0%,0%);}}.banner-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:center center;transition:opacity 1s ease;}.banner-bg-img.hidden-img{opacity:0;animation:none !important;}.banner-bg-img.visible-img{opacity:1;}.banner-bg-img.kb1{animation:kb1 9s ease-in-out infinite;}.banner-bg-img.kb2{animation:kb2 9s ease-in-out infinite;}.banner-bg-img.kb3{animation:kb3 9s ease-in-out infinite;}#admDescEditor[data-empty='true']:before{content:attr(data-placeholder);color:#94a3b8;pointer-events:none;font-size:11px;}#admDescEditor[data-empty='true']{}#admDescEditor{min-height:200px;height:auto;}#admDescEditor h3{font-size:14px;font-weight:900;color:#101944;margin:8px 0 4px;}#admDescEditor ul{list-style:disc;padding-left:18px;margin:4px 0;}#admDescEditor b,#admDescEditor strong{font-weight:900;color:#0f172a;}#admDescEditor i,#admDescEditor em{font-style:italic;}.rich-desc h3{font-size:15px;font-weight:900;color:#101944;margin:14px 0 6px;line-height:1.3;}.rich-desc p{font-size:12px;color:#475569;line-height:1.7;margin:4px 0;}.rich-desc ul{list-style:disc;padding-left:18px;margin:6px 0;font-size:12px;color:#475569;}.rich-desc li{margin:2px 0;line-height:1.6;}.rich-desc b,.rich-desc strong{font-weight:900;color:#0f172a;}.rich-desc img{max-width:100%;border-radius:14px;margin:10px 0;display:block;}.rich-desc div{margin:0;}</style>
 </head>
 <body class="text-slate-900 overflow-x-hidden">
 
@@ -77,91 +77,104 @@
 
 <div id="stickyShell" class="sticky top-0 z-[101]">
 
-<div id="promoTopBar" class="bg-gradient-to-r from-[#bd1e24] via-[#e02020] to-[#bd1e24] text-white flex items-stretch overflow-hidden shadow-lg" style="height:38px;">
-<div class="flex-1 flex items-center justify-center px-2 relative" style="min-width:0;overflow:hidden;">
-<div id="promoMsgWrap" style="position:relative;width:100%;overflow:hidden;height:100%;display:flex;align-items:center;justify-content:center;">
-<div id="promoMsg" style="width:100%;text-align:center;display:flex;align-items:center;justify-content:center;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;font-size:clamp(8px,2.4vw,11px);line-height:1.2;padding:0 4px;will-change:transform;"></div>
-</div>
-</div>
-<div class="shrink-0 bg-white/15 border-l border-white/30 flex flex-col items-center justify-center px-3 py-1" style="min-width:110px">
-<span id="promoPhoneLabel" class="text-[7px] font-bold uppercase tracking-widest opacity-80"
-data-fr="Commandez par appel" data-en="Order by call">Commandez par appel</span>
-<a href="tel:+237658562104" class="text-[13px] font-black tracking-tight leading-tight">658 562 104</a>
-</div>
-</div>
-
-<header class="bg-[#101944] text-white shadow-2xl">
-
-<div class="px-3 pt-3 pb-2 flex items-center gap-2">
-
-<button onclick="window.openNav && window.openNav()" class="flex-shrink-0 flex flex-col gap-[5px] justify-center items-center w-9 h-9 rounded-xl hover:bg-white/10 active:scale-95 transition-all">
-<span class="block w-5 h-[2.5px] bg-red-500 rounded-full"></span>
-<span class="block w-5 h-[2.5px] bg-red-500 rounded-full"></span>
-<span class="block w-3 h-[2.5px] bg-red-500 rounded-full self-start"></span>
-</button>
-
-<div class="flex items-center gap-2 flex-1 min-w-0">
-<div class="relative flex-shrink-0">
-<img src="https://i.postimg.cc/KYpsH5PR/20260328-090141.jpg"
-class="h-11 w-11 rounded-xl object-cover shadow-lg border-2 border-red-600/40"
-alt="Afro Service Logo">
-</div>
-<div class="flex flex-col min-w-0">
-<span class="font-black text-[15px] leading-none tracking-tight text-white" style="letter-spacing:-0.3px">Afro Service</span>
-<div style="overflow:hidden;max-width:150px;margin-top:2px;">
-<span id="taglineText" class="text-[8px] font-semibold leading-tight italic"
-style="color:#f87171;display:inline-block;white-space:nowrap;animation:taglineScroll 8s linear infinite;"
-data-fr="Le Commerce Vous Ouvre Son Cœur"
-data-en="Commerce Opens Its Heart To You">Le Commerce Vous Ouvre Son Cœur</span>
-</div>
-</div>
+<!-- ══ BARRE PROMO TOP ══ -->
+<div id="promoTopBar" style="background:linear-gradient(90deg,#bd1e24,#e02020,#bd1e24);height:36px;display:flex;align-items:stretch;overflow:hidden;">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden;padding:0 8px;">
+    <div id="promoMsgWrap" style="width:100%;overflow:hidden;height:100%;display:flex;align-items:center;justify-content:center;">
+      <div id="promoMsg" style="width:100%;text-align:center;display:flex;align-items:center;justify-content:center;font-weight:900;text-transform:uppercase;letter-spacing:0.07em;font-size:clamp(8px,2.4vw,11px);color:white;line-height:1.2;padding:0 4px;will-change:transform;"></div>
+    </div>
+  </div>
+  <div style="flex-shrink:0;background:rgba(0,0,0,0.2);border-left:1px solid rgba(255,255,255,0.2);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 14px;min-width:130px;">
+    <span id="promoPhoneLabel" style="font-size:7px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.8);" data-fr="Commandez par appel" data-en="Order by call">Commandez par appel</span>
+    <a href="tel:+237658562104" style="font-size:14px;font-weight:900;color:white;letter-spacing:-0.3px;line-height:1.3;text-decoration:none;">658 562 104</a>
+  </div>
 </div>
 
-<div class="flex items-center gap-2 flex-shrink-0">
+<!-- ══ HEADER PRINCIPAL ══ -->
+<header style="background:#101944;color:white;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+  <div style="display:flex;align-items:center;padding:8px 12px;gap:10px;height:60px;">
 
-<button id="langBtn" onclick="window.cycleLang && window.cycleLang()" title="Changer de langue">
-<span id="langFlag" class="text-base leading-none">🇫🇷</span>
-<span id="langCode" style="font-size:11px;font-weight:900;">FR</span>
-<svg class="lang-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/>
-</svg>
-</button>
+    <!-- Burger — 3 lignes blanches simples -->
+    <button onclick="window.openNav && window.openNav()"
+      style="flex-shrink:0;display:flex;flex-direction:column;gap:5px;justify-content:center;width:28px;height:28px;background:none;border:none;cursor:pointer;padding:0;">
+      <span style="display:block;width:22px;height:2px;background:white;border-radius:3px;"></span>
+      <span style="display:block;width:22px;height:2px;background:white;border-radius:3px;"></span>
+      <span style="display:block;width:14px;height:2px;background:white;border-radius:3px;"></span>
+    </button>
 
-<button id="authBtn" onclick="window.openAuth && window.openAuth()">
-<svg viewBox="0 0 24 24">
-<circle cx="12" cy="8" r="3.5" stroke="white" stroke-width="2" fill="none"/>
-<path d="M5 20c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
-</svg>
-<span id="authStatusDot" class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[#101944] bg-slate-400"></span>
-</button>
+    <!-- LOGO — grand et lisible -->
+    <div style="flex:1;min-width:0;display:flex;align-items:center;">
+      <img src="https://i.postimg.cc/GpZd7Y2F/logo-afroservice-2.png"
+        style="display:block;height:44px;width:auto;max-width:190px;object-fit:contain;object-position:left center;"
+        alt="Afro Service">
+    </div>
 
-<button onclick="window.openCart && window.openCart()"
-class="relative flex items-center justify-center flex-shrink-0 transition-all active:scale-95"
-style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.65);box-shadow:0 2px 6px rgba(0,0,0,0.15);">
-<svg width="19" height="19" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
-<path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-</svg>
-<span id="badge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-black h-[18px] w-[18px] rounded-full flex items-center justify-center border-2 border-[#101944] shadow-md leading-none">0</span>
-</button>
-</div>
-</div>
+    <!-- Actions droite -->
+    <div style="flex-shrink:0;display:flex;align-items:center;gap:8px;">
 
-<div class="px-3 pb-3">
-<div class="relative">
-<input id="fastSearch" type="text"
-oninput="window.quickSearch && window.quickSearch(this.value)"
-data-placeholder-fr="Que cherchez-vous chez AfroService ?"
-data-placeholder-en="What are you looking for at AfroService?"
-placeholder="Que cherchez-vous chez AfroService ?"
-class="w-full rounded-2xl py-3 px-5 pr-12 text-sm font-medium outline-none transition-all"
-style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);color:white;">
-<div class="absolute right-4 top-1/2 -translate-y-1/2">
-<div class="w-7 h-7 flex items-center justify-center rounded-xl" style="background:#bd1e24">
-<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-</div>
-</div>
-</div>
-</div>
+      <!-- FR — capsule style Glotelho -->
+      <div style="position:relative;" id="langDropdownWrap">
+        <button id="langBtn" onclick="window.toggleLangDropdown && window.toggleLangDropdown()"
+          style="display:flex;align-items:center;gap:5px;background:#1a2c6e;border:none;border-radius:50px;padding:6px 11px;cursor:pointer;height:36px;">
+          <span id="langFlag" style="font-size:17px;line-height:1;">🇫🇷</span>
+          <span id="langCode" style="font-size:13px;font-weight:800;color:white;">FR</span>
+          <svg id="langArrow" class="lang-arrow" fill="none" stroke="white" viewBox="0 0 24 24" style="width:12px;height:12px;flex-shrink:0;transition:transform 0.25s;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        <div id="langDropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:white;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.25);overflow:hidden;z-index:9999;min-width:145px;border:1px solid rgba(0,0,0,0.06);">
+          <button onclick="window.setLang('fr')" class="lang-option" id="langOptFr">
+            <span style="font-size:18px;">🇫🇷</span>
+            <span style="font-size:13px;font-weight:700;color:#101944;">Français</span>
+            <span id="langCheckFr" style="margin-left:auto;color:#bd1e24;font-size:14px;font-weight:900;">✓</span>
+          </button>
+          <div style="height:1px;background:#f1f5f9;margin:0 12px;"></div>
+          <button onclick="window.setLang('en')" class="lang-option" id="langOptEn">
+            <span style="font-size:18px;">🇬🇧</span>
+            <span style="font-size:13px;font-weight:700;color:#101944;">English</span>
+            <span id="langCheckEn" style="margin-left:auto;color:#bd1e24;font-size:14px;font-weight:900;display:none;">✓</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Compte — cercle semi-transparent contour blanc comme Glotelho -->
+      <button id="authBtn" onclick="window.openAuth && window.openAuth()"
+        style="position:relative;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <circle cx="12" cy="8" r="3.5"/>
+          <path d="M5 20c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke-linecap="round"/>
+        </svg>
+        <span id="authStatusDot" style="position:absolute;bottom:0px;right:0px;width:9px;height:9px;border-radius:50%;border:2px solid #101944;background:#94a3b8;display:block;"></span>
+      </button>
+
+      <!-- Panier — même style cercle -->
+      <button onclick="window.openCart && window.openCart()"
+        style="position:relative;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+        <svg width="19" height="19" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span id="badge" style="position:absolute;top:-4px;right:-4px;background:#bd1e24;color:white;font-size:9px;font-weight:900;height:17px;width:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #101944;line-height:1;">0</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Barre de recherche -->
+  <div style="padding:0 12px 10px;">
+    <div style="position:relative;background:white;border-radius:10px;display:flex;align-items:center;">
+      <input id="fastSearch" type="text"
+        oninput="window.quickSearch && window.quickSearch(this.value)"
+        data-placeholder-fr="Que cherchez-vous chez AfroService ?"
+        data-placeholder-en="What are you looking for at AfroService?"
+        placeholder="Que cherchez-vous chez AfroService ?"
+        style="flex:1;padding:12px 14px;font-size:13px;outline:none;background:transparent;border:none;color:#374151;font-family:'Inter',sans-serif;">
+      <div style="padding-right:12px;">
+        <svg width="19" height="19" fill="none" stroke="#9ca3af" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
 
 </header>
 </div>
@@ -804,6 +817,37 @@ Importer tout
  }
 
  window.cycleLang = function() { applyLang(currentLang === 'fr' ? 'en' : 'fr'); };
+
+ // ── Dropdown Langue ──
+ let _langDropOpen = false;
+ window.toggleLangDropdown = function() {
+   const dd = document.getElementById('langDropdown');
+   const arrow = document.getElementById('langArrow');
+   if (!dd) return;
+   _langDropOpen = !_langDropOpen;
+   dd.style.display = _langDropOpen ? 'block' : 'none';
+   if (arrow) { _langDropOpen ? arrow.classList.add('open') : arrow.classList.remove('open'); }
+ };
+ window.closeLangDropdown = function() {
+   const dd = document.getElementById('langDropdown');
+   const arrow = document.getElementById('langArrow');
+   if (dd) dd.style.display = 'none';
+   if (arrow) arrow.classList.remove('open');
+   _langDropOpen = false;
+ };
+ window.setLang = function(lang) {
+   applyLang(lang);
+   const checkFr = document.getElementById('langCheckFr');
+   const checkEn = document.getElementById('langCheckEn');
+   if (checkFr) checkFr.style.display = lang === 'fr' ? 'inline' : 'none';
+   if (checkEn) checkEn.style.display = lang === 'en' ? 'inline' : 'none';
+   window.closeLangDropdown();
+ };
+ document.addEventListener('click', function(e) {
+   if (_langDropOpen && !document.getElementById('langDropdownWrap')?.contains(e.target)) {
+     window.closeLangDropdown();
+   }
+ }, true);
 
  async function getCustomerBadge(userId) {
  if (!userId) return null;
