@@ -428,7 +428,7 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
 <div id="detailContent" class="flex-1 overflow-y-auto p-6 no-scrollbar"></div>
 </div>
 
-<aside id="sideNav" class="fixed inset-y-0 left-0 w-[280px] bg-white z-[110] shadow-2xl -translate-x-full overflow-y-auto">
+<aside id="sideNav" class="fixed inset-y-0 left-0 w-full max-w-[320px] bg-white z-[110] shadow-2xl -translate-x-full overflow-y-auto">
 <div class="p-6 bg-[#101944] text-white flex justify-between items-center sticky top-0">
 <span class="font-black italic" data-fr="RAYONS" data-en="CATEGORIES">RAYONS</span>
 <button onclick="window.closeMenus && window.closeMenus()" class="text-2xl">&times;</button>
@@ -2895,9 +2895,36 @@ Importer tout
  }
  };
 
- window.openNav    = function() { document.getElementById('sideNav').style.transform = "translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); };
- window.openCart   = function() { document.getElementById('sideCart').style.transform = "translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); };
- window.closeMenus = function() { document.querySelectorAll('#sideNav, #sideCart, #detailModal').forEach(el => { el.style.transform = el.id === 'sideNav' ? "translateX(-100%)" : "translateX(100%)"; }); document.getElementById('overlay').classList.add('hidden'); };
+ let _scrollY = 0;
+ window.openNav    = function() {
+   _scrollY = window.scrollY;
+   document.getElementById('sideNav').style.transform = "translateX(0)";
+   document.getElementById('overlay').classList.remove('hidden');
+   document.body.style.overflow = 'hidden';
+   document.body.style.position = 'fixed';
+   document.body.style.top = '-' + _scrollY + 'px';
+   document.body.style.width = '100%';
+ };
+ window.openCart   = function() {
+   _scrollY = window.scrollY;
+   document.getElementById('sideCart').style.transform = "translateX(0)";
+   document.getElementById('overlay').classList.remove('hidden');
+   document.body.style.overflow = 'hidden';
+   document.body.style.position = 'fixed';
+   document.body.style.top = '-' + _scrollY + 'px';
+   document.body.style.width = '100%';
+ };
+ window.closeMenus = function() {
+   document.querySelectorAll('#sideNav, #sideCart, #detailModal').forEach(el => {
+     el.style.transform = el.id === 'sideNav' ? "translateX(-100%)" : "translateX(100%)";
+   });
+   document.getElementById('overlay').classList.add('hidden');
+   document.body.style.overflow = '';
+   document.body.style.position = '';
+   document.body.style.top = '';
+   document.body.style.width = '';
+   window.scrollTo(0, _scrollY);
+ };
  window.closeDetail = function() { document.getElementById('detailModal').style.transform = "translateX(100%)"; document.getElementById('overlay').classList.add('hidden'); updateWALink(); };
  window.switchAdminTab = function(tabName) {
  document.querySelectorAll('.admin-panel').forEach(panel => panel.classList.add('hidden'));
@@ -2910,9 +2937,11 @@ Importer tout
  if (tabName === 'products')   renderAdminStock();
  };
  window.openAdmin  = function() {
+   _scrollY = window.scrollY;
    document.getElementById('adminModal').classList.remove('hidden');
    document.body.style.overflow = 'hidden';
    document.body.style.position = 'fixed';
+   document.body.style.top = '-' + _scrollY + 'px';
    document.body.style.width = '100%';
    window.switchAdminTab('products');
    renderAdminStock();
@@ -2921,7 +2950,9 @@ Importer tout
    document.getElementById('adminModal').classList.add('hidden');
    document.body.style.overflow = '';
    document.body.style.position = '';
+   document.body.style.top = '';
    document.body.style.width = '';
+   window.scrollTo(0, _scrollY);
    editId = null;
    document.getElementById('admTitle').textContent = currentLang === 'fr' ? "Ajouter un article" : "Add an item";
    resetAdminForm();
