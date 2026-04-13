@@ -21,6 +21,57 @@
 </head>
 <body class="text-slate-900 overflow-x-hidden">
 
+<!-- ══ LOADING SCREEN ══ -->
+<div id="afroLoadingScreen" style="
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,#101944 0%,#1a2a6c 50%,#101944 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+  transition:opacity 0.6s ease, transform 0.6s ease;
+">
+  <!-- Cercles décoratifs -->
+  <div style="position:absolute;top:-80px;right:-80px;width:260px;height:260px;border-radius:50%;background:rgba(189,30,36,0.12);pointer-events:none;"></div>
+  <div style="position:absolute;bottom:-60px;left:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none;"></div>
+
+  <!-- Logo -->
+  <div style="position:relative;margin-bottom:28px;">
+    <div style="width:110px;height:110px;border-radius:28px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.5);border:3px solid rgba(255,255,255,0.15);animation:afroLogoPulse 2s ease-in-out infinite;">
+      <img src="https://i.postimg.cc/KYpsH5PR/20260328-090141.jpg" style="width:100%;height:100%;object-fit:cover;" alt="Afro Service">
+    </div>
+    <!-- Halo rouge tournant -->
+    <div style="position:absolute;inset:-6px;border-radius:34px;border:2.5px solid transparent;border-top-color:#bd1e24;border-right-color:#bd1e24;animation:afroSpin 1.2s linear infinite;"></div>
+  </div>
+
+  <!-- Nom -->
+  <div style="margin-bottom:4px;">
+    <span style="font-family:'Inter',sans-serif;font-size:22px;font-weight:900;color:white;letter-spacing:-0.5px;">Afro Service</span>
+  </div>
+  <div style="margin-bottom:32px;">
+    <span style="font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:#f87171;letter-spacing:0.15em;text-transform:uppercase;font-style:italic;">Le Commerce Vous Ouvre Son Cœur</span>
+  </div>
+
+  <!-- Barre de chargement -->
+  <div style="width:160px;height:3px;background:rgba(255,255,255,0.12);border-radius:9999px;overflow:hidden;">
+    <div id="afroLoadBar" style="height:100%;width:0%;background:linear-gradient(90deg,#bd1e24,#ff4d4d);border-radius:9999px;transition:width 0.3s ease;animation:afroLoadFill 2s ease-out forwards;"></div>
+  </div>
+  <span style="margin-top:12px;font-family:'Inter',sans-serif;font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;">Chargement...</span>
+</div>
+
+<style>
+@keyframes afroLogoPulse {
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.04);}
+}
+@keyframes afroSpin {
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
+@keyframes afroLoadFill {
+  0%{width:0%;}
+  60%{width:75%;}
+  85%{width:90%;}
+  100%{width:100%;}
+}
+</style>
 
 <div id="overlay" onclick="window.closeMenus && window.closeMenus()" class="hidden fixed inset-0 bg-black/70 z-[90]"></div>
 
@@ -305,7 +356,6 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
 </svg>
 </button>
 
-
 <!-- ══ MODAL PARTAGE STYLE GLOTELHO ══ -->
 <div id="shareModal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);align-items:flex-end;justify-content:center;" onclick="if(event.target===this)window._closeShareModal()">
   <div id="shareModalBox" style="background:white;border-radius:24px 24px 0 0;padding:24px 20px 36px;width:100%;max-width:480px;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);">
@@ -340,14 +390,14 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
       { label:'Twitter',   color:'#000000', bg:'#f8fafc', href: 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text),
         svg:'<svg width="28" height="28" fill="#000" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' },
       { label:'Linkedin',  color:'#0A66C2', bg:'#eff6ff', href: 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url),
-        svg:'<svg width="28" height="28" fill="#0A66C2" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 23.2 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>' },
+        svg:'<svg width="28" height="28" fill="#0A66C2" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>' },
       { label:'Email',     color:'#475569', bg:'#f8fafc', href: 'mailto:?subject=' + encodeURIComponent(name) + '&body=' + encodeURIComponent(text + '\n\n' + url),
         svg:'<svg width="28" height="28" fill="none" stroke="#475569" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>' }
     ];
 
     var grid = document.getElementById('shareModalGrid');
     grid.innerHTML = platforms.map(function(p) {
-      return '<a href="' + p.href + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;background:' + p.bg + ';border:1.5px solid ' + p.color + '22;border-radius:16px;padding:14px 16px;cursor:pointer;text-decoration:none;transition:all 0.2s;-webkit-tap-highlight-color:transparent;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform=''"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex-shrink:0;">' + p.svg + '</div><span style="font-size:14px;font-weight:700;color:#1e293b;">' + p.label + '</span></a>';
+      return '<a href="' + p.href + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;background:' + p.bg + ';border:1.5px solid ' + p.color + '22;border-radius:16px;padding:14px 16px;cursor:pointer;text-decoration:none;transition:all 0.2s;-webkit-tap-highlight-color:transparent;" onmousedown="this.style.transform=\'scale(0.96)\'" onmouseup="this.style.transform=\'\'"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex-shrink:0;">' + p.svg + '</div><span style="font-size:14px;font-weight:700;color:#1e293b;">' + p.label + '</span></a>';
     }).join('');
 
     var modal = document.getElementById('shareModal');
@@ -496,6 +546,28 @@ Importer tout
 <div class="grid grid-cols-2 gap-3">
 <input id="admColors" type="text" data-placeholder-fr="Couleurs" data-placeholder-en="Colors" placeholder="Couleurs" class="border p-3 rounded-xl text-xs">
 <input id="admMem" type="text" data-placeholder-fr="Mémoire" data-placeholder-en="Memory" placeholder="Mémoire" class="border p-3 rounded-xl text-xs">
+</div>
+
+<!-- ══ TOGGLE STOCK ══ -->
+<div class="md:col-span-2" style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:16px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div id="admStockDot" style="width:10px;height:10px;border-radius:50%;background:#22c55e;flex-shrink:0;transition:background 0.3s;"></div>
+    <div>
+      <p style="font-size:11px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:0.06em;">Disponibilité</p>
+      <p id="admStockLabel" style="font-size:10px;font-weight:700;color:#22c55e;margin-top:1px;transition:color 0.3s;">En Stock</p>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <button type="button" id="admStockBtnIn" onclick="window.setAdmStock(true)"
+      style="padding:8px 16px;border-radius:20px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.2s;border:2px solid #22c55e;background:#dcfce7;color:#15803d;">
+      ✓ En Stock
+    </button>
+    <button type="button" id="admStockBtnOut" onclick="window.setAdmStock(false)"
+      style="padding:8px 16px;border-radius:20px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.2s;border:2px solid #e2e8f0;background:#f8fafc;color:#94a3b8;">
+      ✕ Rupture
+    </button>
+  </div>
+  <input type="hidden" id="admInStock" value="true">
 </div>
 
 <div class="md:col-span-2" id="richEditorWrap" style="border:2px solid #e2e8f0;border-radius:16px;overflow:hidden;background:white;">
@@ -1712,180 +1784,247 @@ Importer tout
  window.showDetail = function(id) {
  const p = stock.find(x => x.id === id);
  if (!p) return;
+ window.currentSlide = 0;
  const content = document.getElementById('detailContent');
  const imgs = p.imgs && p.imgs.length ? p.imgs : ['https://via.placeholder.com/300'];
  const ordersCount = productOrderCounts[p.id] || 0;
  const lang = currentLang;
+ const sku = 'AFRO-' + (p.id || '').toUpperCase().slice(-10);
+ const promo = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
+ const desc = (lang === 'en' && p.descEn) ? p.descEn : (p.desc || (lang === 'fr' ? 'Pas de description disponible.' : 'No description available.'));
 
- const existingBadgeHtml = (p.badgeLabel && p.badgeIcon) ? `
- <div class="product-badge-chip">
+ // Badge stock/boutique
+ const isEnStock = p.badgeLabel && p.badgeLabel.toLowerCase().includes('stock') && !p.badgeLabel.toLowerCase().includes('rupture') && !p.badgeLabel.toLowerCase().includes('limité');
+ const stockBadgeHtml = `<span style="display:inline-flex;align-items:center;gap:5px;background:#dcfce7;border:1.5px solid #86efac;border-radius:20px;padding:4px 12px;font-size:10px;font-weight:900;color:#15803d;letter-spacing:0.04em;">
+ <span style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;flex-shrink:0;"></span>
+ ${lang === 'fr' ? 'En Stock' : 'In Stock'}
+ </span>`;
+ const outStockBadge = `<span style="display:inline-flex;align-items:center;gap:5px;background:#fee2e2;border:1.5px solid #fca5a5;border-radius:20px;padding:4px 12px;font-size:10px;font-weight:900;color:#dc2626;letter-spacing:0.04em;">
+ <span style="width:7px;height:7px;border-radius:50%;background:#ef4444;display:inline-block;flex-shrink:0;"></span>
+ ${lang === 'fr' ? 'Rupture de stock' : 'Out of Stock'}
+ </span>`;
+ const bientotBadge = `<span style="display:inline-flex;align-items:center;gap:5px;background:#fef3c7;border:1.5px solid #fde68a;border-radius:20px;padding:4px 12px;font-size:10px;font-weight:900;color:#b45309;letter-spacing:0.04em;">
+ <span style="width:7px;height:7px;border-radius:50%;background:#f59e0b;display:inline-block;flex-shrink:0;"></span>
+ ${lang === 'fr' ? 'Bientôt disponible' : 'Coming Soon'}
+ </span>`;
+
+ let stockStatusHtml = stockBadgeHtml;
+ // Priorité au champ inStock dédié
+ if (p.inStock === false) {
+   stockStatusHtml = outStockBadge;
+ } else if (p.inStock === true) {
+   stockStatusHtml = stockBadgeHtml;
+ } else if (p.badgeLabel) {
+   const bl = p.badgeLabel.toLowerCase();
+   if (bl.includes('rupture')) stockStatusHtml = outStockBadge;
+   else if (bl.includes('bientôt') || bl.includes('bientot')) stockStatusHtml = bientotBadge;
+   else if (bl.includes('stock') || bl.includes('disponible')) stockStatusHtml = stockBadgeHtml;
+ }
+
+ // Extra badge (non-stock)
+ const extraBadgeHtml = (p.badgeLabel && p.badgeIcon && !p.badgeLabel.toLowerCase().includes('stock') && !p.badgeLabel.toLowerCase().includes('disponible')) ? `
+ <div class="product-badge-chip" style="margin-bottom:8px;">
  ${getBadgeSVG(p.badgeIcon, 14)}
  <span>${p.badgeLabel}</span>
  </div>` : '';
 
- const desc = (lang === 'en' && p.descEn) ? p.descEn : (p.desc || (lang === 'fr' ? 'Pas de description disponible.' : 'No description available.'));
+ // Color swatches
+ const colorMap = { 'noir':'#1a1a1a','black':'#1a1a1a','blanc':'#f5f5f5','white':'#f5f5f5','rouge':'#e53e3e','red':'#e53e3e','bleu':'#3182ce','blue':'#3182ce','vert':'#38a169','green':'#38a169','jaune':'#d69e2e','yellow':'#d69e2e','orange':'#dd6b20','rose':'#d53f8c','pink':'#d53f8c','violet':'#805ad5','purple':'#805ad5','gris':'#718096','gray':'#718096','grey':'#718096','or':'#b7791f','gold':'#b7791f','argent':'#a0aec0','silver':'#a0aec0','marron':'#7b341e','brown':'#7b341e','beige':'#d2b48c' };
+ let colorsHtml = '';
+ if (p.colors) {
+   const cols = p.colors.split(',').map(c => c.trim()).filter(Boolean);
+   colorsHtml = `<div style="margin-bottom:18px;">
+ <p style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:#64748b;margin-bottom:10px;">${lang === 'fr' ? 'Couleur du produit' : 'Product Color'}</p>
+ <div style="display:flex;flex-wrap:wrap;gap:10px;" id="colorSwatchesWrap">
+ ${cols.map((c, i) => {
+   const hex = colorMap[c.toLowerCase()] || '#94a3b8';
+   const isLight = ['blanc','white','beige','argent','silver'].includes(c.toLowerCase());
+   return `<button onclick="window._selectColor(this,'${c}')" data-color="${c}" style="width:36px;height:36px;border-radius:50%;background:${hex};border:3px solid ${i===0?'#101944':'#e2e8f0'};box-shadow:${i===0?'0 0 0 2px #101944':'none'};cursor:pointer;transition:all 0.2s;flex-shrink:0;position:relative;" title="${c}"></button>`;
+ }).join('')}
+ </div>
+ <p id="selectedColorLabel" style="font-size:11px;font-weight:700;color:#101944;margin-top:8px;">${cols[0] || ''}</p>
+ <input type="hidden" id="vCol" value="${cols[0] || ''}">
+ </div>`;
+ }
+
+ let memHtml = '';
+ if (p.memory) {
+   memHtml = `<div style="margin-bottom:18px;">
+ <p style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:#64748b;margin-bottom:8px;">${lang === 'fr' ? 'Capacité / Mémoire' : 'Capacity / Memory'}</p>
+ <select id="vMem" style="width:100%;border:2px solid #e2e8f0;border-radius:14px;padding:12px 16px;font-size:12px;font-weight:700;background:#f8fafc;outline:none;font-family:inherit;">${p.memory.split(',').map(m => `<option>${m.trim()}</option>`).join('')}</select>
+ </div>`;
+ }
 
  content.innerHTML = `
- <div class="relative overflow-hidden rounded-3xl mb-6 shadow-xl bg-slate-100">
- <div id="slideTrack" class="flex transition-transform duration-500">
- ${imgs.map(img => `<img src="${img}" class="min-w-full aspect-square object-cover" loading="lazy">`).join('')}
+ <style>
+ .dtl-share-btn{display:flex;flex-direction:column;align-items:center;gap:4px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:14px;padding:10px 6px;cursor:pointer;transition:all 0.2s;flex:1;min-width:0;}
+ .dtl-share-btn:active{transform:scale(0.93);}
+ .dtl-share-btn span{font-size:8.5px;font-weight:900;color:#475569;text-transform:uppercase;letter-spacing:0.04em;text-align:center;}
+ .dtl-trust-card{display:flex;flex-direction:column;align-items:center;gap:8px;background:#f8fafc;border:1.5px solid #eef2f7;border-radius:18px;padding:18px 8px;}
+ .dtl-trust-label{font-size:8px;font-weight:900;text-transform:uppercase;text-align:center;color:#475569;line-height:1.3;letter-spacing:0.06em;}
+ </style>
+
+ <!-- IMAGE GALLERY — pleine largeur, sans padding -->
+ <div style="position:relative;background:#f1f5f9;margin:-24px -24px 0;overflow:hidden;">
+ <div id="slideTrack" style="display:flex;transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);">
+ ${imgs.map(img => `<img src="${img}" style="min-width:100%;width:100%;aspect-ratio:1/1;object-fit:cover;display:block;" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">`).join('')}
  </div>
- ${imgs.length > 1 ? `<div class="absolute inset-0 flex items-center justify-between px-3"><button onclick="window.moveSlide(-1,${imgs.length})" class="bg-white/90 w-10 h-10 rounded-full shadow-lg flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg></button><button onclick="window.moveSlide(1,${imgs.length})" class="bg-white/90 w-10 h-10 rounded-full shadow-lg flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg></button></div>` : ''}
- </div>
- ${ordersCount > 0 ? `<div class="bg-red-50 text-red-600 p-3 rounded-xl mb-4 flex items-center gap-3 border border-red-100">
- <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
- <p class="text-[10px] font-bold uppercase italic">${ordersCount} ${lang === 'fr' ? 'commande' + (ordersCount > 1 ? 's' : '') + ' enregistrée' + (ordersCount > 1 ? 's' : '') + ' ce mois !' : 'order' + (ordersCount > 1 ? 's' : '') + ' this month!'}</p>
+ ${imgs.length > 1 ? `
+ <button onclick="window.moveSlide(-1,${imgs.length})" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.15);z-index:2;">
+ <svg width="18" height="18" fill="none" stroke="#101944" viewBox="0 0 24 24" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
+ </button>
+ <button onclick="window.moveSlide(1,${imgs.length})" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.15);z-index:2;">
+ <svg width="18" height="18" fill="none" stroke="#101944" viewBox="0 0 24 24" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+ </button>
+ <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2;">
+ ${imgs.map((_,i) => `<div id="slideDot_${i}" style="width:${i===0?'18':'6'}px;height:6px;border-radius:3px;background:${i===0?'#101944':'rgba(255,255,255,0.6)'};transition:all 0.3s;"></div>`).join('')}
  </div>` : ''}
- ${existingBadgeHtml}
- <h2 class="text-xl font-black text-[#101944] uppercase mb-4 leading-tight">${p.name}</h2>
- <div class="flex items-center gap-4 mb-4">
- <span class="text-3xl font-black text-red-600">${parseInt(p.price).toLocaleString()} FCFA</span>
- ${p.old ? `<span class="text-slate-400 line-through text-sm font-bold">${parseInt(p.old).toLocaleString()} FCFA</span>` : ''}
- </div>
- <p class="text-[9px] font-black text-slate-400 uppercase mb-6 italic underline">${p.cat} / ${p.sub} / ${p.subsub || ''}</p>
-
- <div class="space-y-6">
- ${p.colors ? `<div class="space-y-2"><label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">${lang === 'fr' ? 'Couleur disponible' : 'Available Color'}</label><select id="vCol" class="w-full border-2 border-slate-100 p-4 rounded-2xl text-xs font-bold uppercase tracking-wider bg-slate-50 focus:border-red-600 outline-none transition-all">${p.colors.split(',').map(c => `<option>${c.trim()}</option>`).join('')}</select></div>` : ''}
- ${p.memory ? `<div class="space-y-2"><label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">${lang === 'fr' ? 'Capacité / Mémoire' : 'Capacity / Memory'}</label><select id="vMem" class="w-full border-2 border-slate-100 p-4 rounded-2xl text-xs font-bold uppercase tracking-wider bg-slate-50 focus:border-red-600 outline-none transition-all">${p.memory.split(',').map(m => `<option>${m.trim()}</option>`).join('')}</select></div>` : ''}
- <div class="space-y-2"><label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">${lang === 'fr' ? 'Quantité souhaitée' : 'Desired Quantity'}</label><input id="vQty" type="number" value="1" min="1" class="w-full border-2 border-slate-100 p-4 rounded-2xl font-black text-sm bg-slate-50 focus:border-red-600 outline-none transition-all"></div>
+ ${promo > 0 ? `<div style="position:absolute;top:14px;left:14px;background:linear-gradient(135deg,#bd1e24,#e03030);color:white;font-size:11px;font-weight:900;padding:5px 12px;border-radius:20px;box-shadow:0 3px 10px rgba(189,30,36,0.4);z-index:2;">-${promo}%</div>` : ''}
  </div>
 
- <button onclick="window.addToCart('${p.id}')" class="w-full bg-[#101944] text-white py-5 rounded-[24px] font-black uppercase text-xs mt-8 shadow-xl hover:bg-red-600 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2">
- <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+ <!-- BREADCRUMB -->
+ <div style="margin-top:14px;margin-bottom:6px;">
+ <p style="font-size:9px;color:#94a3b8;font-weight:600;">${p.cat}${p.sub ? ' › ' + p.sub : ''}${p.subsub ? ' › ' + p.subsub : ''}</p>
+ </div>
+
+ <!-- TITRE + STATUS -->
+ <div style="margin-bottom:10px;">
+ ${stockStatusHtml}
+ ${extraBadgeHtml}
+ </div>
+ <h1 style="font-size:16px;font-weight:900;color:#101944;line-height:1.3;margin-bottom:12px;letter-spacing:-0.01em;">${p.name}</h1>
+
+ <!-- PRIX -->
+ <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:18px;">
+ <span style="font-size:28px;font-weight:900;color:#101944;line-height:1;letter-spacing:-1px;">${parseInt(p.price).toLocaleString('fr-FR')} <span style="font-size:14px;font-weight:700;">FCFA</span></span>
+ ${p.old ? `<span style="color:#94a3b8;font-size:14px;font-weight:600;text-decoration:line-through;">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</span>` : ''}
+ ${promo > 0 ? `<span style="background:#fee2e2;color:#dc2626;font-size:11px;font-weight:900;padding:3px 10px;border-radius:20px;">-${promo}%</span>` : ''}
+ </div>
+
+ ${ordersCount > 0 ? `<div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+ <svg width="16" height="16" fill="none" stroke="#ea580c" viewBox="0 0 24 24" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+ <p style="font-size:10px;font-weight:700;color:#c2410c;">${ordersCount} ${lang === 'fr' ? 'commande' + (ordersCount > 1 ? 's' : '') + ' ce mois !' : 'order' + (ordersCount > 1 ? 's' : '') + ' this month!'}</p>
+ </div>` : ''}
+
+ <!-- COULEURS -->
+ ${colorsHtml}
+
+ <!-- MÉMOIRE -->
+ ${memHtml}
+
+ <!-- QUANTITÉ -->
+ <div style="margin-bottom:20px;">
+ <p style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:#64748b;margin-bottom:8px;">${lang === 'fr' ? 'Quantité' : 'Quantity'}</p>
+ <div style="display:flex;align-items:center;gap:0;border:2px solid #e2e8f0;border-radius:14px;overflow:hidden;width:fit-content;">
+ <button onclick="window._dtlQtyMinus()" style="width:44px;height:44px;background:#f8fafc;border:none;cursor:pointer;font-size:20px;font-weight:900;color:#101944;display:flex;align-items:center;justify-content:center;">−</button>
+ <input id="vQty" type="number" value="1" min="1" style="width:50px;border:none;text-align:center;font-size:14px;font-weight:900;color:#101944;outline:none;background:white;height:44px;">
+ <button onclick="window._dtlQtyPlus()" style="width:44px;height:44px;background:#f8fafc;border:none;cursor:pointer;font-size:20px;font-weight:900;color:#101944;display:flex;align-items:center;justify-content:center;">+</button>
+ </div>
+ </div>
+
+ <!-- CTA BUTTONS -->
+ <button onclick="window.addToCart('${p.id}')" style="width:100%;background:#101944;color:white;border:none;border-radius:18px;padding:17px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;box-shadow:0 6px 20px rgba(16,25,68,0.3);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+ <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3c-.63.63-.18 1.7.7 1.7H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
  ${lang === 'fr' ? 'Ajouter au Panier' : 'Add to Cart'}
  </button>
 
- <div class="mt-6 flex items-center justify-between bg-[#f8fafc] border border-[#eef2f7] rounded-2xl px-5 py-4">
+ <a id="dtlWhatsAppBtn" href="#" target="_blank" style="width:100%;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;border-radius:18px;padding:17px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 20px rgba(34,197,94,0.35);transition:all 0.2s;text-decoration:none;margin-bottom:20px;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+ <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.445 0 .081 5.391.079 11.99c0 2.112.553 4.177 1.6 6.002L0 24l6.163-1.617a11.831 11.831 0 005.883 1.562h.005c6.604 0 11.967-5.391 11.97-11.991a11.856 11.856 0 00-3.486-8.452z"/></svg>
+ ${lang === 'fr' ? 'Commander via WhatsApp' : 'Order via WhatsApp'}
+ </a>
+
+ <!-- TRUST ICONS -->
+ <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">
+ <div class="dtl-trust-card">
+ <svg width="40" height="40" viewBox="0 0 64 64" fill="none"><rect x="6" y="22" width="30" height="22" rx="4" fill="#FFA94D"/><rect x="6" y="22" width="30" height="10" rx="4" fill="#FF8C00"/><rect x="18" y="22" width="6" height="22" fill="#FFD08A"/><rect x="6" y="27" width="30" height="5" fill="#FFD08A"/><circle cx="21" cy="27" r="3.5" fill="#FF8C00"/><circle cx="44" cy="16" r="9" fill="#FF4D4D"/><circle cx="44" cy="16" r="4" fill="white"/><path d="M44 25 L44 32" stroke="#FF4D4D" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="50" r="2" fill="#CBD5E1"/><circle cx="20" cy="52" r="1.5" fill="#CBD5E1"/><circle cx="28" cy="50" r="2" fill="#CBD5E1"/></svg>
+ <span class="dtl-trust-label">${lang === 'fr' ? 'Livraison\nRapide' : 'Fast\nDelivery'}</span>
+ </div>
+ <div class="dtl-trust-card">
+ <svg width="40" height="40" viewBox="0 0 64 64" fill="none"><rect x="6" y="18" width="44" height="30" rx="5" fill="#F8AEBA"/><rect x="6" y="18" width="44" height="13" rx="5" fill="#F07090"/><rect x="6" y="26" width="44" height="5" fill="#F07090"/><rect x="13" y="34" width="11" height="8" rx="2" fill="#FFD08A"/><rect x="13" y="34" width="11" height="3" rx="1" fill="#FFA94D"/><rect x="28" y="35" width="14" height="3" rx="1.5" fill="#fff" opacity="0.6"/><rect x="28" y="40" width="10" height="3" rx="1.5" fill="#fff" opacity="0.4"/><circle cx="50" cy="18" r="9" fill="#22C55E"/><path d="M46.5 18l2.5 2.5 5-5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+ <span class="dtl-trust-label">${lang === 'fr' ? 'Paiement\nSécurisé' : 'Secure\nPayment'}</span>
+ </div>
+ <div class="dtl-trust-card">
+ <svg width="40" height="40" viewBox="0 0 64 64" fill="none"><path d="M32 6L8 16v18c0 13 10.7 22.3 24 26 13.3-3.7 24-13 24-26V16L32 6z" fill="#FCD34D"/><path d="M32 6L8 16v18c0 13 10.7 22.3 24 26V6z" fill="#F59E0B"/><path d="M22 32l6 6 12-12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+ <span class="dtl-trust-label">${lang === 'fr' ? 'Garantie\n12 Mois' : '12-Month\nWarranty'}</span>
+ </div>
+ </div>
+
+ <!-- SKU / RÉFÉRENCE -->
+ <div style="background:#f8fafc;border:1.5px solid #eef2f7;border-radius:16px;padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
  <div>
- <span class="text-[9px] font-black uppercase tracking-[0.15em] text-slate-400 block mb-1">SKU</span>
- <span id="detailSkuVal" class="text-[12px] font-black text-[#101944] tracking-wide">${'AFRO-' + (p.id || '').toUpperCase().slice(-10)}</span>
+ <p style="font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.15em;color:#94a3b8;margin-bottom:3px;">${lang === 'fr' ? 'Référence' : 'Reference'}</p>
+ <p id="detailSkuVal" style="font-size:13px;font-weight:900;color:#101944;letter-spacing:0.05em;">${sku}</p>
  </div>
- <button onclick="window._copySku('${('AFRO-' + (p.id || '').toUpperCase().slice(-10))}')" id="skuCopyBtn" class="flex items-center justify-center w-10 h-10 bg-white border border-slate-200 rounded-xl shadow-sm active:scale-90 transition-all" title="Copier">
- <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+ <button onclick="window._copySku('${sku}')" id="skuCopyBtn" style="width:40px;height:40px;background:white;border:1.5px solid #e2e8f0;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;" title="Copier">
+ <svg width="16" height="16" fill="none" stroke="#94a3b8" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
  </button>
  </div>
 
- <div class="mt-5 grid grid-cols-3 gap-3">
-
- <div class="flex flex-col items-center gap-2.5 bg-[#f8fafc] border border-[#eef2f7] rounded-2xl py-5 px-2">
- <svg width="44" height="44" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-
- <rect x="6" y="22" width="30" height="22" rx="4" fill="#FFA94D"/>
- <rect x="6" y="22" width="30" height="10" rx="4" fill="#FF8C00"/>
-
- <rect x="18" y="22" width="6" height="22" fill="#FFD08A"/>
- <rect x="6" y="27" width="30" height="5" fill="#FFD08A"/>
-
- <circle cx="21" cy="27" r="3.5" fill="#FF8C00"/>
-
- <circle cx="44" cy="16" r="9" fill="#FF4D4D"/>
- <circle cx="44" cy="16" r="4" fill="white"/>
- <path d="M44 25 L44 32" stroke="#FF4D4D" stroke-width="2.5" stroke-linecap="round"/>
-
- <circle cx="12" cy="50" r="2" fill="#CBD5E1"/>
- <circle cx="20" cy="52" r="1.5" fill="#CBD5E1"/>
- <circle cx="28" cy="50" r="2" fill="#CBD5E1"/>
- </svg>
- <span class="text-[8px] font-black uppercase text-center text-[#475569] leading-tight tracking-wider">${lang === 'fr' ? 'Livraison\nRapide' : 'Fast\nDelivery'}</span>
- </div>
-
- <div class="flex flex-col items-center gap-2.5 bg-[#f8fafc] border border-[#eef2f7] rounded-2xl py-5 px-2">
- <svg width="44" height="44" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-
- <rect x="6" y="18" width="44" height="30" rx="5" fill="#F8AEBA"/>
- <rect x="6" y="18" width="44" height="13" rx="5" fill="#F07090"/>
- <rect x="6" y="26" width="44" height="5" fill="#F07090"/>
-
- <rect x="13" y="34" width="11" height="8" rx="2" fill="#FFD08A"/>
- <rect x="13" y="34" width="11" height="3" rx="1" fill="#FFA94D"/>
-
- <rect x="28" y="35" width="14" height="3" rx="1.5" fill="#fff" opacity="0.6"/>
- <rect x="28" y="40" width="10" height="3" rx="1.5" fill="#fff" opacity="0.4"/>
-
- <circle cx="50" cy="18" r="9" fill="#22C55E"/>
- <path d="M46.5 18l2.5 2.5 5-5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
- </svg>
- <span class="text-[8px] font-black uppercase text-center text-[#475569] leading-tight tracking-wider">${lang === 'fr' ? 'Paiement\nSécurisé' : 'Secure\nPayment'}</span>
- </div>
-
- <div class="flex flex-col items-center gap-2.5 bg-[#f8fafc] border border-[#eef2f7] rounded-2xl py-5 px-2">
- <svg width="44" height="44" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-
- <rect x="8" y="28" width="48" height="28" rx="3" fill="#93C5FD"/>
-
- <path d="M4 30 L32 10 L60 30 Z" fill="#3B82F6"/>
-
- <rect x="26" y="38" width="12" height="18" rx="2" fill="#1D4ED8"/>
-
- <circle cx="36" cy="47" r="1.5" fill="#93C5FD"/>
-
- <rect x="12" y="34" width="10" height="9" rx="2" fill="white" opacity="0.9"/>
- <rect x="42" y="34" width="10" height="9" rx="2" fill="white" opacity="0.9"/>
-
- <line x1="17" y1="34" x2="17" y2="43" stroke="#93C5FD" stroke-width="1"/>
- <line x1="12" y1="38.5" x2="22" y2="38.5" stroke="#93C5FD" stroke-width="1"/>
-
- <line x1="47" y1="34" x2="47" y2="43" stroke="#93C5FD" stroke-width="1"/>
- <line x1="42" y1="38.5" x2="52" y2="38.5" stroke="#93C5FD" stroke-width="1"/>
-
- <circle cx="52" cy="16" r="9" fill="#F97316"/>
- <path d="M52 13v4M52 19v1" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
- </svg>
- <span class="text-[8px] font-black uppercase text-center text-[#475569] leading-tight tracking-wider">${lang === 'fr' ? 'Service\nAprès Vente' : 'After-Sales\nService'}</span>
- </div>
- </div>
-
- <div class="mt-3 bg-[#f8fafc] border border-[#eef2f7] rounded-2xl overflow-hidden">
- <button onclick="window._toggleDetailAccordion()" class="w-full flex items-center justify-between px-5 py-4 active:bg-slate-100 transition-colors">
- <div class="flex items-center gap-2.5">
- <svg id="detailAccordionIcon" class="w-4 h-4 text-[#101944] transition-transform duration-300 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>
- <span class="text-[12px] font-black text-[#101944] uppercase tracking-wider">${lang === 'fr' ? 'Détail du produit' : 'Product Details'}</span>
- </div>
+ <!-- PARTAGE SOCIAL — bouton icône -->
+ <div style="margin-bottom:20px;">
+ <button onclick="window._openShareModal('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}',${p.price})"
+   style="display:flex;align-items:center;gap:8px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:14px;padding:10px 16px;cursor:pointer;transition:all 0.2s;width:100%;justify-content:center;">
+   <svg width="18" height="18" fill="none" stroke="#475569" viewBox="0 0 24 24" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+   <span style="font-size:11px;font-weight:900;color:#475569;text-transform:uppercase;letter-spacing:0.08em;">${lang === 'fr' ? 'Partager ce produit' : 'Share this product'}</span>
  </button>
- <div id="detailAccordionBody" class="overflow-hidden transition-all duration-300" style="max-height:0">
- <div class="px-5 pb-5 border-t border-slate-200">
- <div class="rich-desc text-[12px] text-slate-700 leading-relaxed pt-4">${desc}</div>
+ </div>
+
+ <!-- DESCRIPTION ACCORDÉON -->
+ <div style="border:1.5px solid #eef2f7;border-radius:18px;overflow:hidden;margin-bottom:20px;">
+ <button onclick="window._toggleDetailAccordion()" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 18px;background:#f8fafc;border:none;cursor:pointer;">
+ <div style="display:flex;align-items:center;gap:10px;">
+ <div style="width:28px;height:28px;border-radius:8px;background:#101944;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+ <svg width="14" height="14" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+ </div>
+ <span style="font-size:13px;font-weight:900;color:#101944;text-transform:uppercase;letter-spacing:0.04em;">${lang === 'fr' ? 'Détail du produit' : 'Product Details'}</span>
+ </div>
+ <svg id="detailAccordionIcon" width="18" height="18" fill="none" stroke="#101944" viewBox="0 0 24 24" stroke-width="2.5" style="transition:transform 0.3s;transform:rotate(180deg);"><path d="M5 15l7-7 7 7"/></svg>
+ </button>
+ <div id="detailAccordionBody" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;">
+ <div style="padding:18px;border-top:1.5px solid #f1f5f9;">
+ <div class="rich-desc" style="font-size:13px;color:#475569;line-height:1.7;">${desc}</div>
  </div>
  </div>
  </div>
 
- <div class="mt-10 border-t border-slate-100 pt-6">
- <h3 class="font-black text-[13px] uppercase tracking-widest text-[#101944] mb-4 flex items-center gap-2">
- <svg class="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+ <!-- AVIS CLIENTS -->
+ <div style="margin-bottom:10px;">
+ <h3 style="font-size:15px;font-weight:900;color:#101944;display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+ <svg width="18" height="18" fill="#f97316" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
  ${lang === 'fr' ? 'Avis Clients' : 'Customer Reviews'}
  </h3>
 
- <div id="prodRatingSummary_${p.id}" class="bg-slate-50 rounded-2xl p-4 mb-4 flex items-center gap-4">
- <div class="text-center flex-shrink-0">
- <div id="prodRatingAvg_${p.id}" class="text-4xl font-black text-[#101944]">0.0</div>
- <div id="prodRatingStars_${p.id}" class="flex justify-center gap-0.5 mt-1"></div>
- <div id="prodRatingCount_${p.id}" class="text-[9px] font-bold text-slate-400 mt-1">${lang === 'fr' ? 'Basé sur 0 avis' : 'Based on 0 reviews'}</div>
+ <div style="background:#fffbf0;border:1.5px solid #fde68a;border-radius:18px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:16px;">
+ <div style="text-align:center;flex-shrink:0;">
+ <div id="prodRatingAvg_${p.id}" style="font-size:40px;font-weight:900;color:#101944;line-height:1;">0.0</div>
+ <div id="prodRatingStars_${p.id}" style="display:flex;justify-content:center;gap:2px;margin-top:4px;"></div>
+ <div id="prodRatingCount_${p.id}" style="font-size:9px;font-weight:700;color:#94a3b8;margin-top:4px;">${lang === 'fr' ? 'Basé sur 0 avis' : 'Based on 0 reviews'}</div>
  </div>
- <div class="flex-1 space-y-1" id="prodRatingBars_${p.id}">
- ${[5,4,3,2,1].map(n => `<div class="flex items-center gap-2"><span class="text-[9px] font-bold text-slate-400 w-2">${n}</span><svg class="w-2.5 h-2.5 text-orange-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><div class="flex-1 bg-slate-200 rounded-full h-1.5"><div id="prodBar_${p.id}_${n}" class="h-1.5 bg-orange-400 rounded-full transition-all" style="width:0%"></div></div><span id="prodBarCount_${p.id}_${n}" class="text-[9px] font-bold text-slate-400 w-3 text-right">0</span></div>`).join('')}
+ <div style="flex:1;" id="prodRatingBars_${p.id}">
+ ${[5,4,3,2,1].map(n => `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:9px;font-weight:700;color:#94a3b8;width:8px;">${n}</span><svg width="10" height="10" fill="#fbbf24" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg><div style="flex:1;background:#e2e8f0;border-radius:9999px;height:6px;"><div id="prodBar_${p.id}_${n}" style="height:6px;background:linear-gradient(90deg,#f97316,#fbbf24);border-radius:9999px;transition:width 0.5s;width:0%;"></div></div><span id="prodBarCount_${p.id}_${n}" style="font-size:9px;font-weight:700;color:#94a3b8;width:14px;text-align:right;">0</span></div>`).join('')}
  </div>
- </div>
-
- <div id="prodReviewsList_${p.id}" class="space-y-3 mb-5">
- <p class="text-[10px] text-slate-400 italic">${lang === 'fr' ? 'Chargement des avis...' : 'Loading reviews...'}</p>
  </div>
 
- <div class="bg-[#101944] rounded-2xl p-4 text-white">
- <h4 class="font-black text-[10px] uppercase mb-3 flex items-center gap-1.5">
- <svg class="w-3 h-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
- ${lang === 'fr' ? 'Écrire un avis' : 'Write a review'}
- </h4>
+ <div id="prodReviewsList_${p.id}" style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+ <p style="font-size:10px;color:#94a3b8;font-style:italic;">${lang === 'fr' ? 'Chargement des avis...' : 'Loading reviews...'}</p>
+ </div>
 
- <div class="flex items-center gap-1 mb-3" id="prodStarPicker_${p.id}">
- <span class="text-[9px] font-bold text-white/60 uppercase mr-1">${lang === 'fr' ? 'Note :' : 'Rating:'}</span>
- ${[1,2,3,4,5].map(n => `<button onclick="window.setProdStar('${p.id}',${n})" id="prodStar_${p.id}_${n}" class="text-2xl transition-transform active:scale-90" style="color:#94a3b8;background:none;border:none;cursor:pointer;padding:0 2px;">★</button>`).join('')}
+ <!-- FORMULAIRE AVIS -->
+ <div style="background:#101944;border-radius:20px;padding:18px;color:white;">
+ <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+ <div style="width:28px;height:28px;border-radius:8px;background:rgba(189,30,36,0.3);display:flex;align-items:center;justify-content:center;">
+ <svg width="14" height="14" fill="none" stroke="#f87171" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+ </div>
+ <h4 style="font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;">${lang === 'fr' ? 'Laisser un avis' : 'Write a review'}</h4>
+ </div>
+ <div style="display:flex;align-items:center;gap:4px;margin-bottom:12px;">
+ <span style="font-size:9px;font-weight:900;color:rgba(255,255,255,0.6);text-transform:uppercase;margin-right:6px;">${lang === 'fr' ? 'Note :' : 'Rating:'}</span>
+ ${[1,2,3,4,5].map(n => `<button onclick="window.setProdStar('${p.id}',${n})" id="prodStar_${p.id}_${n}" style="font-size:26px;color:#94a3b8;background:none;border:none;cursor:pointer;padding:0 1px;transition:transform 0.1s;line-height:1;" onmousedown="this.style.transform='scale(0.85)'" onmouseup="this.style.transform='scale(1)'">★</button>`).join('')}
  </div>
  <input type="hidden" id="prodStarVal_${p.id}" value="5">
- <textarea id="prodRevText_${p.id}"
- placeholder="${lang === 'fr' ? 'Votre expérience avec ce produit...' : 'Your experience with this product...'}"
- class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-[11px] outline-none focus:border-red-400 h-16 text-white resize-none placeholder-white/40 mb-3"></textarea>
- <button onclick="window.sendProductReview('${p.id}')" class="w-full bg-red-600 text-white font-black py-2.5 rounded-xl text-[9px] uppercase shadow-md active:scale-95 transition-all flex items-center justify-center gap-1.5">
- <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+ <textarea id="prodRevText_${p.id}" placeholder="${lang === 'fr' ? 'Votre expérience avec ce produit...' : 'Your experience with this product...'}" style="width:100%;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.15);border-radius:14px;padding:12px;font-size:12px;color:white;resize:none;height:70px;outline:none;font-family:inherit;margin-bottom:12px;box-sizing:border-box;" onfocus="this.style.borderColor='rgba(248,113,113,0.6)'" onblur="this.style.borderColor='rgba(255,255,255,0.15)'"></textarea>
+ <button onclick="window.sendProductReview('${p.id}')" style="width:100%;background:linear-gradient(135deg,#bd1e24,#e03030);color:white;border:none;border-radius:14px;padding:14px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(189,30,36,0.4);transition:all 0.2s;">
+ <svg width="14" height="14" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
  ${lang === 'fr' ? 'Envoyer mon avis' : 'Send my review'}
  </button>
  </div>
@@ -1895,8 +2034,14 @@ Importer tout
  document.getElementById('overlay').classList.remove('hidden');
  updateWALink(p.name);
 
- window.setProdStar(p.id, 5);
+ // Set WhatsApp button in detail
+ const waBtn = document.getElementById('dtlWhatsAppBtn');
+ if (waBtn) {
+   const msg = encodeURIComponent('Bonjour AfroService ! Je souhaite commander : ' + p.name + ' — ' + parseInt(p.price).toLocaleString('fr-FR') + ' FCFA');
+   waBtn.href = 'https://wa.me/237658562104?text=' + msg;
+ }
 
+ window.setProdStar(p.id, 5);
  window.loadProductReviews(p.id);
  };
 
@@ -1905,8 +2050,15 @@ Importer tout
  window.currentSlide = (window.currentSlide + dir + total) % total;
  const track = document.getElementById('slideTrack');
  if (track) track.style.transform = `translateX(-${window.currentSlide * 100}%)`;
+ // Update dots
+ for (let i = 0; i < total; i++) {
+   const dot = document.getElementById('slideDot_' + i);
+   if (dot) {
+     dot.style.width = i === window.currentSlide ? '18px' : '6px';
+     dot.style.background = i === window.currentSlide ? '#101944' : 'rgba(255,255,255,0.6)';
+   }
+ }
  };
-
 
  window._selectColor = function(btn, colorName) {
  const wrap = document.getElementById('colorSwatchesWrap');
@@ -2110,16 +2262,17 @@ Importer tout
  };
 
  window.quickSearch = function(q) {
- if (!q.trim()) {
-   const page = document.getElementById('searchResultsPage');
-   if (page) page.style.display = 'none';
-   const mainSections = document.querySelectorAll('[data-hidden-by-search="1"]');
-   mainSections.forEach(el => { el.style.display = ''; el.removeAttribute('data-hidden-by-search'); });
-   renderProducts(stock);
- } else {
-   const filtered = stock.filter(p => p.name.toLowerCase().includes(q.toLowerCase()));
-   renderStaticGrid(filtered, q.trim(), 'search');
- }
+ if (!q.trim()) { window._resetToHome(); return; }
+ const ql = q.toLowerCase().trim();
+ const filtered = stock.filter(p => {
+   const sku = ('afro-' + (p.id || '').toLowerCase().slice(-10));
+   return p.name.toLowerCase().includes(ql)
+     || sku.includes(ql)
+     || (p.cat && p.cat.toLowerCase().includes(ql))
+     || (p.sub && p.sub.toLowerCase().includes(ql));
+ });
+ renderStaticGrid(filtered, q.trim(), 'search');
+ document.getElementById('productScrollWrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
  };
 
  function renderCategoryBubbles() {
@@ -2234,7 +2387,7 @@ Importer tout
  });
  // Masquer aussi la section avis communauté et les autres sections sous la grille
  const mainSections = document.querySelectorAll('main > section, main > div:not(#heroCardsSection):not(#productScrollWrapper):not(#carouselProgressBar)');
- mainSections.forEach(el => { if (el.id !== 'searchResultsPage') { el.dataset.hiddenBySearch = '1'; el.style.display = 'none'; } });
+ mainSections.forEach(el => { if (el.id !== 'searchResultsPage') el.dataset.hiddenBySearch = '1'; el.style.display = 'none'; });
  // Masquer les banners et bulles
  const bannersSection = document.querySelector('section.pt-4.pb-3');
  const bubblesSection = document.querySelector('section.bg-white.pt-6');
@@ -2246,6 +2399,7 @@ Importer tout
  if (!page) {
    page = document.createElement('div');
    page.id = 'searchResultsPage';
+   // Insérer AVANT le wrapper principal (juste avant productScrollWrapper)
    wrapper.parentNode.insertBefore(page, wrapper);
  }
 
@@ -2318,19 +2472,24 @@ Importer tout
    </div>
  </div>`;
 
- // Masquer la grille native
+ // Masquer la grille native (on affiche dans la page dédiée)
  grid.style.display = 'none';
  }
 
  window._resetToHome = function() {
+   // Masquer la page de résultats
    const page = document.getElementById('searchResultsPage');
    if (page) page.style.display = 'none';
+   // Masquer aussi l'ancien header si présent
    const header = document.getElementById('searchResultsHeader');
    if (header) header.style.display = 'none';
+   // Vider la barre de recherche
    const searchInput = document.getElementById('fastSearch');
    if (searchInput) searchInput.value = '';
+   // Réafficher les sections cachées par la recherche
    const mainSections = document.querySelectorAll('[data-hidden-by-search="1"]');
    mainSections.forEach(el => { el.style.display = ''; el.removeAttribute('data-hidden-by-search'); });
+   // Relancer le carousel
    renderProducts(stock);
    window.scrollTo({ top: 0, behavior: 'smooth' });
  };
@@ -2370,6 +2529,7 @@ Importer tout
  catSelect.value = p.cat;
  window.updateAdminSubs();
  setTimeout(() => { document.getElementById('admSub').value = p.sub; window.updateAdminSubSubs(); if (p.subsub) document.getElementById('admSubSub').value = p.subsub; }, 50);
+ window.setAdmStock(p.inStock !== false);
  document.getElementById('admTitle').textContent = `${currentLang === 'fr' ? 'Édition' : 'Edit'} : ${p.name}`;
  document.getElementById('adminModal').scrollTo({ top: 0, behavior: 'smooth' });
  };
@@ -2386,11 +2546,24 @@ Importer tout
  const colors = document.getElementById('admColors').value.trim();
  const memory = document.getElementById('admMem').value.trim();
  if (!name || !price) return alert(currentLang === "fr" ? "Nom et prix requis" : "Name and price required");
- const productData = { name, price: parseInt(price), old: oldPrice ? parseInt(oldPrice) : null, desc: description || "", cat: category, sub: subCategory, subsub: subSubCategory || "", imgs: images.length ? images : ['https://via.placeholder.com/300'], colors: colors || "", memory: memory || "" };
+ const inStock = document.getElementById('admInStock').value !== 'false';
+ const productData = { name, price: parseInt(price), old: oldPrice ? parseInt(oldPrice) : null, desc: description || "", cat: category, sub: subCategory, subsub: subSubCategory || "", imgs: images.length ? images : ['https://via.placeholder.com/300'], colors: colors || "", memory: memory || "", inStock: inStock };
  if (editId) { update(ref(db, 'stock/' + editId), productData).then(() => { alert(currentLang === "fr" ? "Article mis à jour !" : "Item updated!"); editId = null; document.getElementById('admTitle').textContent = currentLang === "fr" ? "Ajouter un article" : "Add an item"; resetAdminForm(); }).catch(e => alert("Erreur: " + e.message)); }
  else { push(stockRef, productData).then(() => { alert(currentLang === "fr" ? "Article ajouté !" : "Item added!"); resetAdminForm(); }).catch(e => alert("Erreur: " + e.message)); }
  };
- window.deleteProductFromFirebase = function(id) { if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return; if (confirm(currentLang === "fr" ? "Supprimer définitivement ?" : "Delete permanently?")) remove(ref(db, 'stock/' + id)); };
+ window.setAdmStock = function(isIn) {
+   const hiddenInput = document.getElementById('admInStock');
+   const dot    = document.getElementById('admStockDot');
+   const label  = document.getElementById('admStockLabel');
+   const btnIn  = document.getElementById('admStockBtnIn');
+   const btnOut = document.getElementById('admStockBtnOut');
+   if (!hiddenInput) return;
+   hiddenInput.value = isIn ? 'true' : 'false';
+   if (dot)   dot.style.background   = isIn ? '#22c55e' : '#ef4444';
+   if (label) { label.textContent = isIn ? 'En Stock' : 'Rupture de Stock'; label.style.color = isIn ? '#22c55e' : '#ef4444'; }
+   if (btnIn)  { btnIn.style.background  = isIn ? '#dcfce7' : '#f8fafc'; btnIn.style.borderColor  = isIn ? '#22c55e' : '#e2e8f0'; btnIn.style.color  = isIn ? '#15803d' : '#94a3b8'; }
+   if (btnOut) { btnOut.style.background = isIn ? '#f8fafc' : '#fee2e2'; btnOut.style.borderColor = isIn ? '#e2e8f0' : '#ef4444'; btnOut.style.color = isIn ? '#94a3b8' : '#dc2626'; }
+ };
 
  window.toggleStockQuick = function(id) {
    const p = stock.find(x => x.id === id);
@@ -2399,6 +2572,8 @@ Importer tout
    update(ref(db, 'stock/' + id), { inStock: newVal })
      .catch(e => alert("Erreur: " + e.message));
  };
+
+ window.deleteProductFromFirebase = function(id) { if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return; if (confirm(currentLang === "fr" ? "Supprimer définitivement ?" : "Delete permanently?")) remove(ref(db, 'stock/' + id)); };
 
  function badgeSelectOptions(currentLabel) {
  const opts = [
@@ -2411,6 +2586,7 @@ Importer tout
  ['Produit du moment|rocket', 'Produit du moment', ''],
  ['Choix des clients|thumb', 'Choix des clients', ''],
  ['__g2', 'Stocks et Disponibilité', 'group'],
+ ['En stock|checkcirc', 'En stock', ''],
  ['Rupture de stock|xcirc', 'Rupture de stock', ''],
  ['Stock limité|hourglass', 'Stock limité', ''],
  ['Plus que X pièces|coins', 'Plus que X pièces', ''],
@@ -2469,7 +2645,12 @@ Importer tout
  <span class="text-red-600 font-bold text-xs mt-0.5">${parseInt(p.price).toLocaleString()} FCFA</span>
  ${hasB ? `<div class="flex items-center gap-1 mt-1"><svg width="11" height="11" fill="none" stroke="#16a34a" viewBox="0 0 24 24" style="flex-shrink:0">${BADGE_ICONS[currentBadgeIcon] || ''}</svg><span class="text-[9px] font-black text-green-700 uppercase truncate">${currentBadgeLabel}</span></div>` : ''}
  </div>
- <div class="flex gap-2 shrink-0">
+ <div class="flex flex-col items-end gap-1.5 shrink-0">
+ <button onclick="window.toggleStockQuick('${p.id}')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;transition:all 0.2s;border:1.5px solid ${p.inStock === false ? '#fca5a5' : '#86efac'};background:${p.inStock === false ? '#fee2e2' : '#dcfce7'};color:${p.inStock === false ? '#dc2626' : '#15803d'};">
+ <span style="width:7px;height:7px;border-radius:50%;background:${p.inStock === false ? '#ef4444' : '#22c55e'};display:inline-block;flex-shrink:0;"></span>
+ ${p.inStock === false ? 'Rupture' : 'En Stock'}
+ </button>
+ <div class="flex gap-2">
  <button onclick="window.editItem('${p.id}')" class="bg-blue-50 text-blue-600 px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1">
  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
  ${currentLang === 'fr' ? 'Modifier' : 'Edit'}
@@ -2478,6 +2659,7 @@ Importer tout
  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
  ${currentLang === 'fr' ? 'Suppr.' : 'Del.'}
  </button>
+ </div>
  </div>
  </div>
  <div class="px-4 pb-4 pt-0 border-t border-slate-50 bg-slate-50/50">
@@ -2755,8 +2937,15 @@ Importer tout
  renderHeroCards();
  renderTemuGrid(stock);
  renderPddList(stock);
- window._afroLoadingDone = true;
-    if (window._promoAfterLoading) { window._promoAfterLoading(); window._promoAfterLoading = null; }
+ // ── Masquer l'écran de chargement ──
+ setTimeout(function() {
+ const loader = document.getElementById('afroLoadingScreen');
+ if (loader) {
+ loader.style.opacity = '0';
+ loader.style.transform = 'scale(1.04)';
+ setTimeout(function() { loader.style.display = 'none'; window._afroLoadingDone = true; if (window._promoAfterLoading) { window._promoAfterLoading(); window._promoAfterLoading = null; } }, 650);
+ }
+ }, 900);
  } else {
  updateDynamicBanners(stock);
  const adminOpen = document.getElementById('adminModal') && !document.getElementById('adminModal').classList.contains('hidden');
