@@ -2957,7 +2957,7 @@ Importer tout
    if (produitId) {
      const product = stock.find(p => String(p.id) === String(produitId));
      if (product && window.showDetail) {
-       setTimeout(function() { window.showDetail(product); }, 300);
+       setTimeout(function() { window.showDetail(product.id); }, 300);
      }
    }
  })();
