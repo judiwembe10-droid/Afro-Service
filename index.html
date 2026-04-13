@@ -2949,6 +2949,19 @@ Importer tout
  renderTemuGrid(stock);
  renderPddList(stock);
  window._afroLoadingDone = true;
+
+ // ── Ouverture automatique du produit si URL contient ?produit=ID ──
+ (function() {
+   const params = new URLSearchParams(location.search);
+   const produitId = params.get('produit');
+   if (produitId) {
+     const product = stock.find(p => String(p.id) === String(produitId));
+     if (product && window.showDetail) {
+       setTimeout(function() { window.showDetail(product); }, 300);
+     }
+   }
+ })();
+
  } else {
  updateDynamicBanners(stock);
  const adminOpen = document.getElementById('adminModal') && !document.getElementById('adminModal').classList.contains('hidden');
