@@ -11,6 +11,15 @@
 <meta name="keywords" content="Vente en ligne Cameroun, Afro Service, Bafoussam Shopping, E-commerce Cameroun, Livraison rapide Cameroun">
 <meta name="author" content="Afro Service">
 
+<!-- Open Graph — mis à jour dynamiquement par JS au clic sur un produit -->
+<meta id="og-title"       property="og:title"       content="Afro Service Cameroun | Boutique en ligne Premium">
+<meta id="og-description" property="og:description" content="Produits authentiques avec garantie au meilleur prix. Livraison rapide à Bafoussam et environs.">
+<meta id="og-image"       property="og:image"       content="https://i.postimg.cc/9QB2XQRM/20260329-213515.png">
+<meta id="og-url"         property="og:url"         content="">
+<meta property="og:type"        content="website">
+<meta property="og:site_name"   content="Afro Service Cameroun">
+<meta name="twitter:card"       content="summary_large_image">
+
 <link rel="icon" href="https://i.postimg.cc/9QB2XQRM/20260329-213515.png" type="image/png">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/9QB2XQRM/20260329-213515.png">
 
@@ -326,26 +335,36 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
   window._openShareModal = function(id, name, price) {
     _shareData = { id: id, name: name, price: price };
     var text = name + ' — ' + parseInt(price).toLocaleString('fr-FR') + ' FCFA';
-    var url  = location.href;
+    var url  = location.origin + location.pathname + '?produit=' + id;
+
+    // Web Share API natif (Android Chrome — partage système avec aperçu)
+    if (navigator.share) {
+      navigator.share({ title: name, text: text, url: url })
+        .catch(function(){});
+      return;
+    }
 
     var platforms = [
-      { label:'Whatsapp',  color:'#25D366', bg:'#f0fdf4', href: 'https://wa.me/?text=' + encodeURIComponent(text),
+      { label:'Whatsapp',  color:'#25D366', bg:'#f0fdf4', href: 'https://wa.me/?text=' + encodeURIComponent(text + '\n' + url),
         svg:'<svg width="28" height="28" fill="#25D366" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.445 0 .081 5.391.079 11.99c0 2.112.553 4.177 1.6 6.002L0 24l6.163-1.617a11.831 11.831 0 005.883 1.562h.005c6.604 0 11.967-5.391 11.97-11.991a11.856 11.856 0 00-3.486-8.452z"/></svg>' },
       { label:'Facebook',  color:'#1877F2', bg:'#eff6ff', href: 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url),
         svg:'<svg width="28" height="28" fill="#1877F2" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' },
       { label:'Telegram',  color:'#26A5E4', bg:'#f0f9ff', href: 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(name),
         svg:'<svg width="28" height="28" fill="#26A5E4" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>' },
-      { label:'Twitter',   color:'#000000', bg:'#f8fafc', href: 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text),
+      { label:'Twitter',   color:'#000000', bg:'#f8fafc', href: 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(text + ' ' + url),
         svg:'<svg width="28" height="28" fill="#000" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' },
-      { label:'Linkedin',  color:'#0A66C2', bg:'#eff6ff', href: 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url),
-        svg:'<svg width="28" height="28" fill="#0A66C2" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>' },
       { label:'Email',     color:'#475569', bg:'#f8fafc', href: 'mailto:?subject=' + encodeURIComponent(name) + '&body=' + encodeURIComponent(text + '\n\n' + url),
-        svg:'<svg width="28" height="28" fill="none" stroke="#475569" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>' }
+        svg:'<svg width="28" height="28" fill="none" stroke="#475569" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>' },
+      { label:'Copier lien', color:'#101944', bg:'#f0f4ff', href: null, copy: url,
+        svg:'<svg width="28" height="28" fill="none" stroke="#101944" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>' }
     ];
 
     var grid = document.getElementById('shareModalGrid');
-    grid.innerHTML = platforms.map(function(p) {
-      return '<a href="' + p.href + '" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;background:' + p.bg + ';border:1.5px solid ' + p.color + '22;border-radius:16px;padding:14px 16px;cursor:pointer;text-decoration:none;transition:all 0.2s;-webkit-tap-highlight-color:transparent;" onmousedown="this.style.transform=\'scale(0.96)\'" onmouseup="this.style.transform=\'\'"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex-shrink:0;">' + p.svg + '</div><span style="font-size:14px;font-weight:700;color:#1e293b;">' + p.label + '</span></a>';
+    grid.innerHTML = platforms.map(function(pl) {
+      if (pl.copy) {
+        return '<button onclick="navigator.clipboard.writeText(\''+pl.copy+'\').then(function(){var b=this;b.querySelector(\'span\').textContent=\'✅ Copié !\';setTimeout(function(){b.querySelector(\'span\').textContent=\'Copier lien\';},2000);}.bind(this))" style="display:flex;align-items:center;gap:12px;background:'+pl.bg+';border:1.5px solid '+pl.color+'22;border-radius:16px;padding:14px 16px;cursor:pointer;transition:all 0.2s;width:100%;-webkit-tap-highlight-color:transparent;"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex-shrink:0;">'+pl.svg+'</div><span style="font-size:14px;font-weight:700;color:#1e293b;">'+pl.label+'</span></button>';
+      }
+      return '<a href="'+pl.href+'" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;background:'+pl.bg+';border:1.5px solid '+pl.color+'22;border-radius:16px;padding:14px 16px;cursor:pointer;text-decoration:none;transition:all 0.2s;-webkit-tap-highlight-color:transparent;" onmousedown="this.style.transform=\'scale(0.96)\'" onmouseup="this.style.transform=\'\'"><div style="width:40px;height:40px;border-radius:12px;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex-shrink:0;">'+pl.svg+'</div><span style="font-size:14px;font-weight:700;color:#1e293b;">'+pl.label+'</span></a>';
     }).join('');
 
     var modal = document.getElementById('shareModal');
@@ -1937,6 +1956,15 @@ Importer tout
  document.getElementById('detailModal').style.transform = "translateX(0)";
  document.getElementById('overlay').classList.remove('hidden');
  const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll');
+ // URL dynamique pour le partage
+ const _prodUrl = location.origin + location.pathname + '?produit=' + p.id;
+ history.pushState({ produit: p.id }, '', '?produit=' + p.id);
+ // Mise à jour OG tags
+ const _img1 = (p.imgs && p.imgs[0]) ? p.imgs[0] : 'https://i.postimg.cc/9QB2XQRM/20260329-213515.png';
+ document.getElementById('og-title').content       = p.name + ' — Afro Service';
+ document.getElementById('og-description').content = parseInt(p.price).toLocaleString('fr-FR') + ' FCFA · ' + (p.desc ? p.desc.replace(/<[^>]*>/g,'').slice(0,120) : 'Produit authentique avec garantie.');
+ document.getElementById('og-image').content       = _img1;
+ document.getElementById('og-url').content         = _prodUrl;
  updateWALink(p.name);
 
  window.setProdStar(p.id, 5);
@@ -2781,7 +2809,7 @@ Importer tout
  window.openNav    = function() { const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll'); document.getElementById('sideNav').style.transform="translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); };
  window.openCart   = function() { const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll'); document.getElementById('sideCart').style.transform="translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); };
  window.closeMenus = function() { const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('sideNav').style.transform="translateX(-100%)"; document.getElementById('sideCart').style.transform="translateX(100%)"; document.getElementById('detailModal').style.transform="translateX(100%)"; document.getElementById('overlay').classList.add('hidden'); };
- window.closeDetail = function() { const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('detailModal').style.transform="translateX(100%)"; document.getElementById('overlay').classList.add('hidden'); updateWALink(); };
+ window.closeDetail = function() { const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('detailModal').style.transform="translateX(100%)"; document.getElementById('overlay').classList.add('hidden'); history.pushState({},'',location.pathname); document.getElementById('og-title').content='Afro Service Cameroun | Boutique en ligne Premium'; document.getElementById('og-url').content=''; updateWALink(); };
  window.switchAdminTab = function(tabName) {
  document.querySelectorAll('.admin-panel').forEach(panel => panel.classList.add('hidden'));
  document.querySelectorAll('[id^="tab-"]').forEach(tab => { tab.classList.remove('border-red-600', 'text-red-600'); tab.classList.add('border-transparent', 'text-slate-400'); });
