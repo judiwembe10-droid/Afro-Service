@@ -376,7 +376,7 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
 <div id="detailContent" class="flex-1 overflow-y-auto no-scrollbar" style="padding:0 0 24px 0;"></div>
 </div>
 
-<aside id="sideNav" class="fixed inset-y-0 left-0 w-[280px] bg-white z-[110] shadow-2xl -translate-x-full overflow-y-auto">
+<aside id="sideNav" class="fixed inset-y-0 left-0 w-full bg-white z-[110] shadow-2xl -translate-x-full overflow-y-auto">
 <div class="p-6 bg-[#101944] text-white flex justify-between items-center sticky top-0">
 <span class="font-black italic" data-fr="RAYONS" data-en="CATEGORIES">RAYONS</span>
 <button onclick="window.closeMenus && window.closeMenus()" class="text-2xl">&times;</button>
@@ -1936,6 +1936,7 @@ Importer tout
 
  document.getElementById('detailModal').style.transform = "translateX(0)";
  document.getElementById('overlay').classList.remove('hidden');
+ document.body.style.overflow = 'hidden';
  updateWALink(p.name);
 
  window.setProdStar(p.id, 5);
@@ -2774,10 +2775,10 @@ Importer tout
  }
  };
 
- window.openNav    = function() { document.getElementById('sideNav').style.transform = "translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); };
- window.openCart   = function() { document.getElementById('sideCart').style.transform = "translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); };
- window.closeMenus = function() { document.querySelectorAll('#sideNav, #sideCart, #detailModal').forEach(el => { el.style.transform = el.id === 'sideNav' ? "translateX(-100%)" : "translateX(100%)"; }); document.getElementById('overlay').classList.add('hidden'); };
- window.closeDetail = function() { document.getElementById('detailModal').style.transform = "translateX(100%)"; document.getElementById('overlay').classList.add('hidden'); updateWALink(); };
+ window.openNav    = function() { document.getElementById('sideNav').style.transform = "translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); document.body.style.overflow = 'hidden'; };
+ window.openCart   = function() { document.getElementById('sideCart').style.transform = "translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); document.body.style.overflow = 'hidden'; };
+ window.closeMenus = function() { document.querySelectorAll('#sideNav, #sideCart, #detailModal').forEach(el => { el.style.transform = el.id === 'sideNav' ? "translateX(-100%)" : "translateX(100%)"; }); document.getElementById('overlay').classList.add('hidden'); document.body.style.overflow = ''; };
+ window.closeDetail = function() { document.getElementById('detailModal').style.transform = "translateX(100%)"; document.getElementById('overlay').classList.add('hidden'); updateWALink(); document.body.style.overflow = ''; };
  window.switchAdminTab = function(tabName) {
  document.querySelectorAll('.admin-panel').forEach(panel => panel.classList.add('hidden'));
  document.querySelectorAll('[id^="tab-"]').forEach(tab => { tab.classList.remove('border-red-600', 'text-red-600'); tab.classList.add('border-transparent', 'text-slate-400'); });
