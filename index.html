@@ -2212,7 +2212,6 @@ Importer tout
      || (p.sub && p.sub.toLowerCase().includes(ql));
  });
  renderStaticGrid(filtered, q.trim(), 'search');
- document.getElementById('productScrollWrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
  };
 
  function renderCategoryBubbles() {
@@ -2300,7 +2299,6 @@ Importer tout
  const label = subsub || sub || cat;
  renderStaticGrid(filtered, label, 'category');
  closeMenus();
- document.getElementById('productScrollWrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
  };
 
  function renderStaticGrid(data, label, mode) {
@@ -2513,6 +2511,12 @@ Importer tout
      .catch(e => alert("Erreur: " + e.message));
  };
 
+ window.setStockAdmin = function(id, val) {
+   if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
+   update(ref(db, 'stock/' + id), { inStock: val })
+     .catch(e => alert("Erreur: " + e.message));
+ };
+
  window.deleteProductFromFirebase = function(id) { if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return; if (confirm(currentLang === "fr" ? "Supprimer définitivement ?" : "Delete permanently?")) remove(ref(db, 'stock/' + id)); };
 
  function badgeSelectOptions(currentLabel) {
@@ -2563,23 +2567,16 @@ Importer tout
  </div>
  </div>
  <div class="px-4 pb-4 pt-0 border-t border-slate-50 bg-slate-50/50">
- <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-3">${currentLang === 'fr' ? 'Badge boutique' : 'Store badge'}</p>
- <div style="position:relative">
- <select id="badge_${p.id}" class="badge-select-box" style="font-size:10px;padding:10px 38px 10px 12px;" onchange="window.previewAdminBadge('${p.id}')">
- ${badgeSelectOptions(currentBadgeLabel)}
- </select>
- <svg style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#22c55e" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
- </div>
- <div id="adminBadgePreview_${p.id}" class="badge-preview-strip mt-2" style="display:${hasB ? 'flex' : 'none'}">
- <svg id="adminBadgeIcon_${p.id}" class="badge-preview-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">${hasB ? (BADGE_ICONS[currentBadgeIcon] || '') : ''}</svg>
- <span id="adminBadgeText_${p.id}" class="badge-preview-text">${currentBadgeLabel}</span>
- </div>
- <div class="flex gap-2 mt-2">
- <button onclick="window.saveBadge('${p.id}')" class="badge-save-btn flex-1" style="margin-top:0;border-radius:10px;padding:9px 0;font-size:8px">
- <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
- ${currentLang === 'fr' ? 'Appliquer' : 'Apply'}
+ <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-3">${currentLang === 'fr' ? 'Disponibilité' : 'Availability'}</p>
+ <div style="display:flex;gap:8px;">
+ <button type="button" onclick="window.toggleStockQuick('${p.id}')" id="stockBtnIn_${p.id}"
+   style="flex:1;padding:9px 0;border-radius:10px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.2s;border:2px solid ${p.inStock === false ? '#e2e8f0' : '#22c55e'};background:${p.inStock === false ? '#f8fafc' : '#dcfce7'};color:${p.inStock === false ? '#94a3b8' : '#15803d'};font-family:inherit;">
+   ✓ En Stock
  </button>
- ${hasB ? `<button onclick="window.removeBadge('${p.id}')" style="margin-top:0;border-radius:10px;padding:9px 12px;font-size:8px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;background:#fee2e2;color:#dc2626;border:none;cursor:pointer;font-family:inherit">${currentLang === 'fr' ? '✕ Retirer' : '✕ Remove'}</button>` : ''}
+ <button type="button" onclick="window.setStockAdmin('${p.id}', false)" id="stockBtnOut_${p.id}"
+   style="flex:1;padding:9px 0;border-radius:10px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.2s;border:2px solid ${p.inStock === false ? '#ef4444' : '#e2e8f0'};background:${p.inStock === false ? '#fee2e2' : '#f8fafc'};color:${p.inStock === false ? '#dc2626' : '#94a3b8'};font-family:inherit;">
+   ✕ Rupture
+ </button>
  </div>
  </div>
  </div>`;
