@@ -717,22 +717,6 @@ Importer tout
  return `<svg width="${size}" height="${size}" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#16a34a;flex-shrink:0">${BADGE_ICONS[iconKey]}</svg>`;
  }
 
- window.saveBadge = async function(productId) {
- if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) {
- return alert("Connectez-vous en tant qu'administrateur pour appliquer un badge.");
- }
- const select = document.getElementById('badge_' + productId);
- if (!select || !select.value) return alert("Veuillez choisir un badge.");
- const [label, iconKey] = select.value.split('|');
- await update(ref(db, 'stock/' + productId), { badgeLabel: label, badgeIcon: iconKey });
- alert('Badge "' + label + '" appliqué !');
- };
-
- window.removeBadge = async function(productId) {
- if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
- await update(ref(db, 'stock/' + productId), { badgeLabel: null, badgeIcon: null });
- alert('Badge supprimé.');
- };
 
  let currentLang = localStorage.getItem('afroLang') || 'fr';
 
@@ -1612,7 +1596,6 @@ Importer tout
  function buildCard(p, idx) {
  var img     = p.imgs && p.imgs[0] ? p.imgs[0] : 'https://via.placeholder.com/300';
  var promo   = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
- var isTrend = !!(p.badgeLabel && p.badgeLabel.toLowerCase().indexOf('tendance') !== -1);
  var isNew   = idx < 4;
  var h = '<div class="temu-card" onclick="window.showDetail(\'' + p.id + '\')">';
  h += '<div class="temu-card-img-wrap">';
@@ -1622,7 +1605,6 @@ Importer tout
  h += '</div>';
  h += '<div class="temu-card-body">';
  h += '<div class="temu-card-name">' + p.name + '</div>';
- if (isTrend) h += '<div class="temu-trending-chip">&#8593; TENDANCE</div>';
  h += '<div style="position:relative;padding-bottom:36px;">';
  h += '<span class="temu-card-price">' + parseInt(p.price).toLocaleString('fr-FR') + ' <span style="font-size:10px;font-weight:700">FCFA</span></span>';
  if (p.old) h += '<br><span class="temu-card-oldprice">' + parseInt(p.old).toLocaleString('fr-FR') + ' FCFA</span>';
@@ -1782,12 +1764,8 @@ Importer tout
    else if (bl.includes('stock') || bl.includes('disponible')) stockStatusHtml = stockBadgeHtml;
  }
 
- // Extra badge (non-stock)
- const extraBadgeHtml = (p.badgeLabel && p.badgeIcon && !p.badgeLabel.toLowerCase().includes('stock') && !p.badgeLabel.toLowerCase().includes('disponible')) ? `
- <div class="product-badge-chip" style="margin-bottom:8px;">
- ${getBadgeSVG(p.badgeIcon, 14)}
- <span>${p.badgeLabel}</span>
- </div>` : '';
+ // Extra badge supprimé
+ const extraBadgeHtml = '';
 
  // Color swatches
  const colorMap = { 'noir':'#1a1a1a','black':'#1a1a1a','blanc':'#f5f5f5','white':'#f5f5f5','rouge':'#e53e3e','red':'#e53e3e','bleu':'#3182ce','blue':'#3182ce','vert':'#38a169','green':'#38a169','jaune':'#d69e2e','yellow':'#d69e2e','orange':'#dd6b20','rose':'#d53f8c','pink':'#d53f8c','violet':'#805ad5','purple':'#805ad5','gris':'#718096','gray':'#718096','grey':'#718096','or':'#b7791f','gold':'#b7791f','argent':'#a0aec0','silver':'#a0aec0','marron':'#7b341e','brown':'#7b341e','beige':'#d2b48c' };
@@ -2572,42 +2550,116 @@ Importer tout
  return html;
  }
 
+ const BADGE_OPTIONS = [
+   { val: '', label: '— Aucun badge —' },
+   { val: 'En Forte Demande|flame',       label: '🔥 En Forte Demande' },
+   { val: 'Populaire|trending',           label: '📈 Populaire' },
+   { val: 'Choix des Clients|thumb',      label: '👍 Choix des Clients' },
+   { val: 'Nouveau|newbadge',             label: '🆕 Nouveau' },
+   { val: 'Promo|pricetag',              label: '🏷️ Promo' },
+   { val: 'Meilleure Vente|barchart',     label: '📊 Meilleure Vente' },
+   { val: 'Offre Limitée|hourglass',      label: '⏳ Offre Limitée' },
+   { val: 'Top Qualité|star',             label: '⭐ Top Qualité' },
+   { val: 'Livraison Rapide|truck',       label: '🚚 Livraison Rapide' },
+   { val: 'Garanti|shield',              label: '🛡️ Garanti' },
+ ];
+
  function renderAdminStock() {
  const stockList = document.getElementById('stockList');
  if (!stockList) return;
  stockList.innerHTML = stock.map(p => {
- const currentBadgeLabel = p.badgeLabel || '';
- const currentBadgeIcon  = p.badgeIcon  || '';
- const hasB = !!(p.badgeLabel && p.badgeIcon);
+   const curLabel = p.badgeLabel || '';
+   const curIcon  = p.badgeIcon  || '';
+   const hasBadge = !!(curLabel && curIcon);
+   const curVal   = hasBadge ? `${curLabel}|${curIcon}` : '';
+   const opts = BADGE_OPTIONS.map(o =>
+     `<option value="${o.val}"${o.val === curVal ? ' selected' : ''}>${o.label}</option>`
+   ).join('');
+
  return `
  <div class="bg-white rounded-2xl border shadow-sm mb-3 overflow-hidden">
- <div class="flex items-center justify-between p-4">
- <div class="flex flex-col flex-1 min-w-0 mr-3">
- <span class="font-black uppercase text-[10px] text-[#101944] truncate">${p.name}</span>
- <span class="text-red-600 font-bold text-xs mt-0.5">${parseInt(p.price).toLocaleString()} FCFA</span>
- ${hasB ? `<div class="flex items-center gap-1 mt-1"><svg width="11" height="11" fill="none" stroke="#16a34a" viewBox="0 0 24 24" style="flex-shrink:0">${BADGE_ICONS[currentBadgeIcon] || ''}</svg><span class="text-[9px] font-black text-green-700 uppercase truncate">${currentBadgeLabel}</span></div>` : ''}
- </div>
- <div class="flex flex-col items-end gap-1.5 shrink-0">
- <button onclick="window.toggleStockQuick('${p.id}')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;transition:all 0.2s;border:1.5px solid ${p.inStock === false ? '#fca5a5' : '#86efac'};background:${p.inStock === false ? '#fee2e2' : '#dcfce7'};color:${p.inStock === false ? '#dc2626' : '#15803d'};">
- <span style="width:7px;height:7px;border-radius:50%;background:${p.inStock === false ? '#ef4444' : '#22c55e'};display:inline-block;flex-shrink:0;"></span>
- ${p.inStock === false ? 'Rupture' : 'En Stock'}
- </button>
- <div class="flex gap-2">
- <button onclick="window.editItem('${p.id}')" class="bg-blue-50 text-blue-600 px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1">
- <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
- ${currentLang === 'fr' ? 'Modifier' : 'Edit'}
- </button>
- <button onclick="window.deleteProductFromFirebase('${p.id}')" class="bg-red-50 text-red-600 px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1">
- <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
- ${currentLang === 'fr' ? 'Suppr.' : 'Del.'}
- </button>
- </div>
- </div>
- </div>
+
+   <!-- Ligne principale : nom + stock + actions -->
+   <div class="flex items-center justify-between p-4">
+     <div class="flex flex-col flex-1 min-w-0 mr-3">
+       <span class="font-black uppercase text-[10px] text-[#101944] truncate">${p.name}</span>
+       <span class="text-red-600 font-bold text-xs mt-0.5">${parseInt(p.price).toLocaleString()} FCFA</span>
+     </div>
+     <div class="flex flex-col items-end gap-1.5 shrink-0">
+       <button onclick="window.toggleStockQuick('${p.id}')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;transition:all 0.2s;border:1.5px solid ${p.inStock === false ? '#fca5a5' : '#86efac'};background:${p.inStock === false ? '#fee2e2' : '#dcfce7'};color:${p.inStock === false ? '#dc2626' : '#15803d'};">
+         <span style="width:7px;height:7px;border-radius:50%;background:${p.inStock === false ? '#ef4444' : '#22c55e'};display:inline-block;flex-shrink:0;"></span>
+         ${p.inStock === false ? 'Rupture' : 'En Stock'}
+       </button>
+       <div class="flex gap-2">
+         <button onclick="window.editItem('${p.id}')" class="bg-blue-50 text-blue-600 px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1">
+           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+           ${currentLang === 'fr' ? 'Modifier' : 'Edit'}
+         </button>
+         <button onclick="window.deleteProductFromFirebase('${p.id}')" class="bg-red-50 text-red-600 px-3 py-2 rounded-xl text-[9px] font-black uppercase flex items-center gap-1">
+           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+           ${currentLang === 'fr' ? 'Suppr.' : 'Del.'}
+         </button>
+       </div>
+     </div>
+   </div>
+
+   <!-- Section badge déroulante -->
+   <div style="border-top:1.5px solid #f1f5f9;padding:12px 14px 14px;background:#f8fafc;">
+     <p style="font-size:8px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Badge article</p>
+     ${hasBadge ? `<div style="display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:20px;padding:4px 10px;font-size:9px;font-weight:900;color:#15803d;text-transform:uppercase;margin-bottom:8px;">
+       <svg width="11" height="11" fill="none" stroke="#16a34a" viewBox="0 0 24 24">${BADGE_ICONS[curIcon] || ''}</svg>
+       <span>${curLabel}</span>
+     </div>` : `<div style="display:inline-flex;align-items:center;gap:5px;background:#f1f5f9;border:1.5px solid #e2e8f0;border-radius:20px;padding:4px 10px;font-size:9px;font-weight:700;color:#94a3b8;margin-bottom:8px;">Aucun badge</div>`}
+     <div style="position:relative;">
+       <select id="badgeSelect_${p.id}" style="width:100%;appearance:none;-webkit-appearance:none;background:white;border:2px solid #e2e8f0;border-radius:12px;padding:10px 36px 10px 12px;font-size:10px;font-weight:800;color:#0f172a;outline:none;cursor:pointer;font-family:inherit;">
+         ${opts}
+       </select>
+       <svg style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;" width="14" height="14" fill="none" stroke="#94a3b8" viewBox="0 0 24 24" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+     </div>
+     <div style="display:flex;gap:8px;margin-top:8px;">
+       <button type="button" onclick="window.applyBadgeToProduct('${p.id}')"
+         style="flex:1;padding:9px 0;border-radius:10px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;border:none;background:linear-gradient(135deg,#16a34a,#22c55e);color:white;display:flex;align-items:center;justify-content:center;gap:5px;font-family:inherit;transition:opacity 0.2s;" id="badgeApplyBtn_${p.id}">
+         <svg width="11" height="11" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+         Appliquer
+       </button>
+       <button type="button" onclick="window.removeBadgeFromProduct('${p.id}')"
+         style="flex:1;padding:9px 0;border-radius:10px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;border:2px solid #fca5a5;background:#fff5f5;color:#dc2626;display:flex;align-items:center;justify-content:center;gap:5px;font-family:inherit;transition:opacity 0.2s;" id="badgeRemoveBtn_${p.id}">
+         <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+         Retirer
+       </button>
+     </div>
+   </div>
+
  </div>`;
  }).join('');
  syncAdminMenus();
  }
+
+ window.applyBadgeToProduct = async function(productId) {
+   if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
+   const select = document.getElementById('badgeSelect_' + productId);
+   if (!select) return;
+   const btn = document.getElementById('badgeApplyBtn_' + productId);
+   if (!select.value) { alert('Choisissez un badge dans la liste.'); return; }
+   const [label, iconKey] = select.value.split('|');
+   if (btn) { btn.style.opacity = '0.6'; btn.textContent = '...'; }
+   try {
+     await update(ref(db, 'stock/' + productId), { badgeLabel: label, badgeIcon: iconKey });
+     if (btn) { btn.innerHTML = '<svg width="11" height="11" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Appliqué !'; btn.style.opacity = '1'; }
+     setTimeout(() => renderAdminStock(), 1200);
+   } catch(e) { alert('Erreur : ' + e.message); if (btn) { btn.style.opacity = '1'; } }
+ };
+
+ window.removeBadgeFromProduct = async function(productId) {
+   if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
+   const btn = document.getElementById('badgeRemoveBtn_' + productId);
+   if (btn) { btn.style.opacity = '0.6'; btn.textContent = '...'; }
+   try {
+     await update(ref(db, 'stock/' + productId), { badgeLabel: null, badgeIcon: null });
+     if (btn) { btn.innerHTML = '<svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Retiré !'; btn.style.opacity = '1'; }
+     setTimeout(() => renderAdminStock(), 1200);
+   } catch(e) { alert('Erreur : ' + e.message); if (btn) { btn.style.opacity = '1'; } }
+ };
 
  window.previewAdminBadge = function(productId) {
  const select  = document.getElementById('badge_' + productId);
@@ -2850,6 +2902,16 @@ Importer tout
 
  stock        = data ? Object.keys(data).map(key => ({ ...data[key], id: key })) : [];
  window.stock = stock;
+
+ // ── Nettoyage automatique des anciens badges non reconnus dans Firebase ──
+ if (currentUser && adminEmails.includes((currentUser.email || '').toLowerCase())) {
+   const VALID_BADGE_LABELS = ['En Forte Demande','Populaire','Choix des Clients','Nouveau','Promo','Meilleure Vente','Offre Limitée','Top Qualité','Livraison Rapide','Garanti'];
+   stock.forEach(p => {
+     if (p.badgeLabel && !VALID_BADGE_LABELS.includes(p.badgeLabel)) {
+       update(ref(db, 'stock/' + p.id), { badgeLabel: null, badgeIcon: null }).catch(() => {});
+     }
+   });
+ }
 
  if (!_stockLoaded) {
  _stockLoaded = true;
