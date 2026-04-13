@@ -392,7 +392,7 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
 </button>
 <span class="text-[10px] font-black text-slate-400" data-fr="DÉTAILS" data-en="DETAILS">DÉTAILS</span>
 </div>
-<div id="detailContent" class="flex-1 overflow-y-auto no-scrollbar" style="padding:0 0 24px 0;"></div>
+<div id="detailContent" class="flex-1 overflow-y-auto no-scrollbar" style="padding:0 0 0 0;"></div>
 </div>
 
 <aside id="sideNav" class="fixed inset-y-0 left-0 w-[280px] bg-white z-[110] shadow-2xl -translate-x-full overflow-y-auto">
@@ -1788,23 +1788,34 @@ Importer tout
  .dtl-trust-label{font-size:8px;font-weight:900;text-transform:uppercase;text-align:center;color:#475569;line-height:1.3;letter-spacing:0.06em;}
  </style>
 
- <!-- IMAGE GALLERY — pleine largeur, sans padding -->
- <div style="position:relative;background:#f1f5f9;margin:0 0 0;border-radius:0;overflow:hidden;">
+ <!-- IMAGE GALLERY STYLE GLOTELHO — image principale + miniatures + bouton partage -->
+ <div style="position:relative;background:#f1f5f9;margin:0;border-radius:0;overflow:hidden;">
+ <!-- Image principale -->
  <div id="slideTrack" style="display:flex;transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);">
  ${imgs.map(img => `<img src="${img}" style="min-width:100%;width:100%;aspect-ratio:1/1;object-fit:cover;display:block;" loading="lazy" onerror="this.src='https://via.placeholder.com/400'">`).join('')}
  </div>
+ <!-- Flèches navigation -->
  ${imgs.length > 1 ? `
  <button onclick="window.moveSlide(-1,${imgs.length})" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.15);z-index:2;">
  <svg width="18" height="18" fill="none" stroke="#101944" viewBox="0 0 24 24" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
  </button>
  <button onclick="window.moveSlide(1,${imgs.length})" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.92);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.15);z-index:2;">
  <svg width="18" height="18" fill="none" stroke="#101944" viewBox="0 0 24 24" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
- </button>
- <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2;">
- ${imgs.map((_,i) => `<div id="slideDot_${i}" style="width:${i===0?'18':'6'}px;height:6px;border-radius:3px;background:${i===0?'#101944':'rgba(255,255,255,0.6)'};transition:all 0.3s;"></div>`).join('')}
- </div>` : ''}
+ </button>` : ''}
+ <!-- Badge promo -->
  ${promo > 0 ? `<div style="position:absolute;top:14px;left:14px;background:linear-gradient(135deg,#bd1e24,#e03030);color:white;font-size:11px;font-weight:900;padding:5px 12px;border-radius:20px;box-shadow:0 3px 10px rgba(189,30,36,0.4);z-index:2;">-${promo}%</div>` : ''}
+ <!-- BOUTON PARTAGE sur l'image (haut droite) comme Glotelho -->
+ <button onclick="window._openShareModal('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}',${p.price})"
+   style="position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.95);border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.18);cursor:pointer;z-index:3;transition:all 0.2s;"
+   onmousedown="this.style.transform='scale(0.88)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" title="Partager">
+   <svg width="18" height="18" fill="none" stroke="#475569" viewBox="0 0 24 24" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+ </button>
  </div>
+ <!-- MINIATURES cliquables (style Glotelho) -->
+ ${imgs.length > 1 ? `
+ <div id="thumbStrip" style="display:flex;gap:8px;overflow-x:auto;padding:10px 16px 4px;background:white;scrollbar-width:none;">
+ ${imgs.map((img, i) => `<button onclick="window.goToSlide(${i},${imgs.length})" id="thumb_${i}" style="flex-shrink:0;width:62px;height:62px;border-radius:10px;overflow:hidden;border:2.5px solid ${i===0?'#bd1e24':'#e2e8f0'};padding:0;background:#f4f6fa;cursor:pointer;transition:border-color 0.2s;"><img src="${img}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='https://via.placeholder.com/80'"></button>`).join('')}
+ </div>` : ''}
 
  <!-- CONTENT_WRAP -->
  <div style="padding:0 24px;">
@@ -1883,12 +1894,13 @@ Importer tout
  </button>
  </div>
 
- <!-- PARTAGE SOCIAL — bouton icône -->
+ <!-- PARTAGE SOCIAL — bouton pleine largeur style Glotelho -->
  <div style="margin-bottom:20px;">
  <button onclick="window._openShareModal('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}',${p.price})"
-   style="display:flex;align-items:center;gap:8px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:14px;padding:10px 16px;cursor:pointer;transition:all 0.2s;width:100%;justify-content:center;">
-   <svg width="18" height="18" fill="none" stroke="#475569" viewBox="0 0 24 24" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-   <span style="font-size:11px;font-weight:900;color:#475569;text-transform:uppercase;letter-spacing:0.08em;">${lang === 'fr' ? 'Partager ce produit' : 'Share this product'}</span>
+   style="display:flex;align-items:center;gap:10px;background:white;border:1.5px solid #e2e8f0;border-radius:16px;padding:14px 18px;cursor:pointer;transition:all 0.2s;width:100%;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.06);"
+   onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+   <svg width="20" height="20" fill="none" stroke="#101944" viewBox="0 0 24 24" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+   <span style="font-size:12px;font-weight:900;color:#101944;text-transform:uppercase;letter-spacing:0.08em;">${lang === 'fr' ? 'Partager ce produit' : 'Share this product'}</span>
  </button>
  </div>
 
@@ -1951,6 +1963,29 @@ Importer tout
  ${lang === 'fr' ? 'Envoyer mon avis' : 'Send my review'}
  </button>
  </div>
+ </div>
+
+ <!-- PRODUITS SIMILAIRES style Glotelho -->
+ <div style="margin-top:8px;padding-bottom:80px;">
+ <div style="display:flex;align-items:center;justify-content:space-between;padding:0 0 12px;">
+ <h3 style="font-size:14px;font-weight:900;color:#101944;">${lang === 'fr' ? 'Produits similaires' : 'Related Products'}</h3>
+ </div>
+ <div id="similarProductsGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+ <div style="text-align:center;padding:20px;color:#94a3b8;font-size:11px;grid-column:1/-1;">${lang === 'fr' ? 'Chargement...' : 'Loading...'}</div>
+ </div>
+ </div>
+ </div>
+
+ <!-- BARRE STICKY BAS — prix + bouton ajouter au panier style Glotelho -->
+ <div id="dtlStickyBar" style="position:sticky;bottom:0;left:0;right:0;background:white;border-top:1.5px solid #e2e8f0;padding:12px 16px;display:flex;align-items:center;gap:12px;z-index:20;box-shadow:0 -4px 20px rgba(0,0,0,0.08);">
+ <div style="flex:1;">
+ <div style="font-size:20px;font-weight:900;color:#101944;line-height:1;letter-spacing:-0.5px;">${parseInt(p.price).toLocaleString('fr-FR')} <span style="font-size:11px;font-weight:700;">FCFA</span></div>
+ ${p.old ? `<div style="font-size:11px;color:#94a3b8;text-decoration:line-through;line-height:1;margin-top:2px;">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</div>` : ''}
+ </div>
+ <button onclick="window.addToCart('${p.id}')" style="background:#101944;color:white;border:none;border-radius:14px;padding:13px 22px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(16,25,68,0.3);transition:all 0.2s;white-space:nowrap;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+ <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3c-.63.63-.18 1.7.7 1.7H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+ ${lang === 'fr' ? 'Ajouter' : 'Add'}
+ </button>
  </div>`;
 
  document.getElementById('detailModal').style.transform = "translateX(0)";
@@ -1969,6 +2004,8 @@ Importer tout
 
  window.setProdStar(p.id, 5);
  window.loadProductReviews(p.id);
+ // Charger les produits similaires après rendu
+ setTimeout(() => window._loadSimilarProducts(p), 100);
  };
 
  // Alias pour compatibilité (popup Black Friday, etc.)
@@ -1987,6 +2024,59 @@ Importer tout
      dot.style.background = i === window.currentSlide ? '#101944' : 'rgba(255,255,255,0.6)';
    }
  }
+ // Update thumbnails
+ for (let i = 0; i < total; i++) {
+   const thumb = document.getElementById('thumb_' + i);
+   if (thumb) thumb.style.borderColor = i === window.currentSlide ? '#bd1e24' : '#e2e8f0';
+ }
+ };
+
+ // Aller directement à une slide via miniature
+ window.goToSlide = function(idx, total) {
+ window.currentSlide = idx;
+ const track = document.getElementById('slideTrack');
+ if (track) track.style.transform = `translateX(-${idx * 100}%)`;
+ for (let i = 0; i < total; i++) {
+   const thumb = document.getElementById('thumb_' + i);
+   if (thumb) thumb.style.borderColor = i === idx ? '#bd1e24' : '#e2e8f0';
+   const dot = document.getElementById('slideDot_' + i);
+   if (dot) {
+     dot.style.width = i === idx ? '18px' : '6px';
+     dot.style.background = i === idx ? '#101944' : 'rgba(255,255,255,0.6)';
+   }
+ }
+ // Scroll miniature active au centre
+ const thumb = document.getElementById('thumb_' + idx);
+ if (thumb) thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+ };
+
+ // Charger produits similaires (même catégorie)
+ window._loadSimilarProducts = function(currentProduct) {
+ const grid = document.getElementById('similarProductsGrid');
+ if (!grid) return;
+ const lang = currentLang;
+ const similar = (window.stock || [])
+   .filter(x => x.id !== currentProduct.id && (x.cat === currentProduct.cat || x.sub === currentProduct.sub))
+   .slice(0, 6);
+ if (similar.length === 0) {
+   grid.innerHTML = `<p style="font-size:11px;color:#94a3b8;font-style:italic;grid-column:1/-1;text-align:center;">${lang === 'fr' ? 'Aucun produit similaire.' : 'No similar products.'}</p>`;
+   return;
+ }
+ grid.innerHTML = similar.map(sp => {
+   const spPromo = sp.old ? Math.round(((sp.old - sp.price) / sp.old) * 100) : 0;
+   const spImg = sp.imgs && sp.imgs[0] ? sp.imgs[0] : 'https://via.placeholder.com/200';
+   return `<div onclick="window.showDetail('${sp.id}')" style="background:white;border-radius:14px;border:1px solid #e8edf5;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(16,25,68,0.06);transition:all 0.2s;active:transform:scale(0.97);" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+   <div style="position:relative;aspect-ratio:1/1;overflow:hidden;background:#f4f6fa;">
+   <img src="${spImg}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='https://via.placeholder.com/200'">
+   ${spPromo > 0 ? `<div style="position:absolute;bottom:6px;right:6px;background:linear-gradient(135deg,#bd1e24,#e03030);color:white;font-size:9px;font-weight:900;padding:2px 7px;border-radius:6px;">-${spPromo}%</div>` : ''}
+   </div>
+   <div style="padding:8px 10px 10px;">
+   <p style="font-size:11px;font-weight:700;color:#1e293b;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:30px;margin-bottom:4px;">${sp.name}</p>
+   <p style="font-size:14px;font-weight:900;color:#101944;line-height:1;">${parseInt(sp.price).toLocaleString('fr-FR')} <span style="font-size:9px;font-weight:700;">FCFA</span></p>
+   ${sp.old ? `<p style="font-size:9px;color:#94a3b8;text-decoration:line-through;">${parseInt(sp.old).toLocaleString('fr-FR')} FCFA</p>` : ''}
+   </div>
+   </div>`;
+ }).join('');
  };
 
  window._selectColor = function(btn, colorName) {
