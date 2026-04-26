@@ -25,8 +25,28 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<!-- NProgress — barre de progression style Tech Deals -->
+<link rel="stylesheet" href="https://unpkg.com/nprogress@0.2.0/nprogress.css">
+<script src="https://unpkg.com/nprogress@0.2.0/nprogress.js"></script>
+<style>
+/* NProgress — couleur bleue Afro Service, sans spinner NProgress */
+#nprogress .bar { background: #1d4ed8 !important; height: 3px !important; }
+#nprogress .peg  { box-shadow: 0 0 10px #1d4ed8, 0 0 5px #1d4ed8 !important; }
+#nprogress .spinner { display: none !important; }
+/* bottomNavBar — visible par défaut, caché quand un panneau est ouvert */
+#bottomNavBar { z-index: 490; }
+/* Skeleton shimmer */
+@keyframes skeletonShimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.65) 50%, rgba(255,255,255,0) 100%);
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+</style>
 
-<style>:root{--afro-blue:#101944;--afro-red:#bd1e24;--bg-body:#f8fafc;}html{overflow-x:hidden;max-width:100%;}body{font-family:'Inter',sans-serif;background-color:var(--bg-body);color:#0f172a;overflow-x:hidden;max-width:100%;}.no-scrollbar::-webkit-scrollbar{display:none;}#sideNav,#sideCart,#detailModal{transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);isolation:isolate;-webkit-isolation:isolate;overscroll-behavior:contain;}.no-scroll{overflow:hidden !important;height:100vh !important;width:100vw !important;position:fixed !important;touch-action:none;-webkit-overflow-scrolling:none;}#stickyShell{position:fixed !important;top:0;left:0;width:100%;z-index:101;box-shadow:0 2px 10px rgba(0,0,0,0.12);}body{padding-top:148px;}.promo-badge{background:linear-gradient(45deg,#bd1e24,#ff4d4d);box-shadow:0 4px 10px rgba(189,30,36,0.3);}.ticker-wrap{width:100%;overflow:hidden;background:#bd1e24;color:white;padding:8px 0;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;}.ticker{display:inline-block;white-space:nowrap;padding-right:100%;animation:ticker 25s linear infinite;}.ticker__item{display:inline-block;padding:0 30px;}@keyframes ticker{0%{transform:translate3d(0,0,0);}100%{transform:translate3d(-100%,0,0);}}@keyframes taglineScroll{0%{transform:translateX(100%);}100%{transform:translateX(-100%);}}.whatsapp-float{position:fixed;bottom:80px;right:14px;background-color:#25d366;color:#fff;border-radius:50px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:500;box-shadow:0 6px 18px rgba(0,0,0,0.25);transition:all 0.3s ease;animation:pulse-whatsapp 2s infinite;}@keyframes pulse-whatsapp{0%{box-shadow:0 0 0 0 rgba(37,211,102,0.5);}70%{box-shadow:0 0 0 15px rgba(37,211,102,0);}100%{box-shadow:0 0 0 0 rgba(37,211,102,0);}}.badge-new{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#dbeafe;color:#1e40af;gap:0.2rem;vertical-align:middle;line-height:1;}.badge-regular{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#f3e8ff;color:#6b21a5;gap:0.2rem;vertical-align:middle;line-height:1;}.badge-loyal{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#fef3c7;color:#b45309;gap:0.2rem;vertical-align:middle;line-height:1;}.admin-profile-badge{display:inline-flex;align-items:center;gap:0.45rem;background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:9999px;padding:0.45rem 0.85rem;box-shadow:0 4px 14px rgba(0,0,0,0.25);}.admin-profile-badge .admin-name{font-weight:900;color:white;font-size:0.875rem;letter-spacing:0.01em;line-height:1;}.product-card-container{position:relative;border-radius:16px;background:white;border:1px solid #e8edf5;box-shadow:0 2px 10px rgba(16,25,68,0.06);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);cursor:pointer;overflow:hidden;}.product-card-container:active{transform:scale(0.97);box-shadow:0 4px 18px rgba(16,25,68,0.13);}.product-card-inner{position:relative;background:white;border-radius:16px;padding:0;display:flex;flex-direction:column;height:100%;}.product-card-img-wrap{position:relative;background:#f8f9fc;border-radius:16px 16px 0 0;overflow:hidden;aspect-ratio:1/1;}.product-card-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;}.product-card-container:active .product-card-img-wrap img{transform:scale(1.05);}.product-card-promo{position:absolute;bottom:8px;right:8px;background:linear-gradient(135deg,#bd1e24,#e03030);color:white;font-size:10px;font-weight:900;padding:4px 10px;border-radius:8px;box-shadow:0 2px 8px rgba(189,30,36,0.45);white-space:nowrap;z-index:2;letter-spacing:0.03em;}.product-card-body{padding:10px 11px 12px;display:flex;flex-direction:column;gap:5px;}.product-card-name{font-size:11.5px;font-weight:700;color:#1e293b;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px;}.product-card-price-row{display:flex;flex-direction:column;gap:2px;}.product-card-price{color:#111827;font-weight:900;font-size:0.95rem;letter-spacing:-0.3px;line-height:1;}.product-card-oldprice{color:#94a3b8;font-size:9px;font-weight:600;text-decoration:line-through;line-height:1;}.category-bubble{flex:0 0 auto;width:105px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:transform 0.2s ease;}.category-bubble:active{transform:scale(0.95);}.bubble-img-container{width:96px;height:96px;border-radius:20px;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,0.10);border:1.5px solid #f0f0f5;transition:all 0.25s ease;overflow:hidden;}.category-bubble:active .bubble-img-container{box-shadow:0 2px 8px rgba(0,0,0,0.13);}.bubble-img-container img{width:88%;height:88%;object-fit:contain;border-radius:0;}.bubble-text{font-size:12px;font-weight:700;text-align:center;color:#1d1d1f;line-height:1.3;letter-spacing:-0.01em;}.price-tag{color:var(--afro-red);font-weight:900;font-size:1.1rem;letter-spacing:-0.5px;}#productScrollWrapper{overflow:hidden;position:relative;touch-action:pan-y;}#productScrollWrapper::after{content:'';position:absolute;top:0;right:0;bottom:0;width:52px;background:linear-gradient(to right,transparent,rgba(248,250,252,0.94));pointer-events:none;z-index:2;}#productScrollTrack{display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;padding:8px 16px 16px;width:max-content;transition:transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);will-change:transform;cursor:grab;}#productScrollTrack:active{cursor:grabbing;}#productScrollTrack .product-card-container{flex:0 0 auto;width:155px;}@media (min-width:480px){#productScrollTrack .product-card-container{width:170px;}}#categoryBubbles{display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 16px 16px;}@keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}.animate-marquee{display:flex;width:max-content;animation:marquee 28s linear infinite;}.animate-marquee:hover{animation-play-state:paused;}.banner-container{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:12px;}.banner-item{flex:0 0 88%;scroll-snap-align:start;}.banner-item:first-child{margin-left:16px;}.banner-item:last-child{margin-right:16px;}@media (min-width:768px){.banner-item{flex:0 0 55%;}}#langBtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.35);border-radius:22px;padding:6px 10px 6px 8px;font-size:11px;font-weight:900;color:white;cursor:pointer;transition:background 0.2s;white-space:nowrap;height:36px;}#langBtn:active{transform:scale(0.95);}#langBtn:hover{background:rgba(255,255,255,0.25);}#langBtn .lang-arrow{width:12px;height:12px;opacity:0.75;flex-shrink:0;transition:transform 0.25s;}.lang-arrow.open{transform:rotate(180deg);}.lang-option{display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:white;border:none;cursor:pointer;transition:background 0.15s;font-family:'Inter',sans-serif;}.lang-option:hover{background:#f8fafc;}.lang-option:active{background:#f0f4ff;}#authBtn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.65);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;position:relative;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,0.15);}#authBtn:hover{background:rgba(255,255,255,0.28);border-color:white;}#authBtn:active{transform:scale(0.95);}#authBtn svg{width:20px;height:20px;stroke:white;fill:none;stroke-width:2;}.scroll-nav-btn{width:38px;height:38px;border-radius:50%;background:rgba(16,25,68,0.88);border:1.5px solid rgba(255,255,255,0.20);box-shadow:0 4px 14px rgba(0,0,0,0.30);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s,transform 0.15s,opacity 0.3s;color:white;}.scroll-nav-btn:hover{background:rgba(189,30,36,0.88);}.scroll-nav-btn:active{transform:scale(0.88);}.badge-select-box{width:100%;appearance:none;-webkit-appearance:none;background:#f8fafc;border:2px solid #e2e8f0;border-radius:18px;padding:14px 44px 14px 16px;font-size:11px;font-weight:800;color:#0f172a;outline:none;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;font-family:inherit;letter-spacing:0.01em;}.badge-select-box:focus{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.15);}.badge-preview-strip{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 14px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:14px;min-height:42px;}.badge-preview-icon{width:22px;height:22px;color:#16a34a;flex-shrink:0;}.badge-preview-text{font-size:11px;font-weight:900;color:#15803d;text-transform:uppercase;letter-spacing:0.04em;}.badge-save-btn{width:100%;margin-top:8px;background:linear-gradient(135deg,#16a34a,#22c55e);color:white;border:none;border-radius:14px;padding:11px 0;font-size:9px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity 0.2s,transform 0.1s;font-family:inherit;}.badge-save-btn:active{transform:scale(0.97);opacity:0.9;}.product-badge-chip{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:20px;padding:5px 10px;font-size:10px;font-weight:900;color:#15803d;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;}.product-badge-chip svg{width:14px;height:14px;color:#16a34a;flex-shrink:0;}.card-badge-chip{display:inline-flex;align-items:center;gap:3px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:2px 6px;font-size:8px;font-weight:900;color:#15803d;text-transform:uppercase;margin-top:4px;}.card-badge-chip svg{width:10px;height:10px;}#promoTopBar{height:38px;min-height:38px;}#promoMsg{transition:opacity 0.5s ease,transform 0.5s ease;text-align:center;display:flex;align-items:center;justify-content:center;width:100%;}@keyframes kb1{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.14) translate(-2.5%,-2%);}100%{transform:scale(1.00) translate(0%,0%);}}@keyframes kb2{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.12) translate(2.5%,-1.5%);}100%{transform:scale(1.00) translate(0%,0%);}}@keyframes kb3{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.10) translate(0%,2.5%);}100%{transform:scale(1.00) translate(0%,0%);}}.banner-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:center center;transition:opacity 1s ease;}.banner-bg-img.hidden-img{opacity:0;animation:none !important;}.banner-bg-img.visible-img{opacity:1;}.banner-bg-img.kb1{animation:kb1 9s ease-in-out infinite;}.banner-bg-img.kb2{animation:kb2 9s ease-in-out infinite;}.banner-bg-img.kb3{animation:kb3 9s ease-in-out infinite;}#admDescEditor[data-empty='true']:before{content:attr(data-placeholder);color:#94a3b8;pointer-events:none;font-size:11px;}#admDescEditor[data-empty='true']{}#admDescEditor{min-height:200px;height:auto;}#admDescEditor h3{font-size:14px;font-weight:900;color:#101944;margin:8px 0 4px;}#admDescEditor ul{list-style:disc;padding-left:18px;margin:4px 0;}#admDescEditor b,#admDescEditor strong{font-weight:900;color:#0f172a;}#admDescEditor i,#admDescEditor em{font-style:italic;}.rich-desc h3{font-size:15px;font-weight:900;color:#101944;margin:14px 0 6px;line-height:1.3;}.rich-desc p{font-size:12px;color:#475569;line-height:1.7;margin:4px 0;}.rich-desc ul{list-style:disc;padding-left:18px;margin:6px 0;font-size:12px;color:#475569;}.rich-desc li{margin:2px 0;line-height:1.6;}.rich-desc b,.rich-desc strong{font-weight:900;color:#0f172a;}.rich-desc img{max-width:100%;border-radius:14px;margin:10px 0;display:block;}.rich-desc div{margin:0;}</style>
+<style>:root{--afro-blue:#101944;--afro-red:#bd1e24;--bg-body:#f8fafc;}html{overflow-x:hidden;max-width:100%;}body{font-family:'Inter',sans-serif;background-color:var(--bg-body);color:#0f172a;overflow-x:hidden;max-width:100%;}.no-scrollbar::-webkit-scrollbar{display:none;}#sideNav,#sideCart{transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);isolation:isolate;-webkit-isolation:isolate;overscroll-behavior:contain;}#detailModal{isolation:isolate;-webkit-isolation:isolate;overscroll-behavior:contain;}.no-scroll{overflow:hidden !important;height:100vh !important;width:100vw !important;position:fixed !important;touch-action:none;-webkit-overflow-scrolling:none;}#stickyShell{position:fixed !important;top:0;left:0;width:100%;z-index:101;box-shadow:0 2px 10px rgba(0,0,0,0.12);}body{padding-top:148px;}.promo-badge{background:linear-gradient(45deg,#bd1e24,#ff4d4d);box-shadow:0 4px 10px rgba(189,30,36,0.3);}.ticker-wrap{width:100%;overflow:hidden;background:#bd1e24;color:white;padding:8px 0;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;}.ticker{display:inline-block;white-space:nowrap;padding-right:100%;animation:ticker 25s linear infinite;}.ticker__item{display:inline-block;padding:0 30px;}@keyframes ticker{0%{transform:translate3d(0,0,0);}100%{transform:translate3d(-100%,0,0);}}@keyframes taglineScroll{0%{transform:translateX(100%);}100%{transform:translateX(-100%);}}.whatsapp-float{position:fixed;bottom:80px;right:14px;background-color:#25d366;color:#fff;border-radius:50px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;z-index:500;box-shadow:0 6px 18px rgba(0,0,0,0.25);transition:all 0.3s ease;animation:pulse-whatsapp 2s infinite;}@keyframes pulse-whatsapp{0%{box-shadow:0 0 0 0 rgba(37,211,102,0.5);}70%{box-shadow:0 0 0 15px rgba(37,211,102,0);}100%{box-shadow:0 0 0 0 rgba(37,211,102,0);}}.badge-new{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#dbeafe;color:#1e40af;gap:0.2rem;vertical-align:middle;line-height:1;}.badge-regular{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#f3e8ff;color:#6b21a5;gap:0.2rem;vertical-align:middle;line-height:1;}.badge-loyal{display:inline-flex;align-items:center;padding:0.1rem 0.35rem;border-radius:9999px;font-size:0.55rem;font-weight:700;background-color:#fef3c7;color:#b45309;gap:0.2rem;vertical-align:middle;line-height:1;}.admin-profile-badge{display:inline-flex;align-items:center;gap:0.45rem;background:linear-gradient(135deg,#0f172a,#1e293b);border-radius:9999px;padding:0.45rem 0.85rem;box-shadow:0 4px 14px rgba(0,0,0,0.25);}.admin-profile-badge .admin-name{font-weight:900;color:white;font-size:0.875rem;letter-spacing:0.01em;line-height:1;}.product-card-container{position:relative;border-radius:16px;background:white;border:1px solid #e8edf5;box-shadow:0 2px 10px rgba(16,25,68,0.06);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);cursor:pointer;overflow:hidden;}.product-card-container:active{transform:scale(0.97);box-shadow:0 4px 18px rgba(16,25,68,0.13);}.product-card-inner{position:relative;background:white;border-radius:16px;padding:0;display:flex;flex-direction:column;height:100%;}.product-card-img-wrap{position:relative;background:#f8f9fc;border-radius:16px 16px 0 0;overflow:hidden;aspect-ratio:1/1;}.product-card-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;}.product-card-container:active .product-card-img-wrap img{transform:scale(1.05);}.product-card-promo{position:absolute;bottom:8px;right:8px;background:linear-gradient(135deg,#bd1e24,#e03030);color:white;font-size:10px;font-weight:900;padding:4px 10px;border-radius:8px;box-shadow:0 2px 8px rgba(189,30,36,0.45);white-space:nowrap;z-index:2;letter-spacing:0.03em;}.product-card-body{padding:10px 11px 12px;display:flex;flex-direction:column;gap:5px;}.product-card-name{font-size:11.5px;font-weight:700;color:#1e293b;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:32px;}.product-card-price-row{display:flex;flex-direction:column;gap:2px;}.product-card-price{color:#111827;font-weight:900;font-size:0.95rem;letter-spacing:-0.3px;line-height:1;}.product-card-oldprice{color:#94a3b8;font-size:9px;font-weight:600;text-decoration:line-through;line-height:1;}.category-bubble{flex:0 0 auto;width:105px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:transform 0.2s ease;}.category-bubble:active{transform:scale(0.95);}.bubble-img-container{width:96px;height:96px;border-radius:20px;background:white;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,0.10);border:1.5px solid #f0f0f5;transition:all 0.25s ease;overflow:hidden;}.category-bubble:active .bubble-img-container{box-shadow:0 2px 8px rgba(0,0,0,0.13);}.bubble-img-container img{width:88%;height:88%;object-fit:contain;border-radius:0;}.bubble-text{font-size:12px;font-weight:700;text-align:center;color:#1d1d1f;line-height:1.3;letter-spacing:-0.01em;}.price-tag{color:var(--afro-red);font-weight:900;font-size:1.1rem;letter-spacing:-0.5px;}#productScrollWrapper{overflow:hidden;position:relative;touch-action:pan-y;}#productScrollWrapper::after{content:'';position:absolute;top:0;right:0;bottom:0;width:52px;background:linear-gradient(to right,transparent,rgba(248,250,252,0.94));pointer-events:none;z-index:2;}#productScrollTrack{display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;padding:8px 16px 16px;width:max-content;transition:transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94);will-change:transform;cursor:grab;}#productScrollTrack:active{cursor:grabbing;}#productScrollTrack .product-card-container{flex:0 0 auto;width:155px;}@media (min-width:480px){#productScrollTrack .product-card-container{width:170px;}}#categoryBubbles{display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 16px 16px;}@keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}.animate-marquee{display:flex;width:max-content;animation:marquee 28s linear infinite;}.animate-marquee:hover{animation-play-state:paused;}.banner-container{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:12px;}.banner-item{flex:0 0 88%;scroll-snap-align:start;}.banner-item:first-child{margin-left:16px;}.banner-item:last-child{margin-right:16px;}@media (min-width:768px){.banner-item{flex:0 0 55%;}}#langBtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.35);border-radius:22px;padding:6px 10px 6px 8px;font-size:11px;font-weight:900;color:white;cursor:pointer;transition:background 0.2s;white-space:nowrap;height:36px;}#langBtn:active{transform:scale(0.95);}#langBtn:hover{background:rgba(255,255,255,0.25);}#langBtn .lang-arrow{width:12px;height:12px;opacity:0.75;flex-shrink:0;transition:transform 0.25s;}.lang-arrow.open{transform:rotate(180deg);}.lang-option{display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:white;border:none;cursor:pointer;transition:background 0.15s;font-family:'Inter',sans-serif;}.lang-option:hover{background:#f8fafc;}.lang-option:active{background:#f0f4ff;}#authBtn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.18);border:2px solid rgba(255,255,255,0.65);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;position:relative;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,0.15);}#authBtn:hover{background:rgba(255,255,255,0.28);border-color:white;}#authBtn:active{transform:scale(0.95);}#authBtn svg{width:20px;height:20px;stroke:white;fill:none;stroke-width:2;}.scroll-nav-btn{width:38px;height:38px;border-radius:50%;background:rgba(16,25,68,0.88);border:1.5px solid rgba(255,255,255,0.20);box-shadow:0 4px 14px rgba(0,0,0,0.30);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s,transform 0.15s,opacity 0.3s;color:white;}.scroll-nav-btn:hover{background:rgba(189,30,36,0.88);}.scroll-nav-btn:active{transform:scale(0.88);}.badge-select-box{width:100%;appearance:none;-webkit-appearance:none;background:#f8fafc;border:2px solid #e2e8f0;border-radius:18px;padding:14px 44px 14px 16px;font-size:11px;font-weight:800;color:#0f172a;outline:none;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;font-family:inherit;letter-spacing:0.01em;}.badge-select-box:focus{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.15);}.badge-preview-strip{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 14px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:14px;min-height:42px;}.badge-preview-icon{width:22px;height:22px;color:#16a34a;flex-shrink:0;}.badge-preview-text{font-size:11px;font-weight:900;color:#15803d;text-transform:uppercase;letter-spacing:0.04em;}.badge-save-btn{width:100%;margin-top:8px;background:linear-gradient(135deg,#16a34a,#22c55e);color:white;border:none;border-radius:14px;padding:11px 0;font-size:9px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity 0.2s,transform 0.1s;font-family:inherit;}.badge-save-btn:active{transform:scale(0.97);opacity:0.9;}.product-badge-chip{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:20px;padding:5px 10px;font-size:10px;font-weight:900;color:#15803d;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;}.product-badge-chip svg{width:14px;height:14px;color:#16a34a;flex-shrink:0;}.card-badge-chip{display:inline-flex;align-items:center;gap:3px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:2px 6px;font-size:8px;font-weight:900;color:#15803d;text-transform:uppercase;margin-top:4px;}.card-badge-chip svg{width:10px;height:10px;}#promoTopBar{height:38px;min-height:38px;}#promoMsg{transition:opacity 0.5s ease,transform 0.5s ease;text-align:center;display:flex;align-items:center;justify-content:center;width:100%;}@keyframes kb1{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.14) translate(-2.5%,-2%);}100%{transform:scale(1.00) translate(0%,0%);}}@keyframes kb2{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.12) translate(2.5%,-1.5%);}100%{transform:scale(1.00) translate(0%,0%);}}@keyframes kb3{0%{transform:scale(1.00) translate(0%,0%);}50%{transform:scale(1.10) translate(0%,2.5%);}100%{transform:scale(1.00) translate(0%,0%);}}.banner-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:center center;transition:opacity 1s ease;}.banner-bg-img.hidden-img{opacity:0;animation:none !important;}.banner-bg-img.visible-img{opacity:1;}.banner-bg-img.kb1{animation:kb1 9s ease-in-out infinite;}.banner-bg-img.kb2{animation:kb2 9s ease-in-out infinite;}.banner-bg-img.kb3{animation:kb3 9s ease-in-out infinite;}#admDescEditor[data-empty='true']:before{content:attr(data-placeholder);color:#94a3b8;pointer-events:none;font-size:11px;}#admDescEditor[data-empty='true']{}#admDescEditor{min-height:200px;height:auto;}#admDescEditor h3{font-size:14px;font-weight:900;color:#101944;margin:8px 0 4px;}#admDescEditor ul{list-style:disc;padding-left:18px;margin:4px 0;}#admDescEditor b,#admDescEditor strong{font-weight:900;color:#0f172a;}#admDescEditor i,#admDescEditor em{font-style:italic;}.rich-desc h3{font-size:15px;font-weight:900;color:#101944;margin:14px 0 6px;line-height:1.3;}.rich-desc p{font-size:12px;color:#475569;line-height:1.7;margin:4px 0;}.rich-desc ul{list-style:disc;padding-left:18px;margin:6px 0;font-size:12px;color:#475569;}.rich-desc li{margin:2px 0;line-height:1.6;}.rich-desc b,.rich-desc strong{font-weight:900;color:#0f172a;}.rich-desc img{max-width:100%;border-radius:14px;margin:10px 0;display:block;}.rich-desc div{margin:0;}</style>
 </head>
 <body class="text-slate-900 overflow-x-hidden">
 
@@ -213,14 +233,59 @@ RENVOYER L'EMAIL
 </style>
 
 <div id="categoryBubblesSection" class="pt-5 pb-4 border-b border-slate-100" style="position:relative;background:white;overflow:hidden;">
-  <!-- Motif filaire cursif style TechDeals -->
-  <div style="position:absolute;top:-10px;right:-10px;pointer-events:none;user-select:none;z-index:0;opacity:0.18;">
-    <svg width="160" height="130" viewBox="0 0 160 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M140 10 C120 5, 90 20, 100 45 C110 70, 145 60, 135 85 C125 108, 85 100, 70 118" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M155 25 C135 18, 108 35, 118 58 C128 80, 158 72, 150 95 C142 115, 108 110, 95 125" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <path d="M128 5 C108 15, 88 8, 80 30 C72 52, 95 68, 88 88 C80 108, 55 108, 45 122" stroke="#94a3b8" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- ═══ FOND FLORAL "CATÉGORIES" ═══ -->
+  <!-- Fleur gauche -->
+  <div style="position:absolute;top:-10px;left:-30px;pointer-events:none;z-index:0;opacity:0.10;">
+    <svg width="190" height="190" viewBox="0 0 190 190" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Grande fleur centrale -->
+      <ellipse cx="80" cy="90" rx="22" ry="38" fill="#94a3b8" transform="rotate(0 80 90)"/>
+      <ellipse cx="80" cy="90" rx="22" ry="38" fill="#94a3b8" transform="rotate(45 80 90)"/>
+      <ellipse cx="80" cy="90" rx="22" ry="38" fill="#94a3b8" transform="rotate(90 80 90)"/>
+      <ellipse cx="80" cy="90" rx="22" ry="38" fill="#94a3b8" transform="rotate(135 80 90)"/>
+      <circle cx="80" cy="90" r="14" fill="white"/>
+      <circle cx="80" cy="90" r="9" fill="#94a3b8"/>
+      <!-- Petite fleur secondaire -->
+      <ellipse cx="140" cy="38" rx="11" ry="19" fill="#94a3b8" transform="rotate(0 140 38)"/>
+      <ellipse cx="140" cy="38" rx="11" ry="19" fill="#94a3b8" transform="rotate(60 140 38)"/>
+      <ellipse cx="140" cy="38" rx="11" ry="19" fill="#94a3b8" transform="rotate(120 140 38)"/>
+      <circle cx="140" cy="38" r="7" fill="white"/>
+      <circle cx="140" cy="38" r="4" fill="#94a3b8"/>
+      <!-- Feuilles -->
+      <path d="M105 65 Q120 45 135 55 Q120 70 105 65Z" fill="#94a3b8"/>
+      <path d="M50 115 Q30 100 35 82 Q50 95 50 115Z" fill="#94a3b8"/>
+      <!-- Petits points -->
+      <circle cx="155" cy="90" r="3" fill="#94a3b8"/>
+      <circle cx="30" cy="145" r="4" fill="#94a3b8"/>
+      <circle cx="160" cy="130" r="2.5" fill="#94a3b8"/>
     </svg>
   </div>
+  <!-- Fleur droite -->
+  <div style="position:absolute;top:-10px;right:-25px;pointer-events:none;z-index:0;opacity:0.10;">
+    <svg width="180" height="185" viewBox="0 0 180 185" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Grande fleur -->
+      <ellipse cx="110" cy="95" rx="20" ry="35" fill="#94a3b8" transform="rotate(0 110 95)"/>
+      <ellipse cx="110" cy="95" rx="20" ry="35" fill="#94a3b8" transform="rotate(45 110 95)"/>
+      <ellipse cx="110" cy="95" rx="20" ry="35" fill="#94a3b8" transform="rotate(90 110 95)"/>
+      <ellipse cx="110" cy="95" rx="20" ry="35" fill="#94a3b8" transform="rotate(135 110 95)"/>
+      <circle cx="110" cy="95" r="13" fill="white"/>
+      <circle cx="110" cy="95" r="8" fill="#94a3b8"/>
+      <!-- Petite fleur coin bas gauche -->
+      <ellipse cx="40" cy="158" rx="10" ry="17" fill="#94a3b8" transform="rotate(0 40 158)"/>
+      <ellipse cx="40" cy="158" rx="10" ry="17" fill="#94a3b8" transform="rotate(60 40 158)"/>
+      <ellipse cx="40" cy="158" rx="10" ry="17" fill="#94a3b8" transform="rotate(120 40 158)"/>
+      <circle cx="40" cy="158" r="6" fill="white"/>
+      <circle cx="40" cy="158" r="3.5" fill="#94a3b8"/>
+      <!-- Feuilles -->
+      <path d="M88 72 Q72 52 58 63 Q74 77 88 72Z" fill="#94a3b8"/>
+      <path d="M130 120 Q150 108 148 90 Q135 102 130 120Z" fill="#94a3b8"/>
+      <!-- Petits points -->
+      <circle cx="25" cy="95" r="3" fill="#94a3b8"/>
+      <circle cx="165" cy="155" r="4" fill="#94a3b8"/>
+      <circle cx="20" cy="55" r="2.5" fill="#94a3b8"/>
+    </svg>
+  </div>
+
   <!-- Titre section avec trait bleu -->
   <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:14px;position:relative;z-index:1;">
     <h2 style="font-size:22px;font-weight:900;color:#111827;margin:0 0 6px;letter-spacing:-0.3px;" data-fr="Catégories" data-en="Categories">Catégories</h2>
@@ -232,10 +297,59 @@ RENVOYER L'EMAIL
 <main class="py-4 min-h-screen" style="overflow:visible">
 
 <div id="heroCardsSection" class="mb-6" data-had-content="true" style="display:none">
-<div class="flex items-center justify-between px-4 mb-3">
-<span class="text-[13px] font-black uppercase tracking-widest text-[#101944]" data-fr="Nos Articles" data-en="Our Products">Nos Articles</span>
 
+<!-- ═══ EN-TÊTE "PRODUITS" avec fond unique : sacs, boîtes, étoiles ═══ -->
+<div style="position:relative;overflow:hidden;background:white;padding:28px 16px 10px;border-bottom:1px solid #f1f5f9;">
+
+  <!-- ═══ FOND FLORAL "NOS ARTICLES" ═══ -->
+  <!-- Fleur gauche -->
+  <div style="position:absolute;top:-10px;left:-30px;pointer-events:none;z-index:0;opacity:0.10;">
+    <svg width="190" height="170" viewBox="0 0 190 170" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="75" cy="85" rx="20" ry="36" fill="#94a3b8" transform="rotate(0 75 85)"/>
+      <ellipse cx="75" cy="85" rx="20" ry="36" fill="#94a3b8" transform="rotate(45 75 85)"/>
+      <ellipse cx="75" cy="85" rx="20" ry="36" fill="#94a3b8" transform="rotate(90 75 85)"/>
+      <ellipse cx="75" cy="85" rx="20" ry="36" fill="#94a3b8" transform="rotate(135 75 85)"/>
+      <circle cx="75" cy="85" r="13" fill="white"/>
+      <circle cx="75" cy="85" r="8" fill="#94a3b8"/>
+      <ellipse cx="148" cy="30" rx="10" ry="18" fill="#94a3b8" transform="rotate(0 148 30)"/>
+      <ellipse cx="148" cy="30" rx="10" ry="18" fill="#94a3b8" transform="rotate(60 148 30)"/>
+      <ellipse cx="148" cy="30" rx="10" ry="18" fill="#94a3b8" transform="rotate(120 148 30)"/>
+      <circle cx="148" cy="30" r="6" fill="white"/>
+      <circle cx="148" cy="30" r="3.5" fill="#94a3b8"/>
+      <path d="M100 62 Q115 42 130 53 Q115 68 100 62Z" fill="#94a3b8"/>
+      <path d="M45 110 Q25 95 30 77 Q45 90 45 110Z" fill="#94a3b8"/>
+      <circle cx="160" cy="85" r="3" fill="#94a3b8"/>
+      <circle cx="28" cy="145" r="4" fill="#94a3b8"/>
+    </svg>
+  </div>
+  <!-- Fleur droite -->
+  <div style="position:absolute;top:0;right:-10px;pointer-events:none;z-index:0;opacity:0.10;">
+    <svg width="170" height="160" viewBox="0 0 170 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="115" cy="80" rx="20" ry="35" fill="#94a3b8" transform="rotate(0 115 80)"/>
+      <ellipse cx="115" cy="80" rx="20" ry="35" fill="#94a3b8" transform="rotate(45 115 80)"/>
+      <ellipse cx="115" cy="80" rx="20" ry="35" fill="#94a3b8" transform="rotate(90 115 80)"/>
+      <ellipse cx="115" cy="80" rx="20" ry="35" fill="#94a3b8" transform="rotate(135 115 80)"/>
+      <circle cx="115" cy="80" r="13" fill="white"/>
+      <circle cx="115" cy="80" r="8" fill="#94a3b8"/>
+      <ellipse cx="38" cy="140" rx="9" ry="16" fill="#94a3b8" transform="rotate(0 38 140)"/>
+      <ellipse cx="38" cy="140" rx="9" ry="16" fill="#94a3b8" transform="rotate(60 38 140)"/>
+      <ellipse cx="38" cy="140" rx="9" ry="16" fill="#94a3b8" transform="rotate(120 38 140)"/>
+      <circle cx="38" cy="140" r="5.5" fill="white"/>
+      <circle cx="38" cy="140" r="3" fill="#94a3b8"/>
+      <path d="M92 58 Q76 38 62 49 Q78 63 92 58Z" fill="#94a3b8"/>
+      <path d="M135 108 Q155 96 153 78 Q140 90 135 108Z" fill="#94a3b8"/>
+      <circle cx="22" cy="80" r="3" fill="#94a3b8"/>
+      <circle cx="160" cy="140" r="4" fill="#94a3b8"/>
+    </svg>
+  </div>
+
+  <!-- Grand titre centré -->
+  <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:4px;position:relative;z-index:1;">
+    <h2 style="font-size:22px;font-weight:900;color:#111827;margin:0 0 6px;letter-spacing:-0.3px;" data-fr="Nos Articles" data-en="Our Products">Nos Articles</h2>
+    <div style="width:48px;height:3px;background:#1d4ed8;border-radius:2px;"></div>
+  </div>
 </div>
+
 <div id="heroCardsContainer"
 class="no-scrollbar"
 style="display:flex;gap:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;
@@ -250,12 +364,62 @@ scroll-snap-type:x mandatory;padding:0 16px 12px;"></div>
 <div id="carouselProgressBar" style="display:none;padding:4px 16px 10px;display:flex;flex-direction:column;gap:5px;"></div>
 
 <section id="temuGridSection" class="mt-6 mb-2" data-had-content="true" style="display:none;">
-<div class="flex items-center justify-between px-4 mb-3">
+
+<!-- ═══ EN-TÊTE "TOUS LES ARTICLES" avec fond unique : grille, cœurs, prix ═══ -->
+<div style="position:relative;overflow:hidden;background:white;padding:28px 16px 12px;border-bottom:1px solid #f1f5f9;margin-bottom:4px;">
+  <!-- ═══ FOND FLORAL "TOUS LES ARTICLES" ═══ -->
+  <!-- Fleur droite -->
+  <div style="position:absolute;top:0;right:-20px;pointer-events:none;z-index:0;opacity:0.10;">
+    <svg width="180" height="150" viewBox="0 0 180 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="120" cy="75" rx="21" ry="37" fill="#94a3b8" transform="rotate(0 120 75)"/>
+      <ellipse cx="120" cy="75" rx="21" ry="37" fill="#94a3b8" transform="rotate(45 120 75)"/>
+      <ellipse cx="120" cy="75" rx="21" ry="37" fill="#94a3b8" transform="rotate(90 120 75)"/>
+      <ellipse cx="120" cy="75" rx="21" ry="37" fill="#94a3b8" transform="rotate(135 120 75)"/>
+      <circle cx="120" cy="75" r="14" fill="white"/>
+      <circle cx="120" cy="75" r="9" fill="#94a3b8"/>
+      <ellipse cx="40" cy="130" rx="10" ry="18" fill="#94a3b8" transform="rotate(0 40 130)"/>
+      <ellipse cx="40" cy="130" rx="10" ry="18" fill="#94a3b8" transform="rotate(60 40 130)"/>
+      <ellipse cx="40" cy="130" rx="10" ry="18" fill="#94a3b8" transform="rotate(120 40 130)"/>
+      <circle cx="40" cy="130" r="6" fill="white"/>
+      <circle cx="40" cy="130" r="3.5" fill="#94a3b8"/>
+      <path d="M97 53 Q81 33 67 44 Q83 58 97 53Z" fill="#94a3b8"/>
+      <path d="M142 100 Q162 88 160 70 Q147 82 142 100Z" fill="#94a3b8"/>
+      <circle cx="22" cy="70" r="3" fill="#94a3b8"/>
+      <circle cx="168" cy="30" r="4" fill="#94a3b8"/>
+    </svg>
+  </div>
+  <!-- Fleur gauche -->
+  <div style="position:absolute;top:0;left:-20px;pointer-events:none;z-index:0;opacity:0.10;">
+    <svg width="160" height="150" viewBox="0 0 160 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="55" cy="75" rx="19" ry="34" fill="#94a3b8" transform="rotate(0 55 75)"/>
+      <ellipse cx="55" cy="75" rx="19" ry="34" fill="#94a3b8" transform="rotate(45 55 75)"/>
+      <ellipse cx="55" cy="75" rx="19" ry="34" fill="#94a3b8" transform="rotate(90 55 75)"/>
+      <ellipse cx="55" cy="75" rx="19" ry="34" fill="#94a3b8" transform="rotate(135 55 75)"/>
+      <circle cx="55" cy="75" r="12" fill="white"/>
+      <circle cx="55" cy="75" r="7.5" fill="#94a3b8"/>
+      <ellipse cx="130" cy="28" rx="9" ry="16" fill="#94a3b8" transform="rotate(0 130 28)"/>
+      <ellipse cx="130" cy="28" rx="9" ry="16" fill="#94a3b8" transform="rotate(60 130 28)"/>
+      <ellipse cx="130" cy="28" rx="9" ry="16" fill="#94a3b8" transform="rotate(120 130 28)"/>
+      <circle cx="130" cy="28" r="5.5" fill="white"/>
+      <circle cx="130" cy="28" r="3" fill="#94a3b8"/>
+      <path d="M78 54 Q93 34 108 45 Q93 59 78 54Z" fill="#94a3b8"/>
+      <path d="M28 100 Q8 88 10 70 Q23 82 28 100Z" fill="#94a3b8"/>
+      <circle cx="145" cy="100" r="3" fill="#94a3b8"/>
+      <circle cx="18" cy="30" r="4" fill="#94a3b8"/>
+    </svg>
+  </div>
+
+  <div style="display:flex;flex-direction:column;align-items:center;position:relative;z-index:1;">
+    <h2 style="font-size:22px;font-weight:900;color:#111827;margin:0 0 6px;letter-spacing:-0.3px;" data-fr="Tous les Articles" data-en="All Products">Tous les Articles</h2>
+    <div style="width:48px;height:3px;background:#1d4ed8;border-radius:2px;"></div>
+  </div>
+</div>
+
+<div class="flex items-center justify-between px-4 mb-3" style="padding-top:10px;">
 <div class="flex items-center gap-2">
 <div style="width:4px;height:18px;background:linear-gradient(135deg,#bd1e24,#ff4d4d);border-radius:3px;"></div>
-<span class="text-[13px] font-black uppercase tracking-widest text-[#101944]" data-fr="Tous les Articles" data-en="All Products">Tous les Articles</span>
-</div>
 <span id="temuGridCount" class="text-[9px] font-bold text-slate-400 uppercase tracking-widest"></span>
+</div>
 </div>
 <div id="temuGrid" class="px-3" style="display:flex;gap:10px;align-items:flex-start;">
 <div id="temuColLeft"  style="flex:1;display:flex;flex-direction:column;gap:10px;"></div>
@@ -599,15 +763,91 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
 
 <a href="#" id="dynamicWA" target="_blank" class="whatsapp-float"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.445 0 .081 5.391.079 11.99c0 2.112.553 4.177 1.6 6.002L0 24l6.163-1.617a11.831 11.831 0 005.883 1.562h.005c6.604 0 11.967-5.391 11.97-11.991a11.856 11.856 0 00-3.486-8.452z"/></svg></a>
 
-<div id="detailModal" class="fixed inset-y-0 right-0 w-full max-w-md bg-white z-[150] shadow-2xl translate-x-full flex flex-col" style="background:white;will-change:transform;">
-<div class="p-4 border-b flex items-center justify-between sticky top-0 bg-white z-10">
-<button onclick="window.closeDetail && window.closeDetail()" class="font-black text-[#101944] flex items-center gap-2">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-<span data-fr="RETOUR" data-en="BACK">RETOUR</span>
-</button>
-<span class="text-[10px] font-black text-slate-400" data-fr="DÉTAILS" data-en="DETAILS">DÉTAILS</span>
+<div id="detailModal" class="fixed inset-0 w-full flex flex-col" style="
+  background:white;
+  display:none;
+  top:0;left:0;right:0;bottom:0;
+  max-width:100%;
+  z-index:150;
+  overflow:hidden;
+">
+<!-- ── Header fixe style Tech Deals — logo + langue + panier ── -->
+<div style="
+  position:sticky;top:0;z-index:20;
+  background:white;
+  border-bottom:1px solid #e5e7eb;
+  padding:10px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+">
+  <!-- Logo cliquable → ferme le détail -->
+  <button onclick="window.closeDetail && window.closeDetail()" style="background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;">
+    <img src="https://i.postimg.cc/GpZd7Y2F/logo-afroservice-2.png"
+      style="height:38px;width:auto;max-width:160px;object-fit:contain;object-position:left center;display:block;"
+      alt="Afro Service">
+  </button>
+  <!-- Droite : langue + panier -->
+  <div style="display:flex;align-items:center;gap:8px;">
+    <!-- Langue avec dropdown dédié dans la fiche détail -->
+    <div style="position:relative;" id="detailLangDropdownWrap">
+      <button onclick="window._toggleDetailLangDD && window._toggleDetailLangDD()"
+        style="display:flex;align-items:center;gap:4px;border:1.5px solid #d1d5db;border-radius:6px;padding:6px 10px;background:white;cursor:pointer;height:36px;">
+        <span id="detailLangFlag" style="font-size:16px;line-height:1;">🇫🇷</span>
+        <span id="detailLangCode" style="font-size:12px;font-weight:800;color:#111827;">FR</span>
+        <svg fill="none" stroke="#6b7280" viewBox="0 0 24 24" style="width:11px;height:11px;flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div id="detailLangDropdown" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:white;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.18);overflow:hidden;z-index:999;min-width:145px;border:1px solid rgba(0,0,0,0.06);">
+        <button onclick="window.setLang('fr');window._closeDetailLangDD();" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:white;border:none;cursor:pointer;font-family:inherit;">
+          <span style="font-size:18px;">🇫🇷</span>
+          <span style="font-size:13px;font-weight:700;color:#101944;">Français</span>
+        </button>
+        <div style="height:1px;background:#f1f5f9;margin:0 12px;"></div>
+        <button onclick="window.setLang('en');window._closeDetailLangDD();" style="display:flex;align-items:center;gap:10px;width:100%;padding:12px 16px;background:white;border:none;cursor:pointer;font-family:inherit;">
+          <span style="font-size:18px;">🇬🇧</span>
+          <span style="font-size:13px;font-weight:700;color:#101944;">English</span>
+        </button>
+      </div>
+    </div>
+    <!-- Panier -->
+    <button onclick="window.closeDetail && window.closeDetail(); setTimeout(function(){ window.openCart && window.openCart(); }, 350);"
+      style="width:40px;height:40px;border-radius:6px;background:#1d4ed8;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;">
+      <svg width="20" height="20" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+      </svg>
+      <span id="detailCartBadge" style="display:none;position:absolute;top:-5px;right:-5px;background:#ef4444;color:white;font-size:9px;font-weight:900;height:16px;min-width:16px;border-radius:9999px;align-items:center;justify-content:center;border:2px solid white;line-height:1;padding:0 2px;">0</span>
+    </button>
+  </div>
 </div>
 <div id="detailContent" class="flex-1 overflow-y-auto no-scrollbar" style="padding:0 0 0 0;"></div>
+<!-- Bouton scroll haut/bas dans la fiche détail -->
+<button id="detailScrollBtn"
+onclick="window._handleDetailScroll && window._handleDetailScroll()"
+style="
+position:absolute;
+bottom:136px;
+right:19px;
+width:32px;
+height:32px;
+border-radius:50%;
+background:rgba(16,25,68,0.55);
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,0.18);
+box-shadow:0 2px 10px rgba(0,0,0,0.22);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+z-index:30;
+opacity:0;
+pointer-events:none;
+transition:opacity 0.4s ease, transform 0.18s ease;
+">
+<svg id="detailScrollIcon" width="14" height="14" fill="none" stroke="rgba(255,255,255,0.85)" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M5 15l7-7 7 7"/>
+</svg>
+</button>
 </div>
 
 <aside id="sideNav" class="fixed inset-y-0 left-0 w-[280px] bg-white z-[110] shadow-2xl -translate-x-full overflow-y-auto">
@@ -629,17 +869,19 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
 </aside>
 
 <!-- ══ PAGE PANIER PLEIN ÉCRAN ══ -->
-<aside id="sideCart" style="position:fixed;inset:0;width:100%;max-width:100%;background:white;z-index:110;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:30px;">
+<aside id="sideCart" style="position:fixed;inset:0;width:100%;max-width:100%;background:#f8fafc;z-index:500;display:none;flex-direction:column;overflow:hidden;">
 
-  <!-- En-tête sticky -->
-  <div style="background:white;border-bottom:1.5px solid #e5e7eb;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-    <button onclick="window.closeMenus && window.closeMenus()" style="width:38px;height:38px;border-radius:50%;background:#f1f5f9;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
-      <svg width="18" height="18" fill="none" stroke="#374151" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+  <!-- En-tête style page indépendante : flèche retour + titre centré -->
+  <div style="background:#101944;padding:0 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5;height:56px;flex-shrink:0;">
+    <button onclick="window.closeMenus && window.closeMenus()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+      <svg width="20" height="20" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
     </button>
-    <h2 style="font-size:17px;font-weight:900;color:#101944;margin:0;" data-fr="Articles du panier" data-en="Cart items">Articles du panier</h2>
-    <button onclick="window.closeMenus && window.closeMenus()" style="width:38px;height:38px;border-radius:50%;background:#f1f5f9;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:#64748b;line-height:1;">&times;</button>
+    <h2 style="font-size:17px;font-weight:900;color:white;margin:0;letter-spacing:-0.2px;flex:1;" data-fr="Mon Panier" data-en="My Cart">Mon Panier</h2>
+    <span id="cartCountLabel" style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.7);white-space:nowrap;"></span>
   </div>
 
+  <!-- Contenu scrollable -->
+  <div id="cartScrollContent" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:30px;">
   <!-- Articles dans le flux normal -->
   <div id="cartItems" style="padding:16px;background:white;"></div>
 
@@ -684,6 +926,7 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
     </button>
   </div>
 
+  </div><!-- fin scrollable -->
 </aside>
 
 <div id="adminModal" class="hidden fixed inset-0 bg-white z-[200] flex flex-col">
@@ -1079,6 +1322,22 @@ Importer tout
  }
 
  window.cycleLang = function() { applyLang(currentLang === 'fr' ? 'en' : 'fr'); };
+
+ // ── Dropdown Langue fiche détail ──
+ window._toggleDetailLangDD = function() {
+   var dd = document.getElementById('detailLangDropdown');
+   if (!dd) return;
+   dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
+ };
+ window._closeDetailLangDD = function() {
+   var dd = document.getElementById('detailLangDropdown');
+   if (dd) dd.style.display = 'none';
+ };
+ // Fermer si clic hors du dropdown
+ document.addEventListener('click', function(e) {
+   var wrap = document.getElementById('detailLangDropdownWrap');
+   if (wrap && !wrap.contains(e.target)) window._closeDetailLangDD();
+ }, true);
 
  // ── Dropdown Langue ──
  let _langDropOpen = false;
@@ -1601,6 +1860,16 @@ Importer tout
  }
  document.getElementById('cartTotal').innerText = total.toLocaleString() + " FCFA";
  document.getElementById('badge').innerText = cart.length;
+ // Mettre à jour le label de comptage dans l'en-tête du panier
+ var lbl = document.getElementById('cartCountLabel');
+ if (lbl) lbl.textContent = cart.length > 0 ? cart.length + ' article' + (cart.length > 1 ? 's' : '') : '';
+ // Synchroniser tous les badges panier (header détail + catégories)
+ ['bnCartBadge','detailCartBadge','catPageCartBadge'].forEach(function(id) {
+   var el = document.getElementById(id);
+   if (!el) return;
+   el.textContent = cart.length;
+   el.style.display = cart.length > 0 ? 'flex' : 'none';
+ });
  }
  }
  window.removeFromCart = function(index) {
@@ -1998,9 +2267,11 @@ Importer tout
  const p = stock.find(x => x.id === id);
  if (!p) return;
  window._detailFromCategory = !!_fromCat;
- // Masquer la barre de navigation du bas
+ // Cacher la barre de navigation du bas
  var _bnb = document.getElementById('bottomNavBar');
  if (_bnb) _bnb.style.display = 'none';
+ // Barre de progression instantanée
+ if (typeof NProgress !== 'undefined') NProgress.start();
  window.currentSlide = 0;
  const content = document.getElementById('detailContent');
  const imgs = p.imgs && p.imgs.length ? p.imgs : ['https://via.placeholder.com/300'];
@@ -2054,7 +2325,7 @@ Importer tout
  ${cols.map((c, i) => {
    const hex = colorMap[c.toLowerCase()] || '#94a3b8';
    const isLight = ['blanc','white','beige','argent','silver'].includes(c.toLowerCase());
-   return `<button onclick="window._selectColor(this,'${c}')" data-color="${c}" style="width:36px;height:36px;border-radius:50%;background:${hex};border:3px solid ${i===0?'#101944':'#e2e8f0'};box-shadow:${i===0?'0 0 0 2px #101944':'none'};cursor:pointer;transition:all 0.2s;flex-shrink:0;position:relative;" title="${c}"></button>`;
+   return `<button onclick="window._selectColor(this,'${c}')" data-color="${c}" style="width:40px;height:40px;border-radius:50%;background:${hex};border:3px solid ${i===0?'#101944':'#e2e8f0'};box-shadow:${i===0?'0 0 0 3px rgba(16,25,68,0.18)':'none'};cursor:pointer;transition:all 0.2s;flex-shrink:0;position:relative;" title="${c}"></button>`;
  }).join('')}
  </div>
  <p id="selectedColorLabel" style="font-size:11px;font-weight:700;color:#101944;margin-top:8px;">${cols[0] || ''}</p>
@@ -2064,10 +2335,17 @@ Importer tout
 
  let memHtml = '';
  if (p.memory) {
-   memHtml = `<div style="margin-bottom:18px;">
- <p style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:#64748b;margin-bottom:8px;">${lang === 'fr' ? 'Capacité / Mémoire' : 'Capacity / Memory'}</p>
- <select id="vMem" style="width:100%;border:2px solid #e2e8f0;border-radius:14px;padding:12px 16px;font-size:12px;font-weight:700;background:#f8fafc;outline:none;font-family:inherit;">${p.memory.split(',').map(m => `<option>${m.trim()}</option>`).join('')}</select>
- </div>`;
+  const mems = p.memory.split(',').map(m => m.trim()).filter(Boolean);
+  memHtml = `<div style="margin-bottom:18px;">
+  <p style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:#64748b;margin-bottom:8px;">${lang === 'fr' ? 'Capacité / Mémoire' : 'Capacity / Memory'}</p>
+  <div style="position:relative;">
+    <select id="memSelect" onchange="window._selectMemDD(this)" style="width:100%;appearance:none;-webkit-appearance:none;background:white;border:1.5px solid #e2e8f0;border-radius:12px;padding:13px 44px 13px 16px;font-size:13px;font-weight:700;color:#111827;outline:none;cursor:pointer;font-family:inherit;box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+      ${mems.map((m,i) => `<option value="${m}" ${i===0?'selected':''}>${m}</option>`).join('')}
+    </select>
+    <svg style="position:absolute;right:14px;top:50%;transform:translateY(-50%);pointer-events:none;" width="18" height="18" fill="none" stroke="#64748b" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+  </div>
+  <input type="hidden" id="vMem" value="${mems[0]||''}">
+  </div>`;
  }
 
  content.innerHTML = `
@@ -2148,15 +2426,15 @@ Importer tout
  <!-- QUANTITÉ -->
  <div style="margin-bottom:20px;">
  <p style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:#64748b;margin-bottom:8px;">${lang === 'fr' ? 'Quantité' : 'Quantity'}</p>
- <div style="display:flex;align-items:center;gap:0;border:2px solid #e2e8f0;border-radius:0;overflow:hidden;width:fit-content;">
- <button onclick="window._dtlQtyMinus()" style="width:44px;height:44px;background:#f8fafc;border:none;cursor:pointer;font-size:20px;font-weight:900;color:#101944;display:flex;align-items:center;justify-content:center;">−</button>
- <input id="vQty" type="number" value="1" min="1" style="width:50px;border:none;text-align:center;font-size:14px;font-weight:900;color:#101944;outline:none;background:white;height:44px;">
- <button onclick="window._dtlQtyPlus()" style="width:44px;height:44px;background:#f8fafc;border:none;cursor:pointer;font-size:20px;font-weight:900;color:#101944;display:flex;align-items:center;justify-content:center;">+</button>
+ <div style="display:flex;align-items:center;gap:0;border:1.5px solid #e2e8f0;border-radius:0;overflow:hidden;width:fit-content;">
+ <button onclick="window._dtlQtyMinus()" style="width:44px;height:44px;background:#f8fafc;border:none;border-right:1.5px solid #e2e8f0;cursor:pointer;font-size:22px;font-weight:700;color:#374151;display:flex;align-items:center;justify-content:center;">−</button>
+ <input id="vQty" type="number" value="1" min="1" style="width:52px;border:none;text-align:center;font-size:15px;font-weight:900;color:#111827;outline:none;background:white;height:44px;">
+ <button onclick="window._dtlQtyPlus()" style="width:44px;height:44px;background:#f8fafc;border:none;border-left:1.5px solid #e2e8f0;cursor:pointer;font-size:22px;font-weight:700;color:#374151;display:flex;align-items:center;justify-content:center;">+</button>
  </div>
  </div>
 
  <!-- CTA BUTTONS -->
- <button onclick="window.addToCart('${p.id}')" class="${_fromCat ? 'btn-commander-shimmer' : ''}" style="width:100%;background:#101944;color:white;border:none;border-radius:0;padding:17px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;box-shadow:0 6px 20px rgba(16,25,68,0.3);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+ <button onclick="window.addToCart('${p.id}')" class="${_fromCat ? 'btn-commander-shimmer' : ''}" style="width:100%;background:#101944;color:white;border:none;border-radius:10px;padding:17px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;box-shadow:0 6px 20px rgba(16,25,68,0.30);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.97)';this.style.background='#0d1538'" onmouseup="this.style.transform='scale(1)';this.style.background='#101944'" onmouseleave="this.style.transform='scale(1)';this.style.background='#101944'">
  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3c-.63.63-.18 1.7.7 1.7H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
  ${lang === 'fr' ? 'Ajouter au Panier' : 'Add to Cart'}
  </button>
@@ -2278,15 +2556,19 @@ Importer tout
  <div style="font-size:20px;font-weight:900;color:#101944;line-height:1;letter-spacing:-0.5px;">${parseInt(p.price).toLocaleString('fr-FR')} <span style="font-size:11px;font-weight:700;">FCFA</span></div>
  ${p.old ? `<div style="font-size:11px;color:#94a3b8;text-decoration:line-through;line-height:1;margin-top:2px;">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</div>` : ''}
  </div>
- <button onclick="window.addToCart('${p.id}')" class="${_fromCat ? 'btn-commander-shimmer' : ''}" style="background:#101944;color:white;border:none;border-radius:0;padding:13px 22px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(16,25,68,0.3);transition:all 0.2s;white-space:nowrap;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+ <button onclick="window.addToCart('${p.id}')" class="${_fromCat ? 'btn-commander-shimmer' : ''}" style="background:#101944;color:white;border:none;border-radius:8px;padding:13px 22px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(16,25,68,0.30);transition:all 0.2s;white-space:nowrap;" onmousedown="this.style.transform='scale(0.96)';this.style.background='#0d1538'" onmouseup="this.style.transform='scale(1)';this.style.background='#101944'" onmouseleave="this.style.transform='scale(1)';this.style.background='#101944'">
  <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3c-.63.63-.18 1.7.7 1.7H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
  ${lang === 'fr' ? 'Ajouter' : 'Add'}
  </button>
  </div>`;
 
- document.getElementById('detailModal').style.transform = "translateX(0)";
- document.getElementById('overlay').classList.remove('hidden');
+ const _dm = document.getElementById('detailModal');
+ _dm.style.display = 'flex';
+ var _bnb2 = document.getElementById('bottomNavBar');
+ if (_bnb2) _bnb2.style.display = 'none';
  const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll');
+ // Terminer la barre de progression
+ setTimeout(function(){ if (typeof NProgress !== 'undefined') NProgress.done(); }, 350);
  // URL dynamique pour le partage
  const _prodUrl = location.origin + location.pathname + '?produit=' + p.id;
  history.pushState({ produit: p.id }, '', '?produit=' + p.id);
@@ -2396,6 +2678,27 @@ Importer tout
  }).join('');
  };
 
+ window._selectMemDD = function(sel) {
+ var inp = document.getElementById('vMem');
+ if (inp) inp.value = sel.value;
+ };
+
+ window._selectMem = function(btn, memVal) {
+ var wrap = document.getElementById('memChipsWrap');
+ if (wrap) {
+   wrap.querySelectorAll('button').forEach(function(b) {
+     b.style.border = '2px solid #e2e8f0';
+     b.style.background = 'white';
+     b.style.color = '#374151';
+   });
+ }
+ btn.style.border = '2px solid #101944';
+ btn.style.background = '#101944';
+ btn.style.color = 'white';
+ var inp = document.getElementById('vMem');
+ if (inp) inp.value = memVal;
+ };
+
  window._selectColor = function(btn, colorName) {
  const wrap = document.getElementById('colorSwatchesWrap');
  if (wrap) {
@@ -2405,7 +2708,7 @@ Importer tout
    });
  }
  btn.style.border = '3px solid #101944';
- btn.style.boxShadow = '0 0 0 2px #101944';
+ btn.style.boxShadow = '0 0 0 3px rgba(16,25,68,0.18)';
  const label = document.getElementById('selectedColorLabel');
  if (label) label.textContent = colorName;
  const inp = document.getElementById('vCol');
@@ -3357,9 +3660,9 @@ Importer tout
  };
 
  window.openNav    = function() { const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll'); document.getElementById('sideNav').style.transform="translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='none'; };
- window.openCart   = function() { const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll'); document.getElementById('sideCart').style.transform="translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='none'; };
- window.closeMenus = function() { if(window._slideAutoTimer){clearInterval(window._slideAutoTimer);window._slideAutoTimer=null;} const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('sideNav').style.transform="translateX(-100%)"; document.getElementById('sideCart').style.transform="translateX(100%)"; document.getElementById('detailModal').style.transform="translateX(100%)"; document.getElementById('overlay').classList.add('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='flex'; };
- window.closeDetail = function() { if(window._slideAutoTimer){clearInterval(window._slideAutoTimer);window._slideAutoTimer=null;} const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('detailModal').style.transform="translateX(100%)"; document.getElementById('overlay').classList.add('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='flex'; history.pushState({},'',location.pathname); document.getElementById('og-title').content='Afro Service Cameroun | Boutique en ligne Premium'; document.getElementById('og-url').content=''; updateWALink(); };
+ window.openCart   = function() { const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll'); var sc=document.getElementById('sideCart'); sc.style.display='flex'; var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='none'; };
+ window.closeMenus = function() { if(window._slideAutoTimer){clearInterval(window._slideAutoTimer);window._slideAutoTimer=null;} const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('sideNav').style.transform="translateX(-100%)"; document.getElementById('sideCart').style.display="none"; document.getElementById('detailModal').style.display="none"; document.getElementById('overlay').classList.add('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='flex'; };
+ window.closeDetail = function() { if(window._slideAutoTimer){clearInterval(window._slideAutoTimer);window._slideAutoTimer=null;} const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('detailModal').style.display="none"; document.getElementById('overlay').classList.add('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='flex'; history.pushState({},'',location.pathname); document.getElementById('og-title').content='Afro Service Cameroun | Boutique en ligne Premium'; document.getElementById('og-url').content=''; updateWALink(); };
  window.switchAdminTab = function(tabName) {
  document.querySelectorAll('.admin-panel').forEach(panel => panel.classList.add('hidden'));
  document.querySelectorAll('[id^="tab-"]').forEach(tab => { tab.classList.remove('border-red-600', 'text-red-600'); tab.classList.add('border-transparent', 'text-slate-400'); });
@@ -3532,14 +3835,14 @@ Importer tout
    }
    // 2. Fiche détail
    var detail = document.getElementById('detailModal');
-   if (_isPanelOpen(detail)) {
+   if (detail && detail.style.display === 'flex') {
      return document.getElementById('detailContent') || detail;
    }
    // 3. Panier
-   var cartEl = document.getElementById('sideCart');
-   if (_isPanelOpen(cartEl)) {
-     return cartEl;
-   }
+  var cartEl = document.getElementById('sideCart');
+  if (cartEl && cartEl.style.display === 'flex') {
+    return document.getElementById('cartScrollContent') || cartEl;
+  }
    // 4. Menu nav
    var nav = document.getElementById('sideNav');
    if (_isPanelOpen(nav)) return nav;
@@ -3580,7 +3883,7 @@ Importer tout
  document.getElementById('adminModal')?.addEventListener('scroll', updateScrollBtn, { passive: true });
  document.getElementById('adminModal')?.querySelector('.flex-1.overflow-y-auto')?.addEventListener('scroll', updateScrollBtn, { passive: true });
  document.getElementById('detailContent')?.addEventListener('scroll', updateScrollBtn, { passive: true });
- document.getElementById('sideCart')?.addEventListener('scroll', updateScrollBtn, { passive: true });
+ document.getElementById('cartScrollContent')?.addEventListener('scroll', updateScrollBtn, { passive: true });
  document.getElementById('sideNav')?.addEventListener('scroll', updateScrollBtn, { passive: true });
  document.getElementById('catPage')?.addEventListener('scroll', updateScrollBtn, { passive: true });
 
@@ -3594,9 +3897,8 @@ Importer tout
  window.closeAdmin  = function() { _wrapCloseAdmin  && _wrapCloseAdmin(); setTimeout(updateScrollBtn, 200); };
  window.openNav     = function() { _wrapOpenNav     && _wrapOpenNav();    setTimeout(updateScrollBtn, 200); };
  window.openCart    = function() { _wrapOpenCart    && _wrapOpenCart();   setTimeout(updateScrollBtn, 200);
-   // Écouter le scroll du panier dès son ouverture
-   var sc = document.getElementById('sideCart');
-   if (sc) sc.addEventListener('scroll', updateScrollBtn, { passive: true });
+   var cartInner = document.getElementById('cartScrollContent');
+   if (cartInner) cartInner.addEventListener('scroll', updateScrollBtn, { passive: true });
  };
  window.closeMenus  = function() { _wrapCloseMenus  && _wrapCloseMenus(); setTimeout(updateScrollBtn, 400); };
  window.closeDetail = function() { _wrapCloseDetail && _wrapCloseDetail(); setTimeout(updateScrollBtn, 400); };
@@ -3608,7 +3910,7 @@ Importer tout
      var dc = document.getElementById('detailContent');
      if (dc) dc.addEventListener('scroll', updateScrollBtn, { passive: true });
      updateScrollBtn();
-   }, 300);
+   }, 50);
  };
 
  updateScrollBtn();
@@ -3912,12 +4214,11 @@ Voir les articles
  return;
  }
 
- // 2. Modal produit (détail) — ouvert via style.transform = "translateX(0)"
+ // 2. Modal produit (détail) — ouvert via style.display = "flex"
  const detailModal = document.getElementById('detailModal');
- if (isOpenByTransform(detailModal, 'translateX(100%)')) {
+ if (detailModal && detailModal.style.display === 'flex') {
  if (window.closeDetail) { window.closeDetail(); }
- else { detailModal.style.transform = 'translateX(100%)'; }
- hideOverlay();
+ else { detailModal.style.display = 'none'; }
  return;
  }
 
@@ -3927,11 +4228,11 @@ Voir les articles
  return;
  }
 
- // 4. Panier latéral — ouvert via style.transform = "translateX(0)"
+ // 4. Panier — ouvert via display:flex
  const sideCart = document.getElementById('sideCart');
- if (isOpenByTransform(sideCart, 'translateX(100%)')) {
+ if (sideCart && sideCart.style.display === 'flex') {
  if (window.closeMenus) { window.closeMenus(); }
- else { sideCart.style.transform = 'translateX(100%)'; }
+ else { sideCart.style.display = 'none'; }
  hideOverlay();
  return;
  }
@@ -3979,8 +4280,8 @@ Voir les articles
  }
 
  function initWatchers() {
- watchTransformPanel('detailModal');
- watchTransformPanel('sideCart');
+ watchDisplayPanel('detailModal');
+ watchDisplayPanel('sideCart');
  watchTransformPanel('sideNav');
  watchDisplayPanel('promoPopup');
 
@@ -4260,7 +4561,7 @@ Voir les articles
 <script>
 // ── Bottom Nav active state ──
 (function(){
-  var ACTIVE = '#101944';
+  var ACTIVE = '#1d4ed8';
   var INACTIVE = '#94a3b8';
   function setActive(id) {
     ['bnAccueil','bnCategories','bnPanier'].forEach(function(bid){
@@ -4268,12 +4569,27 @@ Voir les articles
       if (!btn) return;
       var isActive = bid === id;
       btn.style.color = isActive ? ACTIVE : INACTIVE;
+      btn.style.fontWeight = isActive ? '900' : '700';
+      // Indicateur bleu sous l'onglet actif
+      var dot = btn.querySelector('.bn-active-dot');
+      if (!dot) {
+        dot = document.createElement('div');
+        dot.className = 'bn-active-dot';
+        dot.style.cssText = 'display:none;';
+        btn.appendChild(dot);
+      }
+      dot.style.opacity = isActive ? '1' : '0';
     });
   }
   setActive('bnAccueil');
 
   window._bnGoHome = function() {
     setActive('bnAccueil');
+    // Fermer la page catégories si elle est ouverte
+    var catPage = document.getElementById('catPage');
+    if (catPage && catPage.style.display !== 'none') {
+      window._closeCatPage && window._closeCatPage();
+    }
     window._resetToHome && window._resetToHome();
   };
 
@@ -4405,14 +4721,29 @@ Voir les articles
     </div>
   </div>
 
-  <!-- Titre Catégories + fond blanc avec dessin cursif identique TechDeals -->
+  <!-- Titre Catégories + fond unique catégories — bulles, icônes grille -->
   <div style="position:relative;overflow:hidden;padding:28px 16px 0;background:white;">
-    <!-- Motif filaire cursif style TechDeals -->
-    <div style="position:absolute;top:-10px;right:-10px;pointer-events:none;user-select:none;z-index:0;opacity:0.18;">
-      <svg width="180" height="150" viewBox="0 0 180 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M160 12 C138 5, 105 22, 116 50 C127 78, 165 66, 154 95 C143 122, 98 115, 82 135" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <path d="M175 28 C153 20, 124 40, 136 66 C148 90, 178 80, 170 108 C162 130, 124 126, 108 143" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <path d="M145 6 C122 18, 100 10, 90 35 C80 60, 106 78, 98 100 C90 122, 62 122, 50 138" stroke="#94a3b8" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <!-- Motif gauche : cercles + grille -->
+    <div style="position:absolute;top:-10px;left:-20px;pointer-events:none;z-index:0;">
+      <svg width="160" height="140" viewBox="0 0 160 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="60" r="52" stroke="#1d4ed8" stroke-width="1" opacity="0.06"/>
+        <circle cx="50" cy="60" r="35" stroke="#1d4ed8" stroke-width="0.8" opacity="0.05"/>
+        <rect x="33" y="43" width="11" height="11" rx="3" stroke="#1d4ed8" stroke-width="1.4" opacity="0.13"/>
+        <rect x="49" y="43" width="11" height="11" rx="3" stroke="#1d4ed8" stroke-width="1.4" opacity="0.13"/>
+        <rect x="33" y="59" width="11" height="11" rx="3" stroke="#1d4ed8" stroke-width="1.4" opacity="0.13"/>
+        <rect x="49" y="59" width="11" height="11" rx="3" stroke="#bd1e24" stroke-width="1.4" opacity="0.12"/>
+        <circle cx="120" cy="120" r="28" stroke="#f97316" stroke-width="0.8" opacity="0.06"/>
+      </svg>
+    </div>
+    <!-- Motif droite : étiquettes -->
+    <div style="position:absolute;top:0;right:-10px;pointer-events:none;z-index:0;">
+      <svg width="160" height="140" viewBox="0 0 160 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M110 15 L148 15 Q153 15 153 20 L153 40 Q153 45 148 45 L110 45 L102 30 Z" stroke="#bd1e24" stroke-width="1.2" opacity="0.11" fill="none"/>
+        <circle cx="106" cy="30" r="3" stroke="#bd1e24" stroke-width="1" opacity="0.12"/>
+        <path d="M120 60 L150 60 Q155 60 155 65 L155 80 Q155 85 150 85 L120 85 L113 72.5 Z" stroke="#1d4ed8" stroke-width="1" opacity="0.09" fill="none"/>
+        <path d="M130 102 L148 102 Q153 102 153 106 L153 118 Q153 122 148 122 L130 122 L124 112 Z" stroke="#f97316" stroke-width="0.9" opacity="0.09" fill="none"/>
+        <circle cx="90" cy="110" r="3" fill="#1d4ed8" opacity="0.08"/>
+        <circle cx="104" cy="118" r="2" fill="#f97316" opacity="0.08"/>
       </svg>
     </div>
     <h2 style="font-size:26px;font-weight:900;color:#111827;text-align:center;margin:0 0 8px;position:relative;z-index:1;" id="catPageTitle">Catégories</h2>
@@ -4496,14 +4827,18 @@ Voir les articles
 <script>
 (function(){
 
-  // ── Sync lang code dans catPage header ──
+  // ── Sync lang code dans catPage header + detail header ──
   function _syncCatPageHeader() {
     var flag = document.getElementById('langFlag');
     var code = document.getElementById('langCode');
     var cpFlag = document.getElementById('catPageLangFlag');
     var cpCode = document.getElementById('catPageLangCode');
+    var dtFlag = document.getElementById('detailLangFlag');
+    var dtCode = document.getElementById('detailLangCode');
     if (flag && cpFlag) cpFlag.textContent = flag.textContent;
     if (code && cpCode) cpCode.textContent = code.textContent;
+    if (flag && dtFlag) dtFlag.textContent = flag.textContent;
+    if (code && dtCode) dtCode.textContent = code.textContent;
     // Sync badge panier
     var hb = document.getElementById('badge');
     var cb = document.getElementById('catPageCartBadge');
@@ -4531,7 +4866,11 @@ Voir les articles
     document.body.style.overflow = '';
     ['bnAccueil','bnCategories','bnPanier'].forEach(function(bid){
       var btn = document.getElementById(bid);
-      if (btn) btn.style.color = bid === 'bnAccueil' ? '#101944' : '#94a3b8';
+      if (!btn) return;
+      var isActive = bid === 'bnAccueil';
+      btn.style.color = isActive ? '#1d4ed8' : '#94a3b8';
+      var dot = btn.querySelector('.bn-active-dot');
+      if (dot) dot.style.opacity = isActive ? '1' : '0';
     });
   };
 
@@ -4588,61 +4927,189 @@ Voir les articles
 
 })();
 </script>
-<!-- ══ SPINNER CHARGEMENT PAGE (comme TechDeals) ══ -->
+<!-- ══ SKELETON OVERLAY DÉTAIL PRODUIT (style Tech Deals) ══ -->
 <div id="pageLoader" style="
   display:none;
-  position:fixed;inset:0;top:0;left:0;right:0;bottom:0;
-  background:#ffffff;
-  opacity:1;
-  z-index:99999;
-  align-items:center;
-  justify-content:center;
+  position:fixed;inset:0;
+  background:#f8fafc;
+  z-index:97000;
   pointer-events:all;
-  will-change:transform;
-  transform:translateZ(0);
+  overflow:hidden;
+  padding-top:148px;
+  padding-bottom:64px;
 ">
-  <div style="width:36px;height:36px;border:3px solid #e5e7eb;border-top-color:#1d4ed8;border-radius:50%;animation:spinLoader 0.7s linear infinite;"></div>
+  <!-- Skeleton image -->
+  <div style="width:100%;aspect-ratio:1/1;max-height:52vw;background:#e2e8f0;position:relative;overflow:hidden;">
+    <div class="skeleton-shimmer" style="position:absolute;inset:0;"></div>
+  </div>
+  <!-- Skeleton contenu -->
+  <div style="padding:18px 16px;display:flex;flex-direction:column;gap:14px;">
+    <div style="position:relative;overflow:hidden;background:#e2e8f0;border-radius:8px;height:22px;width:80%;"><div class="skeleton-shimmer" style="position:absolute;inset:0;"></div></div>
+    <div style="position:relative;overflow:hidden;background:#e2e8f0;border-radius:8px;height:22px;width:55%;"><div class="skeleton-shimmer" style="position:absolute;inset:0;"></div></div>
+    <div style="position:relative;overflow:hidden;background:#dbeafe;border-radius:10px;height:32px;width:45%;"><div class="skeleton-shimmer" style="position:absolute;inset:0;"></div></div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+      <div style="position:relative;overflow:hidden;background:#e2e8f0;border-radius:6px;height:13px;width:100%;"><div class="skeleton-shimmer" style="position:absolute;inset:0;"></div></div>
+      <div style="position:relative;overflow:hidden;background:#e2e8f0;border-radius:6px;height:13px;width:90%;"><div class="skeleton-shimmer" style="position:absolute;inset:0;"></div></div>
+      <div style="position:relative;overflow:hidden;background:#e2e8f0;border-radius:6px;height:13px;width:75%;"><div class="skeleton-shimmer" style="position:absolute;inset:0;"></div></div>
+    </div>
+    <div style="position:relative;overflow:hidden;background:#e2e8f0;border-radius:14px;height:48px;width:100%;margin-top:8px;"><div class="skeleton-shimmer" style="position:absolute;inset:0;"></div></div>
+  </div>
 </div>
-<style>
-@keyframes spinLoader {
-  to { transform: rotate(360deg); }
-}
-</style>
+
 <script>
-window._showPageLoader = function() {
-  var sideCart = document.getElementById('sideCart');
-  if (sideCart) { sideCart.style.transform = 'translateX(100%)'; }
-  var sideNav = document.getElementById('sideNav');
-  if (sideNav) { sideNav.style.transform = 'translateX(-100%)'; }
-  var overlay = document.getElementById('overlay');
-  if (overlay) { overlay.classList.add('hidden'); }
-  document.body.classList.remove('no-scroll');
+// ════════════════════════════════════════════════════════
+//  SYSTÈME DE NAVIGATION STYLE TECH DEALS — NProgress SPA
+// ════════════════════════════════════════════════════════
+
+// Configuration NProgress
+if (typeof NProgress !== 'undefined') {
+  NProgress.configure({
+    showSpinner: false,   // pas de spinner NProgress, on a le skeleton
+    trickleSpeed: 120,
+    minimum: 0.12,
+    easing: 'ease',
+    speed: 280
+  });
+}
+
+// ── Utilitaires ──────────────────────────────────────────
+window._npStart = function() {
+  if (typeof NProgress !== 'undefined') NProgress.start();
+};
+window._npDone = function() {
+  if (typeof NProgress !== 'undefined') NProgress.done();
+};
+
+// Skeleton : affiché seulement si le rendu prend > 200ms (connexion lente)
+var _skeletonTimer = null;
+window._showSkeletonDelayed = function() {
+  _skeletonTimer = setTimeout(function() {
+    var el = document.getElementById('pageLoader');
+    if (el) el.style.display = 'block';
+  }, 200);
+};
+window._hideSkeletonAndBar = function() {
+  clearTimeout(_skeletonTimer);
   var el = document.getElementById('pageLoader');
-  if (el) { el.style.display = 'flex'; }
+  if (el) {
+    el.style.display = 'none';
+  }
+  window._npDone();
+};
+
+// ── Wrapper principal showDetail ─────────────────────────
+(function() {
+  // Attend que showDetail soit défini (peut être wrappé plusieurs fois)
+  function installHook() {
+    var _real = window.showDetail;
+    if (!_real || _real._isAfroHook) return; // déjà installé
+
+    function _hookedShowDetail(id, _fromCat) {
+      // 1. Barre NProgress instantanée (< 16ms)
+      window._npStart();
+      // 2. Skeleton après 200ms si la page est lente
+      window._showSkeletonDelayed();
+      // 3. Rendre le vrai modal (synchrone — les données sont déjà en mémoire)
+      _real.apply(window, arguments);
+      // 4. Finir la barre et masquer le skeleton
+      //    On laisse 80ms pour que le DOM soit peint avant de finir
+      setTimeout(window._hideSkeletonAndBar, 80);
+    }
+    _hookedShowDetail._isAfroHook = true;
+    window.showDetail = _hookedShowDetail;
+    window.openDetail = _hookedShowDetail;
+  }
+
+  // Installe dès que possible, puis re-vérifie si des wrappers successifs l'ont remplacé
+  setTimeout(installHook, 800);
+  setTimeout(installHook, 2000);
+})();
+
+// ── Fonctions héritées (compatibilité) ───────────────────
+window._showPageLoader = function() {
+  window._npStart();
+  window._showSkeletonDelayed();
 };
 window._hidePageLoader = function() {
-  var el = document.getElementById('pageLoader');
-  if (el) { el.style.display = 'none'; }
+  window._hideSkeletonAndBar();
 };
-// Hook sur ouverture du détail produit pour afficher le loader
-(function(){
-  var _origShowDetail = window.showDetail;
-  function hookDetail() {
-    if (window.showDetail && window.showDetail !== _hookedDetail) {
-      _origShowDetail = window.showDetail;
-      window.showDetail = _hookedDetail;
-    }
+</script>
+
+<script>
+// Swipe-to-close désactivé — la fiche détail est maintenant une page indépendante
+// La fermeture se fait via le bouton retour physique ou le logo
+(function() {
+  // Swipe depuis le haut vers le bas pour fermer (optionnel, désactivé)
+})();
+</script>
+
+<script>
+// ════════════════════════════════════════════
+//  BOUTON SCROLL HAUT/BAS — Fiche Détail uniquement
+//  Le bouton global scrollToggleBtn gère le panier
+// ════════════════════════════════════════════
+(function() {
+  var ICON_UP   = '<path d="M5 15l7-7 7 7"/>';
+  var ICON_DOWN = '<path d="M19 9l-7 7-7-7"/>';
+
+  // ── Fiche Détail ──
+  function updateDetailScroll() {
+    var sc  = document.getElementById('detailContent');
+    var btn = document.getElementById('detailScrollBtn');
+    var ico = document.getElementById('detailScrollIcon');
+    if (!sc || !btn || !ico) return;
+    var dm = document.getElementById('detailModal');
+    if (!dm || dm.style.display !== 'flex') { btn.style.opacity='0'; btn.style.pointerEvents='none'; return; }
+    var y   = sc.scrollTop;
+    var max = sc.scrollHeight - sc.clientHeight;
+    var visible = y > 80;
+    btn.style.opacity       = visible ? '1' : '0';
+    btn.style.pointerEvents = visible ? 'auto' : 'none';
+    var goUp = max > 0 && y > max * 0.45;
+    ico.innerHTML = goUp ? ICON_UP : ICON_DOWN;
   }
-  function _hookedDetail() {
-    var el = document.getElementById('pageLoader');
-    if (el) { el.style.display = 'flex'; }
-    var args = arguments;
-    setTimeout(function(){
-      _origShowDetail && _origShowDetail.apply(window, args);
-      setTimeout(window._hidePageLoader, 500);
+
+  window._handleDetailScroll = function() {
+    var sc  = document.getElementById('detailContent');
+    var btn = document.getElementById('detailScrollBtn');
+    if (!sc || !btn) return;
+    var y   = sc.scrollTop;
+    var max = sc.scrollHeight - sc.clientHeight;
+    var goUp = y > max * 0.45;
+    sc.scrollTo({ top: goUp ? 0 : sc.scrollHeight, behavior: 'smooth' });
+    btn.style.transform = 'scale(0.82)';
+    setTimeout(function(){ btn.style.transform = 'scale(1)'; }, 160);
+  };
+
+  // Attacher le listener scroll sur detailContent dès que la page est prête
+  function attachDetailScroll() {
+    var sc = document.getElementById('detailContent');
+    if (sc) sc.addEventListener('scroll', updateDetailScroll, { passive: true });
+  }
+
+  // Masquer le bouton détail à la fermeture
+  var _origCloseDetail2 = window.closeDetail;
+  window.closeDetail = function() {
+    _origCloseDetail2 && _origCloseDetail2();
+    var dbtn = document.getElementById('detailScrollBtn');
+    if (dbtn) { dbtn.style.opacity='0'; dbtn.style.pointerEvents='none'; }
+  };
+
+  // Hook showDetail pour attacher le listener et mettre à jour après ouverture
+  var _origShowDetail3 = window.showDetail;
+  window.showDetail = function() {
+    _origShowDetail3 && _origShowDetail3.apply(window, arguments);
+    setTimeout(function() {
+      var sc = document.getElementById('detailContent');
+      if (sc) {
+        sc.removeEventListener('scroll', updateDetailScroll);
+        sc.addEventListener('scroll', updateDetailScroll, { passive: true });
+      }
+      updateDetailScroll();
     }, 80);
-  }
-  setTimeout(hookDetail, 1500);
+  };
+
+  document.addEventListener('DOMContentLoaded', attachDetailScroll);
 })();
 </script>
 
