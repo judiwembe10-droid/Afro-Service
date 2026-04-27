@@ -704,7 +704,7 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
       <svg width="13" height="13" fill="none" stroke="#374151" stroke-width="2.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
       </svg>
-      <span style="font-size:11px;font-weight:700;color:#374151;">Retour</span>
+      <span style="font-size:11px;font-weight:700;color:#374151;" data-fr="Retour" data-en="Back">Retour</span>
     </button>
 
     <!-- 🏠 Accueil -->
@@ -714,7 +714,7 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
       <svg width="13" height="13" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
       </svg>
-      <span style="font-size:11px;font-weight:700;color:white;">Accueil</span>
+      <span style="font-size:11px;font-weight:700;color:white;" data-fr="Accueil" data-en="Home">Accueil</span>
     </button>
 
   </div>
@@ -5021,8 +5021,15 @@ window._hideSkeletonAndBar = function() {
       // 3. Rendre le vrai modal (synchrone — les données sont déjà en mémoire)
       _real.apply(window, arguments);
       // 4. Finir la barre et masquer le skeleton
-      //    On laisse 80ms pour que le DOM soit peint avant de finir
       setTimeout(window._hideSkeletonAndBar, 80);
+      // 5. Re-appliquer la langue sur les éléments statiques du modal (Retour, Accueil, etc.)
+      setTimeout(function() {
+        var lang = window.currentLang || 'fr';
+        document.querySelectorAll('#detailModal [data-fr][data-en]').forEach(function(el) {
+          var val = el.getAttribute('data-' + lang);
+          if (val !== null) el.textContent = val;
+        });
+      }, 50);
     }
     _hookedShowDetail._isAfroHook = true;
     window.showDetail = _hookedShowDetail;
