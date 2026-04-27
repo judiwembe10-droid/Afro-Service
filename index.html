@@ -1538,7 +1538,7 @@ Importer tout
  return `
  <div class="banner-item relative overflow-hidden cursor-pointer"
  id="${bannerId}"
- onclick="window._safeTap('${cfg.anchorId}')"
+ onclick="window.showDetail('${cfg.anchorId}')"
  style="height:260px;border-radius:0px;box-shadow:0 8px 32px rgba(16,25,68,0.18);">
 
  <img id="${bannerId}_imgA" src="${firstImg}"
@@ -2046,7 +2046,7 @@ Importer tout
  function cardHTML(p) {
  const promo = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
  const img   = p.imgs && p.imgs[0] ? p.imgs[0] : 'https://via.placeholder.com/300';
- return `<div class="product-card-container" onclick="window._safeTap('${p.id}')">
+ return `<div class="product-card-container" onclick="window.showDetail('${p.id}')">
  <div class="product-card-inner">
  <div class="product-card-img-wrap">
  <img src="${img}" loading="lazy" alt="${p.name}">
@@ -2120,7 +2120,7 @@ Importer tout
  var img     = p.imgs && p.imgs[0] ? p.imgs[0] : 'https://via.placeholder.com/300';
  var promo   = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
  var isNew   = idx < 4;
- var h = '<div class="temu-card" onclick="window._safeTap(\'' + p.id + '\')">';
+ var h = '<div class="temu-card" onclick="window.showDetail(\'' + p.id + '\')">';
  h += '<div class="temu-card-img-wrap">';
  if (isNew) h += '<span class="temu-card-badge">NOUVEAU</span>';
  h += '<img src="' + img + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300\'">';
@@ -2174,7 +2174,7 @@ Importer tout
  var isHot    = soldPct > 60;
  var hasPromo = promo > 0;
 
- html += '<div class="pdd-card" onclick="window._safeTap(\'' + p.id + '\')">';
+ html += '<div class="pdd-card" onclick="window.showDetail(\'' + p.id + '\')">';
 
  // Image gauche + badge promo en bas de l'image
  html += '<div class="pdd-card-img-wrap">';
@@ -2664,7 +2664,7 @@ Importer tout
  grid.innerHTML = similar.map(sp => {
    const spPromo = sp.old ? Math.round(((sp.old - sp.price) / sp.old) * 100) : 0;
    const spImg = sp.imgs && sp.imgs[0] ? sp.imgs[0] : 'https://via.placeholder.com/200';
-   return `<div onclick="window._safeTap('${sp.id}')" style="background:white;border-radius:14px;border:1px solid #e8edf5;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(16,25,68,0.06);transition:all 0.2s;active:transform:scale(0.97);" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+   return `<div onclick="window.showDetail('${sp.id}')" style="background:white;border-radius:14px;border:1px solid #e8edf5;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(16,25,68,0.06);transition:all 0.2s;active:transform:scale(0.97);" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
    <div style="position:relative;aspect-ratio:1/1;overflow:hidden;background:#f4f6fa;">
    <img src="${spImg}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='https://via.placeholder.com/200'">
    ${spPromo > 0 ? `<div style="position:absolute;bottom:6px;right:6px;background:linear-gradient(135deg,#bd1e24,#e03030);color:white;font-size:9px;font-weight:900;padding:2px 7px;border-radius:6px;">-${spPromo}%</div>` : ''}
@@ -2959,7 +2959,7 @@ Importer tout
  const promo     = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
  const shortName = p.name.length > 36 ? p.name.substring(0, 36) + '\u2026' : p.name;
  return `
- <div onclick="window._safeTap('${p.id}')"
+ <div onclick="window.showDetail('${p.id}')"
  style="flex:0 0 ${W}px;scroll-snap-align:start;border-radius:0;overflow:hidden;
  cursor:pointer;background:#101944;
  box-shadow:0 10px 28px rgba(16,25,68,0.28);
@@ -3077,7 +3077,7 @@ Importer tout
          + imgTags
          + '</div>';
      } else {
-       imgBlock = '<div style="width:100%;background:white;border:1px solid #e5e7eb;overflow:hidden;cursor:pointer;" onclick="window._safeTap(\''+p.id+'\',true)">'
+       imgBlock = '<div style="width:100%;background:white;border:1px solid #e5e7eb;overflow:hidden;cursor:pointer;" onclick="window.showDetail(\''+p.id+'\',true)">'
          + '<img src="'+img+'" loading="lazy" alt="'+p.name+'" style="width:100%;height:280px;object-fit:contain;display:block;background:white;">'
          + '</div>';
      }
@@ -3088,7 +3088,7 @@ Importer tout
        // Badge catégorie bleu
        + (sub ? '<div style="display:inline-block;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:600;padding:3px 10px;border-radius:0;margin-bottom:10px;">'+sub+'</div>' : '')
        // Nom gras
-       + '<p onclick="window._safeTap(\''+p.id+'\',true)" style="font-size:17px;font-weight:900;color:#111827;margin:0 0 5px;line-height:1.3;cursor:pointer;">'+p.name+'</p>'
+       + '<p onclick="window.showDetail(\''+p.id+'\',true)" style="font-size:17px;font-weight:900;color:#111827;margin:0 0 5px;line-height:1.3;cursor:pointer;">'+p.name+'</p>'
        // Description courte gris
        + (p.desc ? '<p style="font-size:12px;color:#9ca3af;margin:0 0 12px;line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">'+p.desc.replace(/<[^>]*>/g,'').substring(0,120)+'</p>' : '<div style="margin-bottom:12px;"></div>')
        // Prix + bouton panier bleu
@@ -3105,7 +3105,7 @@ Importer tout
        + '</div>'
        + '</div>'
        // Bouton Commander bleu foncé pleine largeur
-       + '<button onclick="window._safeTap(\''+p.id+'\',true)" style="width:100%;background:#1e293b;color:white;border:none;border-radius:0;padding:16px;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.03em;">'
+       + '<button onclick="window.showDetail(\''+p.id+'\',true)" style="width:100%;background:#1e293b;color:white;border:none;border-radius:0;padding:16px;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.03em;">'
        + '<svg width="16" height="16" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>'
        + (lang==='fr'?'Commander':'Order')
        + '</button>'
@@ -5155,41 +5155,4 @@ window._hidePageLoader = function() {
 })();
 </script>
 
-<!-- ══ ANTI-SCROLL-TAP : empêche l'ouverture accidentelle au scroll ══ -->
-<script>
-(function() {
-  // Seuils : si le doigt a bougé de plus de ces pixels, ce n'est pas un tap
-  var _tapStartX = 0;
-  var _tapStartY = 0;
-  var _tapStartTime = 0;
-  var _isTapCancelled = false;
-
-  document.addEventListener('touchstart', function(e) {
-    if (e.touches.length === 1) {
-      _tapStartX = e.touches[0].clientX;
-      _tapStartY = e.touches[0].clientY;
-      _tapStartTime = Date.now();
-      _isTapCancelled = false;
-    }
-  }, { passive: true });
-
-  // Annuler seulement si scroll vertical dominant (dy > dx ET dy > 20px)
-  document.addEventListener('touchmove', function(e) {
-    if (e.touches.length === 1) {
-      var dx = Math.abs(e.touches[0].clientX - _tapStartX);
-      var dy = Math.abs(e.touches[0].clientY - _tapStartY);
-      if (dy > dx && dy > 15) { _isTapCancelled = true; }
-    }
-  }, { passive: true });
-
-  window._safeTap = function(id, fromCat) {
-    if (_isTapCancelled) { _isTapCancelled = false; return; }
-    if (Date.now() - _tapStartTime > 500) return;
-    window.showDetail && window.showDetail(id, fromCat);
-  };
-  };
-})();
-</script>
-
-</body>
 </html>
