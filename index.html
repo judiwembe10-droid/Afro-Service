@@ -2562,6 +2562,14 @@ Importer tout
 
  const _dm = document.getElementById('detailModal');
  _dm.style.display = 'flex';
+ // ── Traduire immédiatement les boutons statiques (Retour/Accueil) ──
+ (function() {
+   var _lang = window.currentLang || localStorage.getItem('afroLang') || 'fr';
+   _dm.querySelectorAll('[data-fr][data-en]').forEach(function(el) {
+     var val = el.getAttribute('data-' + _lang);
+     if (val !== null) el.textContent = val;
+   });
+ })();
  var _bnb2 = document.getElementById('bottomNavBar');
  if (_bnb2) _bnb2.style.display = 'none';
  const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll');
