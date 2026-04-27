@@ -3071,9 +3071,9 @@ Importer tout
        }).join('');
        imgBlock = '<div id="'+cardId+'" data-imgs="'+encodeURIComponent(JSON.stringify(imgs))+'" data-idx="0"'
          + ' style="position:relative;width:100%;height:280px;background:white;border:1px solid #e5e7eb;overflow:hidden;cursor:pointer;"'
-         + ' ontouchstart="window._tdSwX=event.touches[0].clientX;window._tdSwY=event.touches[0].clientY;window._tdMoved=false;window._tdScrolled=false;window._tdT0=Date.now();"\''
-         + ' ontouchmove="(function(){var _dx=Math.abs(event.touches[0].clientX-window._tdSwX),_dy=Math.abs(event.touches[0].clientY-window._tdSwY);if(_dy>_dx&&_dy>15){window._tdScrolled=true;}else if(_dx>_dy&&_dx>8){event.preventDefault();window._tdMoved=true;}})();"\''
-         + ' ontouchend="(function(){var _sc=window._tdScrolled,_mv=window._tdMoved;window._tdScrolled=false;window._tdMoved=false;if(_sc){return;}if(_mv){var dx=event.changedTouches[0].clientX-window._tdSwX;if(Math.abs(dx)>30){window._tdManualSwipe(\\\'\'+cardId+\'\\\',dx<0?1:-1);}return;}if(Date.now()-window._tdT0>500)return;window.showDetail(\\\'\'+p.id+\'\\\',true);})();"\''
+         + ' ontouchstart="window._tdSwX=event.touches[0].clientX;window._tdSwY=event.touches[0].clientY;window._tdMoved=false;window._tdScrolled=false;"'
+         + ' ontouchmove="(function(){var dx=Math.abs(event.touches[0].clientX-window._tdSwX),dy=Math.abs(event.touches[0].clientY-window._tdSwY);if(dy>dx&&dy>15){window._tdScrolled=true;}else if(dx>dy&&dx>8){event.preventDefault();window._tdMoved=true;}})();"'
+         + ' ontouchend="(function(){if(window._tdScrolled){window._tdScrolled=false;window._tdMoved=false;return;}if(!window._tdMoved){window.showDetail(\''+p.id+'\',true);return;}var dx=event.changedTouches[0].clientX-window._tdSwX;if(Math.abs(dx)>30){window._tdManualSwipe(\''+cardId+'\',dx<0?1:-1);}window._tdMoved=false;})();">'
          + imgTags
          + '</div>';
      } else {
@@ -5178,7 +5178,7 @@ window._hidePageLoader = function() {
     if (e.touches.length === 1) {
       var dx = Math.abs(e.touches[0].clientX - _tapStartX);
       var dy = Math.abs(e.touches[0].clientY - _tapStartY);
-      if (dy > dx && dy > 20) { _isTapCancelled = true; }
+      if (dy > dx && dy > 15) { _isTapCancelled = true; }
     }
   }, { passive: true });
 
