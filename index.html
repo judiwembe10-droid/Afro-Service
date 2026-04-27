@@ -1538,7 +1538,7 @@ Importer tout
  return `
  <div class="banner-item relative overflow-hidden cursor-pointer"
  id="${bannerId}"
- onclick="window.showDetail('${cfg.anchorId}')"
+ onclick="window._safeTap('${cfg.anchorId}')"
  style="height:260px;border-radius:0px;box-shadow:0 8px 32px rgba(16,25,68,0.18);">
 
  <img id="${bannerId}_imgA" src="${firstImg}"
@@ -2664,7 +2664,7 @@ Importer tout
  grid.innerHTML = similar.map(sp => {
    const spPromo = sp.old ? Math.round(((sp.old - sp.price) / sp.old) * 100) : 0;
    const spImg = sp.imgs && sp.imgs[0] ? sp.imgs[0] : 'https://via.placeholder.com/200';
-   return `<div onclick="window.showDetail('${sp.id}')" style="background:white;border-radius:14px;border:1px solid #e8edf5;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(16,25,68,0.06);transition:all 0.2s;active:transform:scale(0.97);" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+   return `<div onclick="window._safeTap('${sp.id}')" style="background:white;border-radius:14px;border:1px solid #e8edf5;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(16,25,68,0.06);transition:all 0.2s;active:transform:scale(0.97);" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
    <div style="position:relative;aspect-ratio:1/1;overflow:hidden;background:#f4f6fa;">
    <img src="${spImg}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='https://via.placeholder.com/200'">
    ${spPromo > 0 ? `<div style="position:absolute;bottom:6px;right:6px;background:linear-gradient(135deg,#bd1e24,#e03030);color:white;font-size:9px;font-weight:900;padding:2px 7px;border-radius:6px;">-${spPromo}%</div>` : ''}
@@ -2959,7 +2959,7 @@ Importer tout
  const promo     = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
  const shortName = p.name.length > 36 ? p.name.substring(0, 36) + '\u2026' : p.name;
  return `
- <div onclick="window.showDetail('${p.id}')"
+ <div onclick="window._safeTap('${p.id}')"
  style="flex:0 0 ${W}px;scroll-snap-align:start;border-radius:0;overflow:hidden;
  cursor:pointer;background:#101944;
  box-shadow:0 10px 28px rgba(16,25,68,0.28);
@@ -3071,13 +3071,13 @@ Importer tout
        }).join('');
        imgBlock = '<div id="'+cardId+'" data-imgs="'+encodeURIComponent(JSON.stringify(imgs))+'" data-idx="0"'
          + ' style="position:relative;width:100%;height:280px;background:white;border:1px solid #e5e7eb;overflow:hidden;cursor:pointer;"'
-         + ' ontouchstart="window._tdSwX=event.touches[0].clientX;window._tdSwY=event.touches[0].clientY;window._tdMoved=false;"'
-         + ' ontouchmove="(function(){var dx=Math.abs(event.touches[0].clientX-window._tdSwX),dy=Math.abs(event.touches[0].clientY-window._tdSwY);if(dx>dy&&dx>8){event.preventDefault();window._tdMoved=true;}})();"'
-         + ' ontouchend="(function(){if(!window._tdMoved){window.showDetail(\''+p.id+'\',true);return;}var dx=event.changedTouches[0].clientX-window._tdSwX;if(Math.abs(dx)>30){window._tdManualSwipe(\''+cardId+'\',dx<0?1:-1);}window._tdMoved=false;})();">'
+         + ' ontouchstart="window._tdSwX=event.touches[0].clientX;window._tdSwY=event.touches[0].clientY;window._tdMoved=false;window._tdScrolled=false;window._tdT0=Date.now();"\''
+         + ' ontouchmove="(function(){var dy=Math.abs(event.touches[0].clientY-window._tdSwY),dx=Math.abs(event.touches[0].clientX-window._tdSwX);if(dy>10){window._tdScrolled=true;}if(dx>dy&&dx>8){event.preventDefault();window._tdMoved=true;}})();"\''
+         + ' ontouchend="(function(){if(window._tdScrolled){window._tdScrolled=false;window._tdMoved=false;return;}if(window._tdMoved){var dx=event.changedTouches[0].clientX-window._tdSwX;if(Math.abs(dx)>30){window._tdManualSwipe(\\\'\'+cardId+\'\\\',dx<0?1:-1);}window._tdMoved=false;return;}if(Date.now()-window._tdT0>400)return;window.showDetail(\\\'\'+p.id+\'\\\',true);})();"\''
          + imgTags
          + '</div>';
      } else {
-       imgBlock = '<div style="width:100%;background:white;border:1px solid #e5e7eb;overflow:hidden;cursor:pointer;" onclick="window.showDetail(\''+p.id+'\',true)">'
+       imgBlock = '<div style="width:100%;background:white;border:1px solid #e5e7eb;overflow:hidden;cursor:pointer;" onclick="window._safeTap(\''+p.id+'\',true)">'
          + '<img src="'+img+'" loading="lazy" alt="'+p.name+'" style="width:100%;height:280px;object-fit:contain;display:block;background:white;">'
          + '</div>';
      }
@@ -3088,7 +3088,7 @@ Importer tout
        // Badge catégorie bleu
        + (sub ? '<div style="display:inline-block;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:600;padding:3px 10px;border-radius:0;margin-bottom:10px;">'+sub+'</div>' : '')
        // Nom gras
-       + '<p onclick="window.showDetail(\''+p.id+'\',true)" style="font-size:17px;font-weight:900;color:#111827;margin:0 0 5px;line-height:1.3;cursor:pointer;">'+p.name+'</p>'
+       + '<p onclick="window._safeTap(\''+p.id+'\',true)" style="font-size:17px;font-weight:900;color:#111827;margin:0 0 5px;line-height:1.3;cursor:pointer;">'+p.name+'</p>'
        // Description courte gris
        + (p.desc ? '<p style="font-size:12px;color:#9ca3af;margin:0 0 12px;line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">'+p.desc.replace(/<[^>]*>/g,'').substring(0,120)+'</p>' : '<div style="margin-bottom:12px;"></div>')
        // Prix + bouton panier bleu
@@ -3105,7 +3105,7 @@ Importer tout
        + '</div>'
        + '</div>'
        // Bouton Commander bleu foncé pleine largeur
-       + '<button onclick="window.showDetail(\''+p.id+'\',true)" style="width:100%;background:#1e293b;color:white;border:none;border-radius:0;padding:16px;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.03em;">'
+       + '<button onclick="window._safeTap(\''+p.id+'\',true)" style="width:100%;background:#1e293b;color:white;border:none;border-radius:0;padding:16px;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.03em;">'
        + '<svg width="16" height="16" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>'
        + (lang==='fr'?'Commander':'Order')
        + '</button>'
