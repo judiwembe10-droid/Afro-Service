@@ -704,7 +704,7 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
       <svg width="13" height="13" fill="none" stroke="#374151" stroke-width="2.5" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
       </svg>
-      <span style="font-size:11px;font-weight:700;color:#374151;" data-fr="Retour" data-en="Back">Retour</span>
+      <span id="detailBtnRetour" style="font-size:11px;font-weight:700;color:#374151;" data-fr="Retour" data-en="Back">Retour</span>
     </button>
 
     <!-- 🏠 Accueil -->
@@ -714,7 +714,7 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
       <svg width="13" height="13" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
       </svg>
-      <span style="font-size:11px;font-weight:700;color:white;" data-fr="Accueil" data-en="Home">Accueil</span>
+      <span id="detailBtnAccueil" style="font-size:11px;font-weight:700;color:white;" data-fr="Accueil" data-en="Home">Accueil</span>
     </button>
 
   </div>
@@ -812,7 +812,9 @@ transition:opacity 0.4s ease, transform 0.18s ease;
         </label>
       </div>
       <textarea id="cRemarques" data-placeholder-fr="Remarques (optionnel)" data-placeholder-en="Remarks (optional)" placeholder="Remarques (optionnel)" style="border:1.5px solid #e2e8f0;padding:12px 14px;font-size:13px;border-radius:10px;width:100%;box-sizing:border-box;outline:none;height:70px;resize:none;font-family:inherit;margin-top:4px;"></textarea>
-      <p style="font-size:10px;color:#94a3b8;line-height:1.6;margin-top:10px;">
+      <p style="font-size:10px;color:#94a3b8;line-height:1.6;margin-top:10px;"
+        data-fr="<b>Notes du client :</b> Après avoir cliqué sur Confirmer, WhatsApp s'ouvrira. Appuyez sur « Envoyer » pour transmettre votre commande au vendeur."
+        data-en="<b>Customer note:</b> After clicking Confirm, WhatsApp will open. Press « Send » to submit your order to the seller.">
         <b>Notes du client :</b> Après avoir cliqué sur Confirmer, WhatsApp s'ouvrira. Appuyez sur « Envoyer » pour transmettre votre commande au vendeur.
       </p>
     </div>
@@ -1196,11 +1198,20 @@ Importer tout
  if (cpFlag) cpFlag.textContent = lang === 'fr' ? '🇫🇷' : '🇬🇧';
  if (cpCode) cpCode.textContent = lang === 'fr' ? 'FR' : 'EN';
 
+ // Traduire les boutons Retour/Accueil du détail par ID
+ var btnRetour = document.getElementById('detailBtnRetour');
+ var btnAccueil = document.getElementById('detailBtnAccueil');
+ if (btnRetour) btnRetour.textContent = lang === 'fr' ? 'Retour' : 'Back';
+ if (btnAccueil) btnAccueil.textContent = lang === 'fr' ? 'Accueil' : 'Home';
+
  document.querySelectorAll('[data-fr][data-en]').forEach(el => {
  const tag = el.tagName.toLowerCase();
  if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
  const val = el.getAttribute('data-' + lang);
- if (val !== null) el.textContent = val;
+ if (val !== null) {
+   if (val.includes('<')) el.innerHTML = val;
+   else el.textContent = val;
+ }
  });
 
  document.querySelectorAll('[data-placeholder-fr], [data-placeholder-en]').forEach(el => {
@@ -2035,7 +2046,7 @@ Importer tout
  function cardHTML(p) {
  const promo = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
  const img   = p.imgs && p.imgs[0] ? p.imgs[0] : 'https://via.placeholder.com/300';
- return `<div class="product-card-container" onclick="window.showDetail('${p.id}')">
+ return `<div class="product-card-container" onclick="window._safeTap('${p.id}')">
  <div class="product-card-inner">
  <div class="product-card-img-wrap">
  <img src="${img}" loading="lazy" alt="${p.name}">
@@ -2109,7 +2120,7 @@ Importer tout
  var img     = p.imgs && p.imgs[0] ? p.imgs[0] : 'https://via.placeholder.com/300';
  var promo   = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
  var isNew   = idx < 4;
- var h = '<div class="temu-card" onclick="window.showDetail(\'' + p.id + '\')">';
+ var h = '<div class="temu-card" onclick="window._safeTap(\'' + p.id + '\')">';
  h += '<div class="temu-card-img-wrap">';
  if (isNew) h += '<span class="temu-card-badge">NOUVEAU</span>';
  h += '<img src="' + img + '" loading="lazy" onerror="this.src=\'https://via.placeholder.com/300\'">';
@@ -2163,7 +2174,7 @@ Importer tout
  var isHot    = soldPct > 60;
  var hasPromo = promo > 0;
 
- html += '<div class="pdd-card" onclick="window.showDetail(\'' + p.id + '\')">';
+ html += '<div class="pdd-card" onclick="window._safeTap(\'' + p.id + '\')">';
 
  // Image gauche + badge promo en bas de l'image
  html += '<div class="pdd-card-img-wrap">';
@@ -2565,9 +2576,16 @@ Importer tout
  // ── Traduire immédiatement les boutons statiques (Retour/Accueil) ──
  (function() {
    var _lang = window.currentLang || localStorage.getItem('afroLang') || 'fr';
+   var btnR = document.getElementById('detailBtnRetour');
+   var btnA = document.getElementById('detailBtnAccueil');
+   if (btnR) btnR.textContent = _lang === 'fr' ? 'Retour' : 'Back';
+   if (btnA) btnA.textContent = _lang === 'fr' ? 'Accueil' : 'Home';
    _dm.querySelectorAll('[data-fr][data-en]').forEach(function(el) {
      var val = el.getAttribute('data-' + _lang);
-     if (val !== null) el.textContent = val;
+     if (val !== null) {
+       if (val.includes('<')) el.innerHTML = val;
+       else el.textContent = val;
+     }
    });
  })();
  var _bnb2 = document.getElementById('bottomNavBar');
@@ -5134,6 +5152,52 @@ window._hidePageLoader = function() {
   };
 
   document.addEventListener('DOMContentLoaded', attachDetailScroll);
+})();
+</script>
+
+<!-- ══ ANTI-SCROLL-TAP : empêche l'ouverture accidentelle au scroll ══ -->
+<script>
+(function() {
+  // Seuils : si le doigt a bougé de plus de ces pixels, ce n'est pas un tap
+  var TAP_MOVE_THRESHOLD = 10; // px horizontal
+  var TAP_VERT_THRESHOLD = 12; // px vertical
+
+  var _tapStartX = 0;
+  var _tapStartY = 0;
+  var _tapStartTime = 0;
+  var _isTapCancelled = false;
+
+  // Enregistrer la position au touchstart sur toute la page
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 1) {
+      _tapStartX = e.touches[0].clientX;
+      _tapStartY = e.touches[0].clientY;
+      _tapStartTime = Date.now();
+      _isTapCancelled = false;
+    }
+  }, { passive: true });
+
+  // Annuler si le doigt bouge trop (scroll)
+  document.addEventListener('touchmove', function(e) {
+    if (e.touches.length === 1) {
+      var dx = Math.abs(e.touches[0].clientX - _tapStartX);
+      var dy = Math.abs(e.touches[0].clientY - _tapStartY);
+      if (dx > TAP_MOVE_THRESHOLD || dy > TAP_VERT_THRESHOLD) {
+        _isTapCancelled = true;
+      }
+    }
+  }, { passive: true });
+
+  // Fonction globale utilisée par les cartes : n'ouvre que si vrai tap
+  window._safeTap = function(id, fromCat) {
+    if (_isTapCancelled) {
+      _isTapCancelled = false;
+      return;
+    }
+    // Durée max d'un tap : 400ms (évite les appuis longs)
+    if (Date.now() - _tapStartTime > 400) return;
+    window.showDetail && window.showDetail(id, fromCat);
+  };
 })();
 </script>
 
