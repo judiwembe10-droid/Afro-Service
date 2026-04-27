@@ -3072,8 +3072,8 @@ Importer tout
        imgBlock = '<div id="'+cardId+'" data-imgs="'+encodeURIComponent(JSON.stringify(imgs))+'" data-idx="0"'
          + ' style="position:relative;width:100%;height:280px;background:white;border:1px solid #e5e7eb;overflow:hidden;cursor:pointer;"'
          + ' ontouchstart="window._tdSwX=event.touches[0].clientX;window._tdSwY=event.touches[0].clientY;window._tdMoved=false;window._tdScrolled=false;window._tdT0=Date.now();"\''
-         + ' ontouchmove="(function(){var dy=Math.abs(event.touches[0].clientY-window._tdSwY),dx=Math.abs(event.touches[0].clientX-window._tdSwX);if(dy>10){window._tdScrolled=true;}if(dx>dy&&dx>8){event.preventDefault();window._tdMoved=true;}})();"\''
-         + ' ontouchend="(function(){if(window._tdScrolled){window._tdScrolled=false;window._tdMoved=false;return;}if(window._tdMoved){var dx=event.changedTouches[0].clientX-window._tdSwX;if(Math.abs(dx)>30){window._tdManualSwipe(\\\'\'+cardId+\'\\\',dx<0?1:-1);}window._tdMoved=false;return;}if(Date.now()-window._tdT0>400)return;window.showDetail(\\\'\'+p.id+\'\\\',true);})();"\''
+         + ' ontouchmove="(function(){var _dx=Math.abs(event.touches[0].clientX-window._tdSwX),_dy=Math.abs(event.touches[0].clientY-window._tdSwY);if(_dy>_dx&&_dy>15){window._tdScrolled=true;}else if(_dx>_dy&&_dx>8){event.preventDefault();window._tdMoved=true;}})();"\''
+         + ' ontouchend="(function(){var _sc=window._tdScrolled,_mv=window._tdMoved;window._tdScrolled=false;window._tdMoved=false;if(_sc){return;}if(_mv){var dx=event.changedTouches[0].clientX-window._tdSwX;if(Math.abs(dx)>30){window._tdManualSwipe(\\\'\'+cardId+\'\\\',dx<0?1:-1);}return;}if(Date.now()-window._tdT0>500)return;window.showDetail(\\\'\'+p.id+\'\\\',true);})();"\''
          + imgTags
          + '</div>';
      } else {
@@ -5159,15 +5159,11 @@ window._hidePageLoader = function() {
 <script>
 (function() {
   // Seuils : si le doigt a bougé de plus de ces pixels, ce n'est pas un tap
-  var TAP_MOVE_THRESHOLD = 10; // px horizontal
-  var TAP_VERT_THRESHOLD = 12; // px vertical
-
   var _tapStartX = 0;
   var _tapStartY = 0;
   var _tapStartTime = 0;
   var _isTapCancelled = false;
 
-  // Enregistrer la position au touchstart sur toute la page
   document.addEventListener('touchstart', function(e) {
     if (e.touches.length === 1) {
       _tapStartX = e.touches[0].clientX;
@@ -5177,26 +5173,20 @@ window._hidePageLoader = function() {
     }
   }, { passive: true });
 
-  // Annuler si le doigt bouge trop (scroll)
+  // Annuler seulement si scroll vertical dominant (dy > dx ET dy > 20px)
   document.addEventListener('touchmove', function(e) {
     if (e.touches.length === 1) {
       var dx = Math.abs(e.touches[0].clientX - _tapStartX);
       var dy = Math.abs(e.touches[0].clientY - _tapStartY);
-      if (dx > TAP_MOVE_THRESHOLD || dy > TAP_VERT_THRESHOLD) {
-        _isTapCancelled = true;
-      }
+      if (dy > dx && dy > 20) { _isTapCancelled = true; }
     }
   }, { passive: true });
 
-  // Fonction globale utilisée par les cartes : n'ouvre que si vrai tap
   window._safeTap = function(id, fromCat) {
-    if (_isTapCancelled) {
-      _isTapCancelled = false;
-      return;
-    }
-    // Durée max d'un tap : 400ms (évite les appuis longs)
-    if (Date.now() - _tapStartTime > 400) return;
+    if (_isTapCancelled) { _isTapCancelled = false; return; }
+    if (Date.now() - _tapStartTime > 500) return;
     window.showDetail && window.showDetail(id, fromCat);
+  };
   };
 })();
 </script>
