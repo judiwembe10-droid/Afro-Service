@@ -50,6 +50,17 @@
 </head>
 <body class="text-slate-900 overflow-x-hidden">
 
+<!-- ══ SKELETON OUVERTURE BOUTIQUE ══ -->
+<div id="initSkeleton" style="position:fixed;inset:0;z-index:999999;background:#ffffff;display:flex;align-items:center;justify-content:center;">
+  <div style="width:44px;height:44px;border:3px solid #e2e8f0;border-top-color:#101944;border-radius:50%;animation:afroSpin 0.75s linear infinite;"></div>
+</div>
+<style>
+@keyframes afroSpin {
+  to { transform: rotate(360deg); }
+}
+</style>
+
+
 <div id="overlay" onclick="window.closeMenus && window.closeMenus()" class="hidden fixed inset-0 bg-black/70 z-[90]"></div>
 
 <div id="stickyShell">
@@ -3746,6 +3757,14 @@ Importer tout
  renderTemuGrid(stock);
  renderPddList(stock);
  window._afroLoadingDone = true;
+  // ── Masquer le skeleton d'ouverture avec fondu ──
+  (function() {
+    var sk = document.getElementById('initSkeleton');
+    if (!sk) return;
+    sk.style.transition = 'opacity 0.4s ease';
+    sk.style.opacity = '0';
+    setTimeout(function() { sk.style.display = 'none'; }, 420);
+  })();
 
  // ── Ouverture automatique du produit si URL contient ?produit=ID ──
  (function() {
@@ -5152,6 +5171,172 @@ window._hidePageLoader = function() {
   };
 
   document.addEventListener('DOMContentLoaded', attachDetailScroll);
+})();
+</script>
+
+
+<!-- ══ LOADER UNIVERSEL — TOUTES LES NAVIGATIONS ══ -->
+<script>
+(function() {
+
+  // ── Utilitaire skeleton léger (pas de fiche produit, juste barre + flash) ──
+  function _navStart() {
+    if (typeof NProgress !== 'undefined') NProgress.start();
+  }
+  function _navDone() {
+    setTimeout(function() {
+      if (typeof NProgress !== 'undefined') NProgress.done();
+    }, 250);
+  }
+
+  // ── Attendre que toutes les fonctions soient prêtes ──
+  function installNavLoaders() {
+
+    // 1. filterItems — navigation vers une catégorie
+    var _origFilter = window.filterItems;
+    if (_origFilter && !_origFilter._navHook) {
+      window.filterItems = function() {
+        _navStart();
+        setTimeout(function() { _origFilter.apply(window, arguments); _navDone(); }, 80);
+      };
+      window.filterItems._navHook = true;
+    }
+
+    // 2. _resetToHome — retour à l'accueil
+    var _origReset = window._resetToHome;
+    if (_origReset && !_origReset._navHook) {
+      window._resetToHome = function() {
+        _navStart();
+        setTimeout(function() { _origReset.apply(window, arguments); _navDone(); }, 80);
+      };
+      window._resetToHome._navHook = true;
+    }
+
+    // 3. renderProducts — "Tous les produits"
+    var _origRP = window.renderProducts;
+    if (_origRP && !_origRP._navHook) {
+      window.renderProducts = function() {
+        _navStart();
+        var args = arguments;
+        setTimeout(function() { _origRP.apply(window, args); _navDone(); }, 80);
+      };
+      window.renderProducts._navHook = true;
+    }
+
+    // 4. _goPage — pagination
+    var _origGoPage = window._goPage;
+    if (_origGoPage && !_origGoPage._navHook) {
+      window._goPage = function() {
+        _navStart();
+        var args = arguments;
+        setTimeout(function() { _origGoPage.apply(window, args); _navDone(); }, 80);
+      };
+      window._goPage._navHook = true;
+    }
+
+    // 5. Recherche — wrapper sur renderStaticGrid mode search
+    var _origRSG = window.renderStaticGrid || (typeof renderStaticGrid !== 'undefined' ? renderStaticGrid : null);
+    // La recherche appelle directement renderStaticGrid — on intercepte via NProgress dans l'input
+    var searchInput = document.getElementById('fastSearch');
+    if (searchInput && !searchInput._navHook) {
+      searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && this.value.trim()) _navStart();
+      });
+      // Bouton loupe
+      var searchBtn = document.querySelector('[onclick*="doSearch"], [onclick*="runSearch"], .search-btn');
+      if (searchBtn && !searchBtn._navHook) {
+        searchBtn.addEventListener('click', function() { _navStart(); });
+        searchBtn._navHook = true;
+      }
+      searchInput._navHook = true;
+    }
+
+    // 6. openCart — ouverture panier
+    var _origCart = window.openCart;
+    if (_origCart && !_origCart._navHook) {
+      window.openCart = function() {
+        _navStart();
+        _origCart.apply(window, arguments);
+        _navDone();
+      };
+      window.openCart._navHook = true;
+    }
+
+    // 7. openNav — ouverture menu hamburger
+    var _origNav = window.openNav;
+    if (_origNav && !_origNav._navHook) {
+      window.openNav = function() {
+        _navStart();
+        _origNav.apply(window, arguments);
+        _navDone();
+      };
+      window.openNav._navHook = true;
+    }
+
+  }
+
+  // Installer après que toutes les fonctions soient définies
+  setTimeout(installNavLoaders, 500);
+  setTimeout(installNavLoaders, 1500);
+  setTimeout(installNavLoaders, 3000);
+
+})();
+</script>
+
+
+<!-- ══ RESTAURATION DE PAGE AU RECHARGEMENT ══ -->
+<script>
+(function() {
+  var SS_KEY = 'afroCurrentView';
+
+  // ── Sauvegarder l'état à chaque changement de vue ──
+  function saveState(type, payload) {
+    try { sessionStorage.setItem(SS_KEY, JSON.stringify({ type: type, payload: payload })); } catch(e) {}
+  }
+
+  // Intercepter filterItems (page catégorie)
+  document.addEventListener('DOMContentLoaded', function() {
+    var origFilter = window.filterItems;
+    window.filterItems = function(cat, sub, subsub) {
+      saveState('category', { cat: cat, sub: sub, subsub: subsub });
+      origFilter && origFilter(cat, sub, subsub);
+    };
+
+    // Intercepter showDetail (fiche produit)
+    var origDetail = window.showDetail;
+    window.showDetail = function(id, fromCat) {
+      saveState('detail', { id: id, fromCat: fromCat });
+      origDetail && origDetail(id, fromCat);
+    };
+
+    // Intercepter _resetToHome (retour accueil)
+    var origReset = window._resetToHome;
+    window._resetToHome = function() {
+      try { sessionStorage.removeItem(SS_KEY); } catch(e) {}
+      origReset && origReset();
+    };
+
+    // ── Restaurer l'état au chargement ──
+    try {
+      var saved = sessionStorage.getItem(SS_KEY);
+      if (!saved) return;
+      var state = JSON.parse(saved);
+
+      if (state.type === 'category' && state.payload) {
+        setTimeout(function() {
+          window.filterItems && window.filterItems(
+            state.payload.cat,
+            state.payload.sub,
+            state.payload.subsub
+          );
+        }, 600);
+      } else if (state.type === 'detail' && state.payload) {
+        setTimeout(function() {
+          window.showDetail && window.showDetail(state.payload.id, state.payload.fromCat);
+        }, 600);
+      }
+    } catch(e) {}
+  });
 })();
 </script>
 
