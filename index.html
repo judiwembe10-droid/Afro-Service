@@ -3869,7 +3869,7 @@ Importer tout
  try { await sendPasswordResetEmail(auth, email); alert((currentLang === 'fr' ? "Lien envoyé à : " : "Link sent to: ") + email); } catch (e) { alert("Erreur : " + e.message); }
  };
 
- window.openAuth   = () => currentUser ? (window._confirmSync && signOut(auth)) : document.getElementById('authModal').classList.remove('hidden');
+ window.openAuth   = () => currentUser ? window._confirm(currentLang==='fr'?'Se déconnecter ?':'Log out?', function(){ signOut(auth); }) : document.getElementById('authModal').classList.remove('hidden');
  window.closeAuth  = () => document.getElementById('authModal').classList.add('hidden');
  window.toggleAuthMode = () => {
  const title     = document.getElementById('authTitle');
