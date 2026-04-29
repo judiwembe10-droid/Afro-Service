@@ -50,20 +50,9 @@
 </head>
 <body class="text-slate-900 overflow-x-hidden">
 
-<!-- ══ TOAST NOTIFICATIONS (remplace alert) ══ -->
+<!-- ══ TOAST NOTIFICATIONS ══ -->
 <style>
-#afroToast {
-  position: fixed;
-  bottom: 72px;
-  left: 0; right: 0;
-  display: flex;
-  justify-content: center;
-  z-index: 9999;
-  pointer-events: none;
-  transform: translateY(100%);
-  opacity: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
+#afroToast{position:fixed;bottom:72px;left:0;right:0;display:flex;justify-content:center;z-index:9999;pointer-events:none;transform:translateY(100%);opacity:0;transition:transform 0.3s ease,opacity 0.3s ease;}
 </style>
 <div id="afroToast">
   <div id="afroToastInner" style="color:white;font-size:13px;font-weight:700;padding:12px 24px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;align-items:center;gap:8px;background:#1e293b;">
@@ -72,49 +61,29 @@
   </div>
 </div>
 <script>
-window._toast = function(msg, type) {
-  var t = document.getElementById('afroToast');
-  var inner = document.getElementById('afroToastInner');
-  var icon = document.getElementById('afroToastIcon');
-  var msgEl = document.getElementById('afroToastMsg');
-  if (!t || !inner || !msgEl) return;
-  msgEl.textContent = msg;
-  if (type === 'success') {
-    inner.style.background = '#166534';
-    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';
-  } else if (type === 'error') {
-    inner.style.background = '#991b1b';
-    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>';
-  } else {
-    inner.style.background = '#1e293b';
-    icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01"/>';
-  }
-  t.style.transform = 'translateY(0)';
-  t.style.opacity = '1';
+window._toast=function(msg,type){
+  var t=document.getElementById('afroToast'),inner=document.getElementById('afroToastInner'),icon=document.getElementById('afroToastIcon'),msgEl=document.getElementById('afroToastMsg');
+  if(!t||!inner||!msgEl)return;
+  msgEl.textContent=msg;
+  if(type==='success'){inner.style.background='#166534';icon.innerHTML='<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';}
+  else if(type==='error'){inner.style.background='#991b1b';icon.innerHTML='<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>';}
+  else{inner.style.background='#1e293b';icon.innerHTML='<circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01"/>';}
+  t.style.transform='translateY(0)';t.style.opacity='1';
   clearTimeout(window._afroToastTimer);
-  window._afroToastTimer = setTimeout(function() {
-    t.style.transform = 'translateY(100%)';
-    t.style.opacity = '0';
-  }, 3000);
+  window._afroToastTimer=setTimeout(function(){t.style.transform='translateY(100%)';t.style.opacity='0';},3000);
 };
-window._nativeAlert = window.alert;
-window.alert = function(msg) { window._toast(String(msg), 'info'); };
+window.alert=function(msg){window._toast(String(msg),'info');};
 </script>
-<!-- ══ SPINNER OUVERTURE BOUTIQUE ══ -->
+<!-- ══ SPINNER OUVERTURE ══ -->
 <div id="initSkeleton" style="position:fixed;inset:0;z-index:999999;background:#ffffff;display:flex;align-items:center;justify-content:center;">
   <div style="width:40px;height:40px;border:2.5px solid #e8f0fe;border-top-color:#2563eb;border-radius:50%;animation:afroSpin 0.8s linear infinite;"></div>
 </div>
-<style>@keyframes afroSpin { to { transform: rotate(360deg); } }</style>
+<style>@keyframes afroSpin{to{transform:rotate(360deg)}}</style>
 <script>
-// Sécurité — masque le spinner après 8s maximum si Firebase tarde
-setTimeout(function() {
-  var sk = document.getElementById('initSkeleton');
-  if (sk && sk.style.display !== 'none') {
-    sk.style.transition = 'opacity 0.3s';
-    sk.style.opacity = '0';
-    setTimeout(function(){ sk.style.display = 'none'; }, 320);
-  }
-}, 8000);
+setTimeout(function(){
+  var sk=document.getElementById('initSkeleton');
+  if(sk&&sk.style.display!=='none'){sk.style.transition='opacity 0.3s';sk.style.opacity='0';setTimeout(function(){sk.style.display='none';},320);}
+},8000);
 </script>
 
 <div id="overlay" onclick="window.closeMenus && window.closeMenus()" class="hidden fixed inset-0 bg-black/70 z-[90]"></div>
@@ -2659,7 +2628,7 @@ Importer tout
  if (_bnb2) _bnb2.style.display = 'none';
  const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll');
  // Terminer la barre de progression
- if (typeof NProgress !== 'undefined') NProgress.done();
+ setTimeout(function(){ if (typeof NProgress !== 'undefined') NProgress.done(); }, 350);
  // URL dynamique pour le partage
  const _prodUrl = location.origin + location.pathname + '?produit=' + p.id;
  history.pushState({ produit: p.id }, '', '?produit=' + p.id);
@@ -2790,27 +2759,19 @@ Importer tout
 
  window._dtlQtyMinus = function() {
  const inp = document.getElementById('vQty');
- if (inp && parseInt(inp.value) > 1) {
-   inp.value = parseInt(inp.value) - 1;
-   window._dtlUpdateStickyPrice();
- }
+ if (inp && parseInt(inp.value) > 1) { inp.value = parseInt(inp.value) - 1; window._dtlUpdateStickyPrice(); }
  };
  window._dtlQtyPlus = function() {
  const inp = document.getElementById('vQty');
- if (inp) {
-   inp.value = parseInt(inp.value) + 1;
-   window._dtlUpdateStickyPrice();
- }
+ if (inp) { inp.value = parseInt(inp.value) + 1; window._dtlUpdateStickyPrice(); }
  };
-
  window._dtlUpdateStickyPrice = function() {
  const inp = document.getElementById('vQty');
- const el = document.getElementById('dtlStickyPrice');
+ const el  = document.getElementById('dtlStickyPrice');
  if (!inp || !el) return;
- const qty = parseInt(inp.value) || 1;
+ const qty  = parseInt(inp.value) || 1;
  const base = parseFloat(el.getAttribute('data-base')) || 0;
- const total = base * qty;
- el.innerHTML = total.toLocaleString('fr-FR') + ' <span style="font-size:11px;font-weight:700;">FCFA</span>';
+ el.innerHTML = (base * qty).toLocaleString('fr-FR') + ' <span style="font-size:11px;font-weight:700;">FCFA</span>';
  };
 
  window.addToCart = function(id) {
@@ -2926,7 +2887,7 @@ Importer tout
  ${r.adminReply ? `<div class="mt-2 p-2 bg-slate-50 rounded-lg border-l-2 border-[#101944]"><p class="text-[8px] font-black text-[#101944] uppercase mb-0.5">Afro Service ✓</p><p class="text-[9px] text-slate-500">${r.adminReply}</p></div>` : ''}
  <div class="flex justify-between items-center mt-2 pt-2 border-t border-slate-50">
  <p class="text-[8px] text-slate-400 font-bold">${r.date || ''}</p>
- ${currentUser && adminEmails.includes(currentUser.email.toLowerCase()) ? `<div class="flex gap-2"><button onclick="window.replyProdReview('${productId}','${id}')" class="text-[7px] font-black uppercase text-blue-600">${currentLang==='fr'?'Répondre':'Reply'}</button><button onclick="window.deleteProdReview('${productId}','${id}')" class="text-[7px] font-black uppercase text-red-500">${currentLang==='fr'?'Supprimer':'Delete'}</button></div>` : (currentUser && r.userId === currentUser.uid ? `<div class="flex gap-2"><button onclick="window.editProdReview('${productId}','${id}','${r.comment.replace(/'/g,\"\\\'\")}',${r.note})" class="text-[7px] font-black uppercase text-slate-500">${currentLang==='fr'?'Modifier':'Edit'}</button><button onclick="window.deleteProdReviewUser('${productId}','${id}')" class="text-[7px] font-black uppercase text-red-400">${currentLang==='fr'?'Supprimer':'Delete'}</button></div>` : '')}
+ ${currentUser && adminEmails.includes(currentUser.email.toLowerCase()) ? `<div class="flex gap-2"><button onclick="window.replyProdReview('${productId}','${id}')" class="text-[7px] font-black uppercase text-blue-600">${currentLang==='fr'?'Répondre':'Reply'}</button><button onclick="window.deleteProdReview('${productId}','${id}')" class="text-[7px] font-black uppercase text-red-500">${currentLang==='fr'?'Supprimer':'Delete'}</button></div>` : (currentUser && r.userId === currentUser.uid ? `<div class="flex gap-2"><button onclick="window.editProdReview('${productId}','${id}','${r.comment}',${r.note})" class="text-[7px] font-black uppercase text-slate-500">${currentLang==='fr'?'Modifier':'Edit'}</button><button onclick="window.deleteProdReviewUser('${productId}','${id}')" class="text-[7px] font-black uppercase text-red-400">${currentLang==='fr'?'Supprimer':'Delete'}</button></div>` : '')}
  </div>
  </div>`;
  }
@@ -2935,14 +2896,14 @@ Importer tout
  };
 
  window.sendProductReview = async function(productId) {
- if (!currentUser) return window._toast(currentLang === 'fr' ? "Connectez-vous pour laisser un avis !" : "Log in to leave a review!", 'info');
+ if (!currentUser) return alert(currentLang === 'fr' ? "Connectez-vous pour laisser un avis !" : "Log in to leave a review!");
  const note    = parseInt(document.getElementById('prodStarVal_' + productId).value) || 5;
  const comment = (document.getElementById('prodRevText_' + productId).value || '').trim();
- if (!comment) return window._toast(currentLang === 'fr' ? "Laissez un petit commentaire !" : "Please write something!", 'info');
+ if (!comment) return alert(currentLang === 'fr' ? "Laissez un petit commentaire !" : "Please write something!");
 
  // Feedback visuel sur le bouton pendant l'envoi
  const btn = document.querySelector(`button[onclick="window.sendProductReview('${productId}')"]`);
- if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.textContent = currentLang === 'fr' ? 'Envoi...' : 'Sending...'; }
+ if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.textContent = currentLang === 'fr' ? '⏳ Envoi...' : '⏳ Sending...'; }
 
  try {
  const badge = await getCustomerBadge(currentUser.uid);
@@ -2958,16 +2919,16 @@ Importer tout
  });
  document.getElementById('prodRevText_' + productId).value = '';
  window.setProdStar(productId, 5);
- if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = ' + (currentLang === 'fr' ? 'Avis envoyé !' : 'Review sent!'); setTimeout(() => { btn.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg> ${currentLang === 'fr' ? 'Envoyer mon avis' : 'Send my review'}`; }, 2500); }
+ if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '✅ ' + (currentLang === 'fr' ? 'Avis envoyé !' : 'Review sent!'); setTimeout(() => { btn.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg> ${currentLang === 'fr' ? 'Envoyer mon avis' : 'Send my review'}`; }, 2500); }
  window.loadProductReviews(productId);
  } catch(err) {
  if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg> ${currentLang === 'fr' ? 'Envoyer mon avis' : 'Send my review'}`; }
- window._toast((currentLang === 'fr' ? "Erreur : " : "Error: ") + err.message, 'error');
+ alert((currentLang === 'fr' ? "Erreur : " : "Error: ") + err.message);
  }
  };
 
  window.likeProductReview = async function(productId, reviewId) {
- if (!currentUser) { window._toast(currentLang === 'fr' ? "Connectez-vous pour aimer un avis !" : "Log in to like a review!", 'info'); return; }
+ if (!currentUser) { alert(currentLang === 'fr' ? "Connectez-vous pour aimer un avis !" : "Log in to like a review!"); return; }
  const rRef     = ref(db, 'productReviews/' + productId + '/' + reviewId);
  const snapshot = await new Promise((resolve) => onValue(rRef, resolve, { onlyOnce: true }));
  const review   = snapshot.val();
@@ -2990,44 +2951,30 @@ Importer tout
  if (confirm(currentLang === 'fr' ? "Supprimer cet avis ?" : "Delete this review?")) remove(ref(db, 'productReviews/' + productId + '/' + reviewId));
  };
 
- // ── Modifier / Supprimer avis produit (par l'auteur) ──
  window.editProdReview = function(productId, reviewId, oldComment, oldNote) {
-   const newComment = prompt(currentLang === 'fr' ? 'Modifier votre commentaire :' : 'Edit your comment:', oldComment);
+   var newComment = prompt(currentLang==='fr'?'Modifier votre commentaire :':'Edit your comment:', oldComment);
    if (!newComment || !newComment.trim()) return;
-   update(ref(db, 'productReviews/' + productId + '/' + reviewId), {
-     comment: newComment.trim(),
-     edited: true,
-     editDate: new Date().toLocaleDateString('fr-FR')
-   }).then(() => window._toast(currentLang === 'fr' ? 'Commentaire modifié' : 'Comment updated', 'success'));
+   update(ref(db,'productReviews/'+productId+'/'+reviewId),{comment:newComment.trim(),edited:true,editDate:new Date().toLocaleDateString('fr-FR')})
+   .then(function(){window._toast(currentLang==='fr'?'Commentaire modifié':'Comment updated','success');});
  };
-
  window.deleteProdReviewUser = function(productId, reviewId) {
-   if (!currentUser) return;
-   const msg = currentLang === 'fr' ? 'Supprimer votre avis ?' : 'Delete your review?';
-   if (!confirm(msg)) return;
-   remove(ref(db, 'productReviews/' + productId + '/' + reviewId))
-     .then(() => window._toast(currentLang === 'fr' ? 'Avis supprimé' : 'Review deleted', 'info'));
+   if(!currentUser)return;
+   if(!confirm(currentLang==='fr'?'Supprimer votre avis ?':'Delete your review?'))return;
+   remove(ref(db,'productReviews/'+productId+'/'+reviewId))
+   .then(function(){window._toast(currentLang==='fr'?'Avis supprimé':'Review deleted','info');});
  };
-
- // ── Modifier / Supprimer avis boutique (par l'auteur) ──
  window.editBoutiqueReview = function(reviewId, oldComment, oldNote) {
-   const newComment = prompt(currentLang === 'fr' ? 'Modifier votre commentaire :' : 'Edit your comment:', oldComment);
+   var newComment = prompt(currentLang==='fr'?'Modifier votre commentaire :':'Edit your comment:', oldComment);
    if (!newComment || !newComment.trim()) return;
-   update(ref(db, 'reviews/' + reviewId), {
-     comment: newComment.trim(),
-     edited: true,
-     editDate: new Date().toLocaleDateString('fr-FR')
-   }).then(() => window._toast(currentLang === 'fr' ? 'Commentaire modifié' : 'Comment updated', 'success'));
+   update(ref(db,'reviews/'+reviewId),{comment:newComment.trim(),edited:true,editDate:new Date().toLocaleDateString('fr-FR')})
+   .then(function(){window._toast(currentLang==='fr'?'Commentaire modifié':'Comment updated','success');});
  };
-
  window.deleteBoutiqueReview = function(reviewId) {
-   if (!currentUser) return;
-   const msg = currentLang === 'fr' ? 'Supprimer votre avis ?' : 'Delete your review?';
-   if (!confirm(msg)) return;
-   remove(ref(db, 'reviews/' + reviewId))
-     .then(() => window._toast(currentLang === 'fr' ? 'Avis supprimé' : 'Review deleted', 'info'));
+   if(!currentUser)return;
+   if(!confirm(currentLang==='fr'?'Supprimer votre avis ?':'Delete your review?'))return;
+   remove(ref(db,'reviews/'+reviewId))
+   .then(function(){window._toast(currentLang==='fr'?'Avis supprimé':'Review deleted','info');});
  };
-
 
  window.quickSearch = function(q) {
  if (!q.trim()) { window._resetToHome(); return; }
@@ -3252,7 +3199,13 @@ Importer tout
 
 
       // ── Barre Filtre + Tri ──
-      + '<div id="sgFilterBar" style="background:#f8fafc;border-bottom:1px solid #e5e7eb;padding:10px 14px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;">'      + '<button id="sgF_asc" onclick="window._sgApplySort(\'asc\')" style="flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;font-size:12px;font-weight:700;color:#374151;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9M3 12h5m5 4l-3-3m0 0l-3 3m3-3v8"/></svg>'+(lang==='fr'?'Prix ↑':'Price ↑')+'</button>'      + '<button id="sgF_desc" onclick="window._sgApplySort(\'desc\')" style="flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;font-size:12px;font-weight:700;color:#374151;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9M3 12h5m5-4l-3 3m0 0l-3-3m3 3V4"/></svg>'+(lang==='fr'?'Prix ↓':'Price ↓')+'</button>'      + '<button id="sgF_promo" onclick="window._sgApplyFilter(\'promo\')" style="flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;font-size:12px;font-weight:700;color:#374151;cursor:pointer;white-space:nowrap;">🏷️ '+(lang==='fr'?'Promos':'Sales')+'</button>'      + '<button id="sgF_new" onclick="window._sgApplyFilter(\'new\')" style="flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;font-size:12px;font-weight:700;color:#374151;cursor:pointer;white-space:nowrap;">✨ '+(lang==='fr'?'Nouveautés':'New')+'</button>'      + '<button id="sgF_reset" onclick="window._sgResetFilter()" style="flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;font-size:12px;font-weight:700;color:#94a3b8;cursor:pointer;white-space:nowrap;">✕ '+(lang==='fr'?'Tout':'All')+'</button>'      + '</div>'
+      + '<div id="sgFilterBar" style="background:#f8fafc;border-bottom:1px solid #e5e7eb;padding:10px 14px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;">'
+      + '<button id="sgF_asc" onclick="window._sgApplySort(\'asc\')" style="flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;font-size:12px;font-weight:700;color:#374151;cursor:pointer;white-space:nowrap;">'+(lang==='fr'?'Prix ↑':'Price ↑')+'</button>'
+      + '<button id="sgF_desc" onclick="window._sgApplySort(\'desc\')" style="flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;font-size:12px;font-weight:700;color:#374151;cursor:pointer;white-space:nowrap;">'+(lang==='fr'?'Prix ↓':'Price ↓')+'</button>'
+      + '<button id="sgF_promo" onclick="window._sgApplyFilter(\'promo\')" style="flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;font-size:12px;font-weight:700;color:#374151;cursor:pointer;white-space:nowrap;">'+(lang==='fr'?'Promos':'Sales')+'</button>'
+      + '<button id="sgF_new" onclick="window._sgApplyFilter(\'new\')" style="flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;font-size:12px;font-weight:700;color:#374151;cursor:pointer;white-space:nowrap;">'+(lang==='fr'?'Nouveautés':'New')+'</button>'
+      + '<button onclick="window._sgResetFilter()" style="flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;font-size:12px;font-weight:700;color:#94a3b8;cursor:pointer;white-space:nowrap;">'+(lang==='fr'?'Tout':'All')+'</button>'
+      + '</div>'
      // ── Corps ──
      + '<div style="background:white;min-height:60vh;padding:0 0 80px;">'
      + (count === 0
@@ -3335,74 +3288,30 @@ Importer tout
  }
 
 
-  // ══ FILTRE + TRI ══════════════════════════════════════════
-  // _sgDataOrig, _sgActiveSort, _sgActiveFilter définis globalement ci-dessus
-
+  // ══ FILTRE + TRI ══
   function _sgApplyAndRebuild() {
     var d = _sgDataOrig.slice();
-    // 1. Filtre
-    if (_sgActiveFilter === 'promo') {
-      d = d.filter(function(p){ return p.old && p.old > p.price; });
-    } else if (_sgActiveFilter === 'new') {
-      // Nouveautés = les 20 derniers ajoutés (par position dans le tableau)
-      d = d.slice(-20).reverse();
-    }
-    // 2. Tri
-    if (_sgActiveSort === 'asc') {
-      d.sort(function(a,b){ return parseInt(a.price) - parseInt(b.price); });
-    } else if (_sgActiveSort === 'desc') {
-      d.sort(function(a,b){ return parseInt(b.price) - parseInt(a.price); });
-    }
-    _sgData = d;
-    _sgPage = 1;
-    _sgBuildPage(1);
-    // Mettre à jour l'apparence des boutons après rebuild
+    if (_sgActiveFilter === 'promo') d = d.filter(function(p){ return p.old && p.old > p.price; });
+    else if (_sgActiveFilter === 'new') d = d.slice(-20).reverse();
+    if (_sgActiveSort === 'asc') d.sort(function(a,b){ return parseInt(a.price)-parseInt(b.price); });
+    else if (_sgActiveSort === 'desc') d.sort(function(a,b){ return parseInt(b.price)-parseInt(a.price); });
+    _sgData = d; _sgPage = 1; _sgBuildPage(1);
     setTimeout(function() {
-      var btns = {
-        'sgF_asc':   _sgActiveSort === 'asc',
-        'sgF_desc':  _sgActiveSort === 'desc',
-        'sgF_promo': _sgActiveFilter === 'promo',
-        'sgF_new':   _sgActiveFilter === 'new',
-        'sgF_reset': false
-      };
-      Object.keys(btns).forEach(function(id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        if (btns[id]) {
-          el.style.background = '#101944';
-          el.style.color = 'white';
-          el.style.borderColor = '#101944';
-        } else {
-          el.style.background = 'white';
-          el.style.color = '#374151';
-          el.style.borderColor = '#e2e8f0';
-        }
+      var map = {sgF_asc:_sgActiveSort==='asc',sgF_desc:_sgActiveSort==='desc',sgF_promo:_sgActiveFilter==='promo',sgF_new:_sgActiveFilter==='new'};
+      Object.keys(map).forEach(function(id){
+        var el=document.getElementById(id); if(!el) return;
+        el.style.background = map[id]?'#101944':'white';
+        el.style.color = map[id]?'white':'#374151';
+        el.style.borderColor = map[id]?'#101944':'#e2e8f0';
       });
     }, 50);
   }
-
-  window._sgApplySort = function(dir) {
-    _sgActiveSort = (_sgActiveSort === dir) ? '' : dir;
-    _sgApplyAndRebuild();
-  };
-
-  window._sgApplyFilter = function(type) {
-    _sgActiveFilter = (_sgActiveFilter === type) ? '' : type;
-    _sgApplyAndRebuild();
-  };
-
-  window._sgResetFilter = function() {
-    _sgActiveSort   = '';
-    _sgActiveFilter = '';
-    _sgData = _sgDataOrig.slice();
-    _sgPage = 1;
-    _sgBuildPage(1);
-  };
-  // ══════════════════════════════════════════════════════════
-
+  window._sgApplySort = function(dir){ _sgActiveSort = (_sgActiveSort===dir)?'':dir; _sgApplyAndRebuild(); };
+  window._sgApplyFilter = function(type){ _sgActiveFilter = (_sgActiveFilter===type)?'':type; _sgApplyAndRebuild(); };
+  window._sgResetFilter = function(){ _sgActiveSort=''; _sgActiveFilter=''; _sgData=_sgDataOrig.slice(); _sgPage=1; _sgBuildPage(1); };
+  // ══════════════════
 
  window._sgGoPage = function(p) {
-    if(typeof NProgress!=='undefined'){NProgress.start();setTimeout(function(){NProgress.done();},200);}
    var pages = Math.max(1, Math.ceil(_sgData.length / _SG_PER_PAGE));
    if (p < 1 || p > pages) return;
    _sgBuildPage(p);
@@ -3452,6 +3361,7 @@ Importer tout
  _sgDataOrig = _sgData.slice();
  _sgActiveSort   = '';
  _sgActiveFilter = '';
+ _sgLabel = label || '';
  _sgMode  = mode  || '';
  _sgPage  = 1;
  _sgBuildPage(1);
@@ -3561,7 +3471,7 @@ Importer tout
  const inStock = document.getElementById('admInStock').value !== 'false';
  const productData = { name, name_en: name_en || "", price: parseInt(price), old: oldPrice ? parseInt(oldPrice) : null, desc: description || "", desc_en: desc_en || "", cat: category, sub: subCategory, subsub: subSubCategory || "", imgs: images.length ? images : ['https://via.placeholder.com/300'], colors: colors || "", memory: memory || "", inStock: inStock };
  if (editId) { update(ref(db, 'stock/' + editId), productData).then(() => { alert(currentLang === "fr" ? "Article mis à jour !" : "Item updated!"); editId = null; document.getElementById('admTitle').textContent = currentLang === "fr" ? "Ajouter un article" : "Add an item"; resetAdminForm(); }).catch(e => alert("Erreur: " + e.message)); }
- else { push(stockRef, productData).then(() => { window._toast(currentLang === "fr" ? "Article ajouté !" : "Item added!", 'success'); resetAdminForm(); }).catch(e => alert("Erreur: " + e.message)); }
+ else { push(stockRef, productData).then(() => { window._toast(currentLang === 'fr' ? 'Article ajouté !' : 'Item added!', 'success'); resetAdminForm(); }).catch(e => alert("Erreur: " + e.message)); }
  };
  window.setAdmStock = function(isIn) {
    const hiddenInput = document.getElementById('admInStock');
@@ -3719,14 +3629,14 @@ Importer tout
  window.saveCategoriesToFirebase = function() {
  if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return alert(currentLang === "fr" ? "Action non autorisée" : "Unauthorized action");
  const cleanCategories = categories.map(cat => ({ ...cat, subs: cat.subs ? cat.subs.map(sub => ({ ...sub, subsubs: sub.subsubs && sub.subsubs.length > 0 ? sub.subsubs : null })) : null }));
- set(catsRef, cleanCategories).then(() => { window._toast(currentLang === "fr" ? "Structure enregistrée !" : "Structure saved!", 'success'); renderMenu(); renderVisualManager(); }).catch(e => alert("Erreur: " + e.message));
+ set(catsRef, cleanCategories).then(() => { window._toast(currentLang === 'fr' ? 'Structure enregistrée !' : 'Structure saved!', 'success'); renderMenu(); renderVisualManager(); }).catch(e => alert("Erreur: " + e.message));
  };
 
  window.sendReview = async function() {
- if (!currentUser) return window._toast(currentLang === 'fr' ? "Connectez-vous pour laisser une note !" : "Log in to leave a review!", 'info');
+ if (!currentUser) return alert(currentLang === 'fr' ? "Connectez-vous pour laisser une note !" : "Log in to leave a review!");
  const note    = document.getElementById('revStars').value;
  const comment = document.getElementById('revText').value.trim();
- if (!comment) return window._toast(currentLang === 'fr' ? "Laissez un petit mot !" : "Please write something!", 'info');
+ if (!comment) return alert(currentLang === 'fr' ? "Laissez un petit mot !" : "Please write something!");
 
  const btn = document.querySelector('button[onclick="window.sendReview && window.sendReview()"]');
  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
@@ -3736,15 +3646,15 @@ Importer tout
  await push(reviewsRef, { name: currentUser.displayName || "Client AfroService", note: parseInt(note), comment, date: new Date().toLocaleDateString('fr-FR'), userId: currentUser.uid, likes: {}, likeCount: 0, timestamp: Date.now(), badge: badge ? badge.label : null, badgeClass: badge ? badge.class : null });
  document.getElementById('revText').value = "";
  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
- window._toast(currentLang === 'fr' ? "Merci pour votre avis !" : "Thank you for your review!", 'success');
+ window._toast(currentLang === 'fr' ? 'Merci pour votre avis !' : 'Thank you for your review!', 'success');
  } catch(err) {
  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
- window._toast((currentLang === 'fr' ? "Erreur : " : "Error: ") + err.message, 'error');
+ alert((currentLang === 'fr' ? "Erreur : " : "Error: ") + err.message);
  }
  };
 
  window.likeReview = async function(reviewId) {
- if (!currentUser) { window._toast(currentLang === 'fr' ? "Connectez-vous pour aimer un avis !" : "Log in to like a review!", 'info'); return; }
+ if (!currentUser) { alert(currentLang === 'fr' ? "Connectez-vous pour aimer un avis !" : "Log in to like a review!"); return; }
  const reviewRef = ref(db, `reviews/${reviewId}`);
  const snapshot  = await new Promise((resolve) => onValue(reviewRef, resolve, { onlyOnce: true }));
  const review    = snapshot.val();
@@ -3784,7 +3694,7 @@ Importer tout
  const name  = document.getElementById('cName').value.trim();
  const tel   = document.getElementById('cTel').value.trim();
  const loc   = document.getElementById('cQuartier').value.trim();
- if (!name || !tel || !loc || !cart.length) return window._toast(currentLang === 'fr' ? "Veuillez remplir vos informations." : "Please fill in your information.", 'info');
+ if (!name || !tel || !loc || !cart.length) return alert(currentLang === 'fr' ? "Veuillez remplir vos informations." : "Please fill in your information.");
  const delivery  = (document.querySelector('input[name="deliveryType"]:checked') || {}).value || (currentLang === 'fr' ? 'Livraison à domicile' : 'Home delivery');
  const remarques = (document.getElementById('cRemarques') || {}).value ? document.getElementById('cRemarques').value.trim() : '';
  const total     = cart.reduce((sum, item) => sum + parseInt(item.price), 0);
@@ -3844,17 +3754,17 @@ Importer tout
  window.resendVerificationEmail = async function() {
  if (!currentUser) return;
  const btn = document.getElementById('resendVerifyBtn');
- if (btn) { btn.disabled = true; btn.textContent = currentLang === 'fr' ? 'Envoi...' : 'Sending...'; btn.style.opacity = '0.7'; }
+ if (btn) { btn.disabled = true; btn.textContent = currentLang === 'fr' ? '⏳ ENVOI...' : '⏳ SENDING...'; btn.style.opacity = '0.7'; }
  try {
  await sendEmailVerification(currentUser);
  alert(currentLang === 'fr'
  ? "✅ Email de vérification envoyé ! Vérifiez votre boîte mail (et vos spams)."
  : "✅ Verification email sent! Check your inbox (and spam folder).");
- if (btn) { btn.disabled = false; btn.textContent = currentLang === 'fr' ? 'Email envoyé !' : 'Email sent!'; btn.style.opacity = '1'; }
+ if (btn) { btn.disabled = false; btn.textContent = currentLang === 'fr' ? '✅ EMAIL ENVOYÉ !' : '✅ EMAIL SENT!'; btn.style.opacity = '1'; }
  setTimeout(() => { if (btn) { btn.textContent = currentLang === 'fr' ? 'RENVOYER L\'EMAIL' : 'RESEND EMAIL'; } }, 4000);
  } catch(err) {
  if (btn) { btn.disabled = false; btn.textContent = currentLang === 'fr' ? 'RENVOYER L\'EMAIL' : 'RESEND EMAIL'; btn.style.opacity = '1'; }
- window._toast((currentLang === 'fr' ? "Erreur : " : "Error: ") + err.message, 'error');
+ alert((currentLang === 'fr' ? "Erreur : " : "Error: ") + err.message);
  }
  };
 
@@ -3867,12 +3777,12 @@ Importer tout
  if (isLogin) { const res = await signInWithEmailAndPassword(auth, email, pass); if (!res.user.emailVerified) alert(currentLang === 'fr' ? "Vérifiez votre adresse e-mail." : "Please verify your email."); }
  else { const res = await createUserWithEmailAndPassword(auth, email, pass); await updateProfile(res.user, { displayName: name }); await sendEmailVerification(res.user); alert(currentLang === 'fr' ? "Compte créé ! Un e-mail de vérification vous a été envoyé." : "Account created! A verification email has been sent."); }
  closeAuth();
- } catch (e) { window._toast((currentLang === "fr" ? "Erreur : " : "Error: ") + e.message, 'error'); }
+ } catch (e) { alert((currentLang === "fr" ? "Erreur : " : "Error: ") + e.message); }
  };
 
  window.forgotPassword = async () => {
  const email = document.getElementById('authEmail').value;
- if (!email) return window._toast(currentLang === 'fr' ? "Entrez votre adresse e-mail." : "Enter your email address.", 'info');
+ if (!email) return alert(currentLang === 'fr' ? "Entrez votre adresse e-mail." : "Enter your email address.");
  try { await sendPasswordResetEmail(auth, email); alert((currentLang === 'fr' ? "Lien envoyé à : " : "Link sent to: ") + email); } catch (e) { alert("Erreur : " + e.message); }
  };
 
@@ -3894,8 +3804,8 @@ Importer tout
  }
  };
 
- window.openNav    = function() { if(typeof NProgress!=='undefined'){NProgress.start();setTimeout(function(){NProgress.done();},200);}; const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll'); document.getElementById('sideNav').style.transform="translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='none'; };
- window.openCart   = function() { if(typeof NProgress!=='undefined'){NProgress.start();setTimeout(function(){NProgress.done();},200);}; const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll'); var sc=document.getElementById('sideCart'); sc.style.display='flex'; var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='none'; };
+ window.openNav    = function() {if(typeof NProgress!=='undefined'){NProgress.start();setTimeout(function(){NProgress.done();},200);}; const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll'); document.getElementById('sideNav').style.transform="translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='none'; };
+ window.openCart   = function() {if(typeof NProgress!=='undefined'){NProgress.start();setTimeout(function(){NProgress.done();},200);}; const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll'); var sc=document.getElementById('sideCart'); sc.style.display='flex'; var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='none'; };
  window.closeMenus = function() { if(window._slideAutoTimer){clearInterval(window._slideAutoTimer);window._slideAutoTimer=null;} const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('sideNav').style.transform="translateX(-100%)"; document.getElementById('sideCart').style.display="none"; document.getElementById('detailModal').style.display="none"; document.getElementById('overlay').classList.add('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='flex'; };
  window.closeDetail = function() { if(window._slideAutoTimer){clearInterval(window._slideAutoTimer);window._slideAutoTimer=null;} const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('detailModal').style.display="none"; document.getElementById('overlay').classList.add('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='flex'; history.pushState({},'',location.pathname); document.getElementById('og-title').content='Afro Service Cameroun | Boutique en ligne Premium'; document.getElementById('og-url').content=''; updateWALink(); };
  window.switchAdminTab = function(tabName) {
@@ -3947,13 +3857,12 @@ Importer tout
  renderTemuGrid(stock);
  renderPddList(stock);
  window._afroLoadingDone = true;
-  // ── Masquer le spinner d'ouverture ──
-  (function() {
-    var sk = document.getElementById('initSkeleton');
-    if (!sk) return;
-    sk.style.transition = 'opacity 0.3s ease';
-    sk.style.opacity = '0';
-    setTimeout(function() { sk.style.display = 'none'; }, 320);
+  (function(){
+    var sk=document.getElementById('initSkeleton');
+    if(!sk)return;
+    sk.style.transition='opacity 0.3s ease';
+    sk.style.opacity='0';
+    setTimeout(function(){sk.style.display='none';},320);
   })();
 
  // ── Ouverture automatique du produit si URL contient ?produit=ID ──
@@ -4900,7 +4809,6 @@ Voir les articles
   }
 
   window._goPage = function(p) {
-    if(typeof NProgress!=='undefined'){NProgress.start();setTimeout(function(){NProgress.done();},200);}
     var total = (window.stock || []).filter(function(x){ return x.active !== false; }).length;
     var pages = Math.ceil(total / ITEMS_PER_PAGE);
     if (p < 1 || p > pages) return;
@@ -5231,7 +5139,7 @@ window._showSkeletonDelayed = function() {
   _skeletonTimer = setTimeout(function() {
     var el = document.getElementById('pageLoader');
     if (el) el.style.display = 'block';
-  }, 150);
+  }, 200);
 };
 window._hideSkeletonAndBar = function() {
   clearTimeout(_skeletonTimer);
@@ -5241,6 +5149,41 @@ window._hideSkeletonAndBar = function() {
   }
   window._npDone();
 };
+
+// ── Wrapper principal showDetail ─────────────────────────
+(function() {
+  // Attend que showDetail soit défini (peut être wrappé plusieurs fois)
+  function installHook() {
+    var _real = window.showDetail;
+    if (!_real || _real._isAfroHook) return; // déjà installé
+
+    function _hookedShowDetail(id, _fromCat) {
+      // 1. Barre NProgress instantanée (< 16ms)
+      window._npStart();
+      // 2. Skeleton après 200ms si la page est lente
+      window._showSkeletonDelayed();
+      // 3. Rendre le vrai modal (synchrone — les données sont déjà en mémoire)
+      _real.apply(window, arguments);
+      // 4. Finir la barre et masquer le skeleton
+      setTimeout(window._hideSkeletonAndBar, 80);
+      // 5. Re-appliquer la langue sur les éléments statiques du modal (Retour, Accueil, etc.)
+      setTimeout(function() {
+        var lang = window.currentLang || 'fr';
+        document.querySelectorAll('#detailModal [data-fr][data-en]').forEach(function(el) {
+          var val = el.getAttribute('data-' + lang);
+          if (val !== null) el.textContent = val;
+        });
+      }, 50);
+    }
+    _hookedShowDetail._isAfroHook = true;
+    window.showDetail = _hookedShowDetail;
+    window.openDetail = _hookedShowDetail;
+  }
+
+  // Installe dès que possible, puis re-vérifie si des wrappers successifs l'ont remplacé
+  setTimeout(installHook, 800);
+  setTimeout(installHook, 2000);
+})();
 
 // ── Fonctions héritées (compatibilité) ───────────────────
 window._showPageLoader = function() {
@@ -5330,189 +5273,43 @@ window._hidePageLoader = function() {
 })();
 </script>
 
-
-<!-- ══ RESTAURATION DE PAGE AU RECHARGEMENT ══ -->
+<!-- ══ ZOOM PINCH-TO-ZOOM ══ -->
 <script>
-(function() {
-  var KEY = 'afroView';
-
-  // Sauvegarder l'état courant
-  function save(type, data) {
-    try { sessionStorage.setItem(KEY, JSON.stringify({type:type, data:data})); } catch(e){}
-  }
-  function clear() {
-    try { sessionStorage.removeItem(KEY); } catch(e){}
-  }
-
-  // Attendre que les fonctions soient prêtes puis installer les hooks
-  function install() {
-    // Hook filterItems — sauvegarde la catégorie visitée
-    var _fi = window.filterItems;
-    if (_fi && !_fi._restoreHook) {
-      window.filterItems = function(cat, sub, subsub) {
-        save('category', {cat:cat, sub:sub, subsub:subsub});
-        return _fi.apply(this, arguments);
-      };
-      window.filterItems._restoreHook = true;
-      // Copier le NProgress déjà présent
-      window.filterItems._npDone = _fi._npDone;
-    }
-
-    // Hook _resetToHome — efface l'état sauvegardé
-    var _rh = window._resetToHome;
-    if (_rh && !_rh._restoreHook) {
-      window._resetToHome = function() {
-        clear();
-        return _rh.apply(this, arguments);
-      };
-      window._resetToHome._restoreHook = true;
-    }
-
-    // Hook showDetail — sauvegarde le produit ouvert
-    var _sd = window.showDetail;
-    if (_sd && !_sd._restoreHook) {
-      window.showDetail = function(id, fromCat) {
-        save('detail', {id:id, fromCat:fromCat});
-        return _sd.apply(this, arguments);
-      };
-      window.showDetail._restoreHook = true;
-    }
-  }
-
-  // Restaurer l'état après le chargement complet
-  function restore() {
-    try {
-      var saved = JSON.parse(sessionStorage.getItem(KEY) || 'null');
-      if (!saved) return;
-
-      if (saved.type === 'category' && saved.data) {
-        var d = saved.data;
-        // Utiliser filterItems directement — sans wrapper pour éviter les conflits
-        var fi = window.filterItems;
-        if (fi) fi(d.cat, d.sub || '', d.subsub || '');
-
-      } else if (saved.type === 'detail' && saved.data) {
-        var sd = window.showDetail;
-        if (sd) sd(saved.data.id, saved.data.fromCat);
-      }
-    } catch(e) {}
-  }
-
-  // Installer les hooks dès que possible
-  setTimeout(install, 600);
-  setTimeout(install, 1500);
-
-  // Restaurer après que tout soit chargé
-  // On attend _afroLoadingDone puis on restaure
-  var _checkRestore = setInterval(function() {
-    if (window._afroLoadingDone) {
-      clearInterval(_checkRestore);
-      setTimeout(restore, 200);
-      // Réinstaller les hooks après le chargement complet
-      install();
-    }
-  }, 100);
-
-  // Sécurité : restaurer après 5s max même si _afroLoadingDone ne vient pas
-  setTimeout(function() {
-    clearInterval(_checkRestore);
-    restore();
-  }, 5000);
-
-})();
-</script>
-
-
-<!-- ══ ZOOM PINCH-TO-ZOOM SUR IMAGES FICHE PRODUIT ══ -->
-<script>
-(function() {
-  var _zScale = 1, _zLastDist = 0, _zStartX = 0, _zStartY = 0, _zTransX = 0, _zTransY = 0, _zEl = null;
-
-  function _zApply(el) {
-    el.style.transform = 'scale(' + _zScale + ') translate(' + _zTransX + 'px,' + _zTransY + 'px)';
-    el.style.transformOrigin = 'center center';
-  }
-
-  function _zReset(el) {
-    _zScale = 1; _zTransX = 0; _zTransY = 0;
-    el.style.transform = '';
-    el.style.cursor = 'default';
-  }
-
-  function _zDist(t) {
-    var dx = t[0].clientX - t[1].clientX, dy = t[0].clientY - t[1].clientY;
-    return Math.sqrt(dx*dx + dy*dy);
-  }
-
-  function attachZoom(img) {
-    if (img._zoomAttached) return;
-    img._zoomAttached = true;
-    img.style.transition = 'transform 0.1s ease';
-
-    img.addEventListener('touchstart', function(e) {
-      if (e.touches.length === 2) {
-        e.preventDefault();
-        _zEl = img;
-        _zLastDist = _zDist(e.touches);
-      } else if (e.touches.length === 1 && _zScale > 1) {
-        _zStartX = e.touches[0].clientX - _zTransX;
-        _zStartY = e.touches[0].clientY - _zTransY;
-      }
-    }, { passive: false });
-
-    img.addEventListener('touchmove', function(e) {
-      if (!_zEl) return;
-      if (e.touches.length === 2) {
-        e.preventDefault();
-        var dist = _zDist(e.touches);
-        _zScale = Math.min(4, Math.max(1, _zScale * (dist / _zLastDist)));
-        _zLastDist = dist;
-        _zApply(img);
-        img.style.cursor = _zScale > 1 ? 'zoom-out' : 'default';
-      } else if (e.touches.length === 1 && _zScale > 1) {
-        e.preventDefault();
-        _zTransX = e.touches[0].clientX - _zStartX;
-        _zTransY = e.touches[0].clientY - _zStartY;
-        _zApply(img);
-      }
-    }, { passive: false });
-
-    img.addEventListener('touchend', function(e) {
-      if (e.touches.length < 2) _zLastDist = 0;
-      if (e.touches.length === 0) {
-        _zEl = null;
-        if (_zScale < 1.05) _zReset(img);
-      }
+(function(){
+  var _zS=1,_zLD=0,_zSX=0,_zSY=0,_zTX=0,_zTY=0,_zEl=null;
+  function _zA(el){el.style.transform='scale('+_zS+') translate('+_zTX+'px,'+_zTY+'px)';el.style.transformOrigin='center center';}
+  function _zR(el){_zS=1;_zTX=0;_zTY=0;el.style.transform='';}
+  function _zD(t){var dx=t[0].clientX-t[1].clientX,dy=t[0].clientY-t[1].clientY;return Math.sqrt(dx*dx+dy*dy);}
+  function attachZoom(img){
+    if(img._z)return; img._z=true; img.style.transition='transform 0.1s ease';
+    img.addEventListener('touchstart',function(e){
+      if(e.touches.length===2){e.preventDefault();_zEl=img;_zLD=_zD(e.touches);}
+      else if(e.touches.length===1&&_zS>1){_zSX=e.touches[0].clientX-_zTX;_zSY=e.touches[0].clientY-_zTY;}
+    },{passive:false});
+    img.addEventListener('touchmove',function(e){
+      if(!_zEl)return;
+      if(e.touches.length===2){e.preventDefault();var d=_zD(e.touches);_zS=Math.min(4,Math.max(1,_zS*(d/_zLD)));_zLD=d;_zA(img);}
+      else if(e.touches.length===1&&_zS>1){e.preventDefault();_zTX=e.touches[0].clientX-_zSX;_zTY=e.touches[0].clientY-_zSY;_zA(img);}
+    },{passive:false});
+    img.addEventListener('touchend',function(e){
+      if(e.touches.length<2){_zLD=0;}
+      if(e.touches.length===0){_zEl=null;if(_zS<1.05)_zR(img);}
     });
-
-    // Double-tap pour zoom/reset
-    var _lastTap = 0;
-    img.addEventListener('touchend', function(e) {
-      var now = Date.now();
-      if (now - _lastTap < 300) {
-        e.preventDefault();
-        if (_zScale > 1) { _zReset(img); }
-        else { _zScale = 2.5; _zApply(img); img.style.cursor = 'zoom-out'; }
-      }
-      _lastTap = now;
+    var _lt=0;
+    img.addEventListener('touchend',function(e){
+      var now=Date.now();
+      if(now-_lt<300){e.preventDefault();if(_zS>1){_zR(img);}else{_zS=2.5;_zA(img);}}
+      _lt=now;
     });
   }
-
-  // Observer pour attacher le zoom aux images de la fiche produit
-  var _zObs = new MutationObserver(function() {
-    var dm = document.getElementById('detailModal');
-    if (!dm) return;
-    dm.querySelectorAll('img').forEach(attachZoom);
+  var obs=new MutationObserver(function(){
+    var dm=document.getElementById('detailModal');
+    if(dm)dm.querySelectorAll('img').forEach(attachZoom);
   });
-
-  document.addEventListener('DOMContentLoaded', function() {
-    var dm = document.getElementById('detailModal');
-    if (dm) {
-      _zObs.observe(dm, { childList: true, subtree: true });
-      dm.querySelectorAll('img').forEach(attachZoom);
-    }
+  document.addEventListener('DOMContentLoaded',function(){
+    var dm=document.getElementById('detailModal');
+    if(dm){obs.observe(dm,{childList:true,subtree:true});dm.querySelectorAll('img').forEach(attachZoom);}
   });
 })();
 </script>
-
 </html>
