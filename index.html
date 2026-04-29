@@ -2578,7 +2578,7 @@ Importer tout
  <!-- BARRE STICKY BAS — prix + bouton ajouter au panier style Glotelho -->
  <div id="dtlStickyBar" style="position:sticky;bottom:0;left:0;right:0;background:white;border-top:1.5px solid #e2e8f0;padding:12px 16px;display:flex;align-items:center;gap:12px;z-index:20;box-shadow:0 -4px 20px rgba(0,0,0,0.08);">
  <div style="flex:1;">
- <div style="font-size:20px;font-weight:900;color:#101944;line-height:1;letter-spacing:-0.5px;">${parseInt(p.price).toLocaleString('fr-FR')} <span style="font-size:11px;font-weight:700;">FCFA</span></div>
+ <div id="dtlStickyPrice" data-base="${p.price}" style="font-size:20px;font-weight:900;color:#101944;line-height:1;letter-spacing:-0.5px;">${parseInt(p.price).toLocaleString('fr-FR')} <span style="font-size:11px;font-weight:700;">FCFA</span></div>
  ${p.old ? `<div style="font-size:11px;color:#94a3b8;text-decoration:line-through;line-height:1;margin-top:2px;">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</div>` : ''}
  </div>
  <button onclick="window.addToCart('${p.id}')" class="${_fromCat ? 'btn-commander-shimmer' : ''}" style="background:#101944;color:white;border:none;border-radius:8px;padding:13px 22px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(16,25,68,0.30);transition:all 0.2s;white-space:nowrap;" onmousedown="this.style.transform='scale(0.96)';this.style.background='#0d1538'" onmouseup="this.style.transform='scale(1)';this.style.background='#101944'" onmouseleave="this.style.transform='scale(1)';this.style.background='#101944'">
@@ -2739,11 +2739,27 @@ Importer tout
 
  window._dtlQtyMinus = function() {
  const inp = document.getElementById('vQty');
- if (inp && parseInt(inp.value) > 1) inp.value = parseInt(inp.value) - 1;
+ if (inp && parseInt(inp.value) > 1) {
+   inp.value = parseInt(inp.value) - 1;
+   window._dtlUpdateStickyPrice();
+ }
  };
  window._dtlQtyPlus = function() {
  const inp = document.getElementById('vQty');
- if (inp) inp.value = parseInt(inp.value) + 1;
+ if (inp) {
+   inp.value = parseInt(inp.value) + 1;
+   window._dtlUpdateStickyPrice();
+ }
+ };
+
+ window._dtlUpdateStickyPrice = function() {
+ const inp = document.getElementById('vQty');
+ const el = document.getElementById('dtlStickyPrice');
+ if (!inp || !el) return;
+ const qty = parseInt(inp.value) || 1;
+ const base = parseFloat(el.getAttribute('data-base')) || 0;
+ const total = base * qty;
+ el.innerHTML = total.toLocaleString('fr-FR') + ' <span style="font-size:11px;font-weight:700;">FCFA</span>';
  };
 
  window.addToCart = function(id) {
