@@ -5136,42 +5136,6 @@ window._hideSkeletonAndBar = function() {
   window._npDone();
 };
 
-// ── Wrapper principal showDetail ─────────────────────────
-(function() {
-  // Attend que showDetail soit défini (peut être wrappé plusieurs fois)
-  function installHook() {
-    var _real = window.showDetail;
-    if (!_real || _real._isAfroHook) return; // déjà installé
-
-    function _hookedShowDetail(id, _fromCat) {
-      // 1. Barre NProgress instantanée (< 16ms)
-      window._npStart();
-      // 2. Skeleton après 200ms si la page est lente
-      window._showSkeletonDelayed();
-      // 3. Rendre le vrai modal (synchrone — les données sont déjà en mémoire)
-      _real.apply(window, arguments);
-      // 4. Finir la barre et masquer le skeleton
-      window._hideSkeletonAndBar();
-      // 5. Re-appliquer la langue sur les éléments statiques du modal (Retour, Accueil, etc.)
-      setTimeout(function() {
-        var lang = window.currentLang || 'fr';
-        document.querySelectorAll('#detailModal [data-fr][data-en]').forEach(function(el) {
-          var val = el.getAttribute('data-' + lang);
-          if (val !== null) el.textContent = val;
-        });
-      }, 50);
-    }
-    _hookedShowDetail._isAfroHook = true;
-    window.showDetail = _hookedShowDetail;
-    window.openDetail = _hookedShowDetail;
-  }
-
-  // Installe dès que possible, puis re-vérifie si des wrappers successifs l'ont remplacé
-  setTimeout(installHook, 100);
-  setTimeout(installHook, 500);
-  setTimeout(installHook, 1500);
-})();
-
 // ── Fonctions héritées (compatibilité) ───────────────────
 window._showPageLoader = function() {
   window._npStart();
