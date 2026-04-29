@@ -74,6 +74,77 @@ window._toast=function(msg,type){
 };
 window.alert=function(msg){window._toast(String(msg),'info');};
 </script>
+
+<!-- ══ MODALES CONFIRM / PROMPT PERSONNALISÉES ══ -->
+<style>
+#afroDialog{position:fixed;inset:0;z-index:999998;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;padding:24px;}
+#afroDialogBox{background:white;border-radius:20px;padding:24px 20px;width:100%;max-width:340px;box-shadow:0 8px 40px rgba(0,0,0,0.2);}
+#afroDialogTitle{font-size:15px;font-weight:900;color:#101944;margin-bottom:12px;line-height:1.3;}
+#afroDialogInput{width:100%;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px;font-size:14px;font-weight:600;color:#111;outline:none;box-sizing:border-box;margin-bottom:16px;display:none;}
+#afroDialogInput:focus{border-color:#101944;}
+.afroDialogBtns{display:flex;gap:10px;justify-content:flex-end;}
+.afroDialogBtns button{padding:10px 22px;border-radius:10px;border:none;font-size:13px;font-weight:900;cursor:pointer;}
+#afroDialogCancel{background:#f1f5f9;color:#64748b;}
+#afroDialogOk{background:#101944;color:white;}
+</style>
+<div id="afroDialog">
+  <div id="afroDialogBox">
+    <div id="afroDialogTitle"></div>
+    <input id="afroDialogInput" type="text" />
+    <div class="afroDialogBtns">
+      <button id="afroDialogCancel">Annuler</button>
+      <button id="afroDialogOk">OK</button>
+    </div>
+  </div>
+</div>
+<script>
+// Confirm personnalisé
+window._confirm = function(msg, onOk) {
+  var d=document.getElementById('afroDialog');
+  var t=document.getElementById('afroDialogTitle');
+  var inp=document.getElementById('afroDialogInput');
+  var ok=document.getElementById('afroDialogOk');
+  var cancel=document.getElementById('afroDialogCancel');
+  var cancelTxt = (typeof currentLang!=='undefined'&&currentLang==='en')?'Cancel':'Annuler';
+  cancel.textContent = cancelTxt;
+  ok.textContent = 'OK';
+  t.textContent = msg;
+  inp.style.display = 'none';
+  d.style.display = 'flex';
+  var done = function(res) {
+    d.style.display = 'none';
+    ok.onclick = null; cancel.onclick = null;
+    if (res && onOk) onOk();
+  };
+  ok.onclick = function(){ done(true); };
+  cancel.onclick = function(){ done(false); };
+};
+// Prompt personnalisé
+window._prompt = function(msg, defaultVal, onOk) {
+  var d=document.getElementById('afroDialog');
+  var t=document.getElementById('afroDialogTitle');
+  var inp=document.getElementById('afroDialogInput');
+  var ok=document.getElementById('afroDialogOk');
+  var cancel=document.getElementById('afroDialogCancel');
+  var cancelTxt = (typeof currentLang!=='undefined'&&currentLang==='en')?'Cancel':'Annuler';
+  cancel.textContent = cancelTxt;
+  ok.textContent = 'OK';
+  t.textContent = msg;
+  inp.style.display = 'block';
+  inp.value = defaultVal || '';
+  d.style.display = 'flex';
+  setTimeout(function(){ inp.focus(); }, 100);
+  var done = function(confirmed) {
+    d.style.display = 'none';
+    ok.onclick = null; cancel.onclick = null;
+    if (confirmed && onOk) onOk(inp.value);
+  };
+  ok.onclick = function(){ done(true); };
+  cancel.onclick = function(){ done(false); };
+  inp.onkeydown = function(e){ if(e.key==='Enter') done(true); };
+};
+</script>
+
 <!-- ══ SPINNER OUVERTURE ══ -->
 <div id="initSkeleton" style="position:fixed;inset:0;z-index:999999;background:#ffffff;display:flex;align-items:center;justify-content:center;">
   <div style="width:40px;height:40px;border:2.5px solid #e8f0fe;border-top-color:#2563eb;border-radius:50%;animation:afroSpin 0.8s linear infinite;"></div>
@@ -2942,38 +3013,42 @@ Importer tout
 
  window.replyProdReview = async function(productId, reviewId) {
  if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
- const reply = prompt(currentLang === 'fr' ? "Réponse de l'équipe Afro Service :" : "Reply from Afro Service team:");
- if (reply && reply.trim()) await update(ref(db, 'productReviews/' + productId + '/' + reviewId), { adminReply: reply.trim(), adminReplyDate: new Date().toLocaleDateString('fr-FR') });
+  window._prompt(currentLang === 'fr' ? "Réponse de l'équipe Afro Service :" : "Reply from Afro Service team:", '', async function(reply){
+  if (reply && reply.trim()) { await update(ref(db, 'productReviews/' + productId + '/' + reviewId), { adminReply: reply.trim() }); }});
  };
 
  window.deleteProdReview = function(productId, reviewId) {
  if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
- if (confirm(currentLang === 'fr' ? "Supprimer cet avis ?" : "Delete this review?")) remove(ref(db, 'productReviews/' + productId + '/' + reviewId));
+ window._confirm(currentLang === 'fr' ? 'Supprimer cet avis ?' : 'Delete this review?', function(){ remove(ref(db, 'productReviews/' + productId + '/' + reviewId)); });
  };
 
  window.editProdReview = function(productId, reviewId, oldComment, oldNote) {
-   var newComment = prompt(currentLang==='fr'?'Modifier votre commentaire :':'Edit your comment:', oldComment);
-   if (!newComment || !newComment.trim()) return;
-   update(ref(db,'productReviews/'+productId+'/'+reviewId),{comment:newComment.trim(),edited:true,editDate:new Date().toLocaleDateString('fr-FR')})
-   .then(function(){window._toast(currentLang==='fr'?'Commentaire modifié':'Comment updated','success');});
+   window._prompt(currentLang==='fr'?'Modifier votre commentaire :':'Edit your comment:', oldComment, function(newComment){
+     if (!newComment || !newComment.trim()) return;
+     update(ref(db,'productReviews/'+productId+'/'+reviewId),{comment:newComment.trim(),edited:true,editDate:new Date().toLocaleDateString('fr-FR')})
+     .then(function(){window._toast(currentLang==='fr'?'Commentaire modifié':'Comment updated','success');});
+   });
  };
  window.deleteProdReviewUser = function(productId, reviewId) {
    if(!currentUser)return;
-   if(!confirm(currentLang==='fr'?'Supprimer votre avis ?':'Delete your review?'))return;
-   remove(ref(db,'productReviews/'+productId+'/'+reviewId))
-   .then(function(){window._toast(currentLang==='fr'?'Avis supprimé':'Review deleted','info');});
+   window._confirm(currentLang==='fr'?'Supprimer votre avis ?':'Delete your review?', function(){
+     remove(ref(db,'productReviews/'+productId+'/'+reviewId))
+     .then(function(){window._toast(currentLang==='fr'?'Avis supprimé':'Review deleted','info');});
+   });
  };
  window.editBoutiqueReview = function(reviewId, oldComment, oldNote) {
-   var newComment = prompt(currentLang==='fr'?'Modifier votre commentaire :':'Edit your comment:', oldComment);
-   if (!newComment || !newComment.trim()) return;
-   update(ref(db,'reviews/'+reviewId),{comment:newComment.trim(),edited:true,editDate:new Date().toLocaleDateString('fr-FR')})
-   .then(function(){window._toast(currentLang==='fr'?'Commentaire modifié':'Comment updated','success');});
+   window._prompt(currentLang==='fr'?'Modifier votre commentaire :':'Edit your comment:', oldComment, function(newComment){
+     if (!newComment || !newComment.trim()) return;
+     update(ref(db,'reviews/'+reviewId),{comment:newComment.trim(),edited:true,editDate:new Date().toLocaleDateString('fr-FR')})
+     .then(function(){window._toast(currentLang==='fr'?'Commentaire modifié':'Comment updated','success');});
+   });
  };
  window.deleteBoutiqueReview = function(reviewId) {
    if(!currentUser)return;
-   if(!confirm(currentLang==='fr'?'Supprimer votre avis ?':'Delete your review?'))return;
-   remove(ref(db,'reviews/'+reviewId))
-   .then(function(){window._toast(currentLang==='fr'?'Avis supprimé':'Review deleted','info');});
+   window._confirm(currentLang==='fr'?'Supprimer votre avis ?':'Delete your review?', function(){
+     remove(ref(db,'reviews/'+reviewId))
+     .then(function(){window._toast(currentLang==='fr'?'Avis supprimé':'Review deleted','info');});
+   });
  };
 
  window.quickSearch = function(q) {
@@ -3519,7 +3594,7 @@ Importer tout
  };
 
 
- window.deleteProductFromFirebase = function(id) { if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return; if (confirm(currentLang === "fr" ? "Supprimer définitivement ?" : "Delete permanently?")) remove(ref(db, 'stock/' + id)); };
+ window.deleteProductFromFirebase = function(id) { if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return; window._confirm(currentLang==='fr'?'Supprimer cet article ?':'Delete this product?', function(){ window._doDeleteProduct && window._doDeleteProduct(id); }); };
 
  function badgeSelectOptions(currentLabel) {
  const opts = [
@@ -3623,7 +3698,7 @@ Importer tout
  window.addNewCategory   = ()               => { categories.push({ name: currentLang === "fr" ? "NOUVEAU" : "NEW", subs: [] }); renderVisualManager(); syncAdminMenus(); };
  window.addNewSub        = (cIdx)           => { if (!categories[cIdx].subs) categories[cIdx].subs = []; categories[cIdx].subs.push({ name: currentLang === "fr" ? "SOUS-CAT" : "SUB-CAT", subsubs: [] }); renderVisualManager(); syncAdminMenus(); };
  window.addSubSub        = (c, s)           => { if (!categories[c].subs[s].subsubs) categories[c].subs[s].subsubs = []; categories[c].subs[s].subsubs.push(""); renderVisualManager(); syncAdminMenus(); };
- window.deleteCat        = (c)              => { if (confirm(currentLang === "fr" ? "Supprimer cette catégorie ?" : "Delete this category?")) { categories.splice(c, 1); renderVisualManager(); syncAdminMenus(); } };
+  window.deleteCat = (c) => { window._confirm(currentLang==="fr"?"Supprimer cette catégorie ?":"Delete this category?", function(){ categories=categories.filter(x=>x.id!==c.id); set(ref(db,'categories'),categories); syncAdminMenus(); renderVisualManager(); }); };
  window.deleteSub        = (c, s)           => { categories[c].subs.splice(s, 1); renderVisualManager(); syncAdminMenus(); };
  window.deleteSubSub     = (c, s, ss)       => { categories[c].subs[s].subsubs.splice(ss, 1); renderVisualManager(); syncAdminMenus(); };
  window.saveCategoriesToFirebase = function() {
@@ -3668,13 +3743,13 @@ Importer tout
 
  window.replyToReview = async function(reviewId) {
  if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) { alert(currentLang === "fr" ? "Action non autorisée" : "Unauthorized action"); return; }
- const reply = prompt(currentLang === 'fr' ? "Réponse de l'équipe Afro Service :" : "Reply from Afro Service team:");
- if (reply && reply.trim()) { await update(ref(db, `reviews/${reviewId}`), { adminReply: reply.trim(), adminReplyDate: new Date().toLocaleDateString('fr-FR') }); alert(currentLang === 'fr' ? "Réponse ajoutée !" : "Reply added!"); }
+  window._prompt(currentLang === 'fr' ? "Réponse de l'équipe Afro Service :" : "Reply from Afro Service team:", '', async function(reply){
+  if (reply && reply.trim()) { await update(ref(db, 'reviews/' + reviewId), { adminReply: reply.trim() }); }});
  };
 
  window.deleteReviewFromFirebase = function(id) {
  if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
- if (confirm(currentLang === 'fr' ? "Supprimer définitivement cet avis ?" : "Permanently delete this review?")) remove(ref(db, 'reviews/' + id));
+  window._confirm(currentLang === 'fr' ? 'Supprimer définitivement cet avis ?' : 'Permanently delete this review?', function(){ remove(ref(db, 'reviews/' + id)); });
  };
 
  window.viewHistory = function() {
@@ -3786,7 +3861,7 @@ Importer tout
  try { await sendPasswordResetEmail(auth, email); alert((currentLang === 'fr' ? "Lien envoyé à : " : "Link sent to: ") + email); } catch (e) { alert("Erreur : " + e.message); }
  };
 
- window.openAuth   = () => currentUser ? (confirm(currentLang === 'fr' ? "Se déconnecter ?" : "Log out?") && signOut(auth)) : document.getElementById('authModal').classList.remove('hidden');
+ window.openAuth   = () => currentUser ? (window._confirmSync && signOut(auth)) : document.getElementById('authModal').classList.remove('hidden');
  window.closeAuth  = () => document.getElementById('authModal').classList.add('hidden');
  window.toggleAuthMode = () => {
  const title     = document.getElementById('authTitle');
