@@ -1121,7 +1121,7 @@ Importer tout
 
 <script type="module">
  import { initializeApp } from "firebase/app";
- import { getDatabase, ref, push, onValue, remove, update, set } from "firebase/database";
+ import { getDatabase, ref, push, onValue, remove, update, set, get } from "firebase/database";
  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, sendEmailVerification, sendPasswordResetEmail } from "firebase/auth";
 
  const firebaseConfig = {
@@ -2990,7 +2990,7 @@ Importer tout
  });
  document.getElementById('prodRevText_' + productId).value = '';
  window.setProdStar(productId, 5);
- if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '✅ ' + (currentLang === 'fr' ? 'Avis envoyé !' : 'Review sent!'); setTimeout(() => { btn.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg> ${currentLang === 'fr' ? 'Envoyer mon avis' : 'Send my review'}`; }, 2500); }
+ if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = (currentLang === 'fr' ? 'Avis envoyé !' : 'Review sent!'); setTimeout(() => { btn.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg> ${currentLang === 'fr' ? 'Envoyer mon avis' : 'Send my review'}`; }, 2500); }
  window.loadProductReviews(productId);
  } catch(err) {
  if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg> ${currentLang === 'fr' ? 'Envoyer mon avis' : 'Send my review'}`; }
@@ -3022,11 +3022,15 @@ Importer tout
  window._confirm(currentLang === 'fr' ? 'Supprimer cet avis ?' : 'Delete this review?', function(){ remove(ref(db, 'productReviews/' + productId + '/' + reviewId)); });
  };
 
- window.editProdReview = function(productId, reviewId, oldComment, oldNote) {
-   window._prompt(currentLang==='fr'?'Modifier votre commentaire :':'Edit your comment:', oldComment, function(newComment){
-     if (!newComment || !newComment.trim()) return;
-     update(ref(db,'productReviews/'+productId+'/'+reviewId),{comment:newComment.trim(),edited:true,editDate:new Date().toLocaleDateString('fr-FR')})
-     .then(function(){window._toast(currentLang==='fr'?'Commentaire modifié':'Comment updated','success');});
+ window.editProdReview = function(productId, reviewId) {
+   get(ref(db,'productReviews/'+productId+'/'+reviewId)).then(function(snap){
+     var r = snap.val();
+     var oldComment = r ? r.comment : '';
+     window._prompt(currentLang==='fr'?'Modifier votre commentaire :':'Edit your comment:', oldComment, function(newComment){
+       if (!newComment || !newComment.trim()) return;
+       update(ref(db,'productReviews/'+productId+'/'+reviewId),{comment:newComment.trim(),edited:true,editDate:new Date().toLocaleDateString('fr-FR')})
+       .then(function(){window._toast(currentLang==='fr'?'Commentaire modifié':'Comment updated','success');});
+     });
    });
  };
  window.deleteProdReviewUser = function(productId, reviewId) {
@@ -3036,11 +3040,15 @@ Importer tout
      .then(function(){window._toast(currentLang==='fr'?'Avis supprimé':'Review deleted','info');});
    });
  };
- window.editBoutiqueReview = function(reviewId, oldComment, oldNote) {
-   window._prompt(currentLang==='fr'?'Modifier votre commentaire :':'Edit your comment:', oldComment, function(newComment){
-     if (!newComment || !newComment.trim()) return;
-     update(ref(db,'reviews/'+reviewId),{comment:newComment.trim(),edited:true,editDate:new Date().toLocaleDateString('fr-FR')})
-     .then(function(){window._toast(currentLang==='fr'?'Commentaire modifié':'Comment updated','success');});
+ window.editBoutiqueReview = function(reviewId) {
+   get(ref(db,'reviews/'+reviewId)).then(function(snap){
+     var r = snap.val();
+     var oldComment = r ? r.comment : '';
+     window._prompt(currentLang==='fr'?'Modifier votre commentaire :':'Edit your comment:', oldComment, function(newComment){
+       if (!newComment || !newComment.trim()) return;
+       update(ref(db,'reviews/'+reviewId),{comment:newComment.trim(),edited:true,editDate:new Date().toLocaleDateString('fr-FR')})
+       .then(function(){window._toast(currentLang==='fr'?'Commentaire modifié':'Comment updated','success');});
+     });
    });
  };
  window.deleteBoutiqueReview = function(reviewId) {
