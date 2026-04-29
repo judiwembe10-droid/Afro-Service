@@ -3035,6 +3035,9 @@ Importer tout
  var _sgMode  = '';
  var _sgPage  = 1;
  var _SG_PER_PAGE = 10;
+ var _sgDataOrig   = [];
+ var _sgActiveSort   = '';
+ var _sgActiveFilter = '';
 
  function _sgBuildPage(page) {
    _sgPage = page;
@@ -3227,9 +3230,7 @@ Importer tout
 
 
   // ══ FILTRE + TRI ══════════════════════════════════════════
-  var _sgDataOrig   = _sgDataOrig || [];
-  var _sgActiveSort   = _sgActiveSort || '';
-  var _sgActiveFilter = _sgActiveFilter || '';
+  // _sgDataOrig, _sgActiveSort, _sgActiveFilter définis globalement ci-dessus
 
   function _sgApplyAndRebuild() {
     var d = _sgDataOrig.slice();
@@ -3341,7 +3342,6 @@ Importer tout
  grid.style.display = 'none';
 
  // Stocker et afficher page 1
- _sgData  = data || [];
  _sgData     = data || [];
  _sgDataOrig = _sgData.slice();
  _sgActiveSort   = '';
