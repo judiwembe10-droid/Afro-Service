@@ -3401,6 +3401,7 @@ Importer tout
  };
 
  function renderStaticGrid(data, label, mode) {
+ var _srWasOpen = !!(document.getElementById('searchResultsPage') && (document.getElementById('searchResultsPage').style.display === 'flex' || document.getElementById('searchResultsPage').style.display === 'block' || (document.getElementById('searchResultsPage').offsetParent !== null && document.getElementById('searchResultsPage').style.display !== 'none')));
  const grid    = document.getElementById('productGrid');
  const track   = document.getElementById('productScrollTrack');
  const wrapper = document.getElementById('productScrollWrapper');
@@ -3448,7 +3449,10 @@ Importer tout
  _sgMode  = mode  || '';
  _sgPage  = 1;
  _sgBuildPage(1);
+ // Pousser un état history si la page résultats vient de s'ouvrir
+ if (!_srWasOpen && window._navPush) { window._navPush('searchResultsPage'); }
  }
+ window.renderStaticGrid = renderStaticGrid;
 
  window._resetToHome = function() {
     if(typeof NProgress!=='undefined'){NProgress.start();setTimeout(function(){NProgress.done();},400);}
@@ -3890,7 +3894,7 @@ Importer tout
  window.openNav    = function() {if(typeof NProgress!=='undefined'){NProgress.start();setTimeout(function(){NProgress.done();},200);}; const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll'); document.getElementById('sideNav').style.transform="translateX(0)"; document.getElementById('overlay').classList.remove('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='none'; };
  window.openCart   = function() {if(typeof NProgress!=='undefined'){NProgress.start();setTimeout(function(){NProgress.done();},200);}; const sy=window.scrollY; document.body.style.top=`-${sy}px`; document.body.classList.add('no-scroll'); var sc=document.getElementById('sideCart'); sc.style.display='flex'; var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='none'; };
  window.closeMenus = function() { if(window._slideAutoTimer){clearInterval(window._slideAutoTimer);window._slideAutoTimer=null;} const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('sideNav').style.transform="translateX(-100%)"; document.getElementById('sideCart').style.display="none"; document.getElementById('detailModal').style.display="none"; document.getElementById('overlay').classList.add('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='flex'; };
- window.closeDetail = function() { if(window._slideAutoTimer){clearInterval(window._slideAutoTimer);window._slideAutoTimer=null;} const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('detailModal').style.display="none"; document.getElementById('overlay').classList.add('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='flex'; history.pushState({},'',location.pathname); document.getElementById('og-title').content='Afro Service Cameroun | Boutique en ligne Premium'; document.getElementById('og-url').content=''; updateWALink(); };
+ window.closeDetail = function() { if(window._slideAutoTimer){clearInterval(window._slideAutoTimer);window._slideAutoTimer=null;} const sy=document.body.style.top; document.body.classList.remove('no-scroll'); document.body.style.top=''; window.scrollTo(0,parseInt(sy||'0')*-1); document.getElementById('detailModal').style.display="none"; document.getElementById('overlay').classList.add('hidden'); var _bnb=document.getElementById('bottomNavBar'); if(_bnb) _bnb.style.display='flex'; history.replaceState({},'',location.pathname); document.getElementById('og-title').content='Afro Service Cameroun | Boutique en ligne Premium'; document.getElementById('og-url').content=''; updateWALink(); };
  window.switchAdminTab = function(tabName) {
  document.querySelectorAll('.admin-panel').forEach(panel => panel.classList.add('hidden'));
  document.querySelectorAll('[id^="tab-"]').forEach(tab => { tab.classList.remove('border-red-600', 'text-red-600'); tab.classList.add('border-transparent', 'text-slate-400'); });
@@ -4400,152 +4404,193 @@ Voir les articles
  </script>
 
 <script>
+/* ══════════════════════════════════════════════════════════════════
+   AFRO SERVICE — GESTIONNAIRE DE NAVIGATION PHYSIQUE (bouton retour)
+   Chaque "écran" ouvert pousse un état dans l'historique du navigateur.
+   Le bouton retour physique Android ferme l'écran actif dans l'ordre :
+   Popup BF → Modal Admin → Détail produit → PromoPopup → Panier →
+   Menu latéral → Page catégories → Page résultats/catégorie → Accueil
+   (depuis l'accueil : le navigateur quitte normalement la page)
+   ══════════════════════════════════════════════════════════════════ */
+(function () {
 
- (function() {
+  /* ── Utilitaires ── */
+  function isDisplayOpen(id) {
+    var el = document.getElementById(id);
+    return el && (el.style.display === 'flex' || el.style.display === 'block');
+  }
+  function isVisibleByClass(id) {
+    var el = document.getElementById(id);
+    return el && !el.classList.contains('hidden');
+  }
+  function isTransformOpen(id) {
+    var el = document.getElementById(id);
+    if (!el) return false;
+    var t = el.style.transform || '';
+    return (t === 'translateX(0)' || t === 'translateX(0px)' || t === 'translateX(0%)');
+  }
+  function hideOverlay() {
+    var o = document.getElementById('overlay');
+    if (o) o.classList.add('hidden');
+  }
 
- function isOpenByTransform(el, closedValue) {
- if (!el) return false;
- const t = el.style.transform || '';
+  /* ── Pile de navigation interne ──
+     Chaque pushState enregistre le nom du panneau dans window._navStack.
+     popstate dépile proprement sans jamais quitter la boutique par erreur. */
+  window._navStack = [];
 
- if (t === 'translateX(0)' || t === 'translateX(0px)' || t === 'translateX(0%)') return true;
- if (t === closedValue) return false;
+  window._navPush = function (panel) {
+    window._navStack.push(panel);
+    history.pushState({ afroPanel: panel }, '');
+  };
 
- if (closedValue === 'translateX(100%)') return !el.classList.contains('translate-x-full');
- if (closedValue === 'translateX(-100%)') return !el.classList.contains('-translate-x-full');
- return false;
- }
+  /* ── Correspondance panneau → fonction de fermeture ── */
+  var closers = {
+    bfOverlay:    function () { window.closeBF && window.closeBF(); },
+    adminModal:   function () {
+      var el = document.getElementById('adminModal');
+      if (window.closeAdmin) { window.closeAdmin(); }
+      else if (el) { el.classList.add('hidden'); }
+    },
+    detailModal:  function () {
+      if (window.closeDetail) { window.closeDetail(); }
+      else {
+        var el = document.getElementById('detailModal');
+        if (el) el.style.display = 'none';
+        document.body.classList.remove('no-scroll');
+        document.body.style.top = '';
+        hideOverlay();
+        var bnb = document.getElementById('bottomNavBar');
+        if (bnb) bnb.style.display = 'flex';
+      }
+    },
+    promoPopup:   function () { window.closePromoPopup && window.closePromoPopup(); },
+    sideCart:     function () {
+      if (window.closeMenus) { window.closeMenus(); }
+      else {
+        var el = document.getElementById('sideCart');
+        if (el) el.style.display = 'none';
+      }
+      hideOverlay();
+    },
+    sideNav:      function () {
+      if (window.closeMenus) { window.closeMenus(); }
+      else {
+        var el = document.getElementById('sideNav');
+        if (el) el.style.transform = 'translateX(-100%)';
+      }
+      hideOverlay();
+    },
+    catPage:      function () {
+      if (window._closeCatPage) { window._closeCatPage(); }
+      else {
+        var el = document.getElementById('catPage');
+        if (el) el.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    },
+    searchResultsPage: function () {
+      window._resetToHome && window._resetToHome();
+    }
+  };
 
- function pushState(panel) {
- history.pushState({ panel: panel }, '');
- }
+  /* ── Détecte l'écran actuellement ouvert (ordre de priorité) ── */
+  function getOpenPanel() {
+    if (isDisplayOpen('bfOverlay'))                       return 'bfOverlay';
+    var adm = document.getElementById('adminModal');
+    if (adm && !adm.classList.contains('hidden'))         return 'adminModal';
+    if (isDisplayOpen('detailModal'))                     return 'detailModal';
+    if (isDisplayOpen('promoPopup'))                      return 'promoPopup';
+    if (isDisplayOpen('sideCart'))                        return 'sideCart';
+    if (isTransformOpen('sideNav'))                       return 'sideNav';
+    var cat = document.getElementById('catPage');
+    if (cat && cat.style.display !== 'none')              return 'catPage';
+    if (isDisplayOpen('searchResultsPage'))               return 'searchResultsPage';
+    return null;
+  }
 
- // Masque l'overlay sombre à coup sûr
- function hideOverlay() {
- const overlay = document.getElementById('overlay');
- if (overlay) overlay.classList.add('hidden');
- }
+  /* ── Handler popstate ── */
+  window.addEventListener('popstate', function (e) {
+    var panel = getOpenPanel();
+    if (panel && closers[panel]) {
+      closers[panel]();
+      // Retirer du stack interne si présent
+      var idx = window._navStack.lastIndexOf(panel);
+      if (idx !== -1) window._navStack.splice(idx, 1);
+    }
+    /* Si rien n'est ouvert, le navigateur remonte naturellement dans son
+       propre historique → l'utilisateur quitte la boutique normalement.
+       On ne repousse PAS d'état ici pour éviter la boucle infinie. */
+  });
 
- // Vérifie si un panneau est visible via classList 'hidden'
- function isVisibleByClass(el) {
- if (!el) return false;
- return !el.classList.contains('hidden');
- }
+  /* ══════════════════════════════════════════════════════════════
+     OBSERVATEURS — poussent un état dès qu'un panneau s'ouvre
+     (sauf detailModal et catPage qui gèrent leur propre pushState)
+     ══════════════════════════════════════════════════════════════ */
 
- window.addEventListener('popstate', function() {
+  /* Surveille display:flex / display:block */
+  function watchDisplay(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var wasOpen = isDisplayOpen(id);
+    new MutationObserver(function () {
+      var nowOpen = isDisplayOpen(id);
+      if (nowOpen && !wasOpen) { window._navPush(id); }
+      wasOpen = nowOpen;
+    }).observe(el, { attributes: true, attributeFilter: ['style'] });
+  }
 
- // 0. Page catégories plein écran — fermée via display:none
- const catPage = document.getElementById('catPage');
- if (catPage && catPage.style.display !== 'none') {
-   if (window._closeCatPage) { window._closeCatPage(); }
-   else { catPage.style.display = 'none'; document.body.style.overflow = ''; }
-   return;
- }
+  /* Surveille transform translateX(0) */
+  function watchTransform(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var wasOpen = isTransformOpen(id);
+    new MutationObserver(function () {
+      var nowOpen = isTransformOpen(id);
+      if (nowOpen && !wasOpen) { window._navPush(id); }
+      wasOpen = nowOpen;
+    }).observe(el, { attributes: true, attributeFilter: ['style'] });
+  }
 
- // 1. Panneau Admin (gestion stock) — visible = pas de classe 'hidden'
- const adminModal = document.getElementById('adminModal');
- if (isVisibleByClass(adminModal)) {
- if (window.closeAdmin) { window.closeAdmin(); }
- else { adminModal.classList.add('hidden'); }
- return;
- }
+  /* Surveille classList hidden/visible */
+  function watchClass(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var wasHidden = el.classList.contains('hidden');
+    new MutationObserver(function () {
+      var nowHidden = el.classList.contains('hidden');
+      if (wasHidden && !nowHidden) { window._navPush(id); }
+      wasHidden = nowHidden;
+    }).observe(el, { attributes: true, attributeFilter: ['class'] });
+  }
 
- // 2. Modal produit (détail) — ouvert via style.display = "flex"
- const detailModal = document.getElementById('detailModal');
- if (detailModal && detailModal.style.display === 'flex') {
- if (window.closeDetail) { window.closeDetail(); }
- else { detailModal.style.display = 'none'; }
- return;
- }
+  function initWatchers() {
+    // sideCart et sideNav : observés via display/transform
+    watchDisplay('sideCart');
+    watchTransform('sideNav');
+    watchDisplay('promoPopup');
+    watchClass('adminModal');
+    // detailModal : pushState déjà dans showDetail (via ?produit=)
+    // catPage     : pushState déjà dans _openCatPage
+    // bfOverlay   : pushState déjà dans showBF
+    // searchResultsPage : voir patch renderStaticGrid ci-dessous
+  }
 
- // 3. Popup Black Friday
- const bfOverlay = document.getElementById('bfOverlay');
- if (bfOverlay && bfOverlay.style.display === 'flex') {
- window.closeBF && window.closeBF();
- return;
- }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWatchers);
+  } else {
+    initWatchers();
+  }
 
- const promoPopup = document.getElementById('promoPopup');
- if (promoPopup && promoPopup.style.display === 'flex') {
- window.closePromoPopup && window.closePromoPopup();
- return;
- }
+  /* ══════════════════════════════════════════════════════════════
+     ÉTAT INITIAL — on place un état "accueil" en bas de la pile
+     pour que le tout premier retour ramène à l'accueil (et non
+     hors de la boutique) si des états internes ont été empilés.
+     ══════════════════════════════════════════════════════════════ */
+  history.replaceState({ afroPanel: 'home' }, '');
 
- // 4. Panier — ouvert via display:flex
- const sideCart = document.getElementById('sideCart');
- if (sideCart && sideCart.style.display === 'flex') {
- if (window.closeMenus) { window.closeMenus(); }
- else { sideCart.style.display = 'none'; }
- hideOverlay();
- return;
- }
-
- // 5. Menu latéral — ouvert via style.transform = "translateX(0)"
- const sideNav = document.getElementById('sideNav');
- if (isOpenByTransform(sideNav, 'translateX(-100%)')) {
- if (window.closeMenus) { window.closeMenus(); }
- else { sideNav.style.transform = 'translateX(-100%)'; }
- hideOverlay();
- return;
- }
-
- // Rien d'ouvert → retour à l'accueil au lieu de quitter la page
- window._resetToHome && window._resetToHome();
- history.pushState({}, '', location.pathname);
- });
-
- function watchTransformPanel(id) {
- const el = document.getElementById(id);
- if (!el) return;
- let prevTransform = el.style.transform;
- const observer = new MutationObserver(function() {
- const t = el.style.transform;
- const isNowOpen = (t === 'translateX(0)' || t === 'translateX(0px)' || t === 'translateX(0%)');
- const wasOpen   = (prevTransform === 'translateX(0)' || prevTransform === 'translateX(0px)' || prevTransform === 'translateX(0%)');
- if (isNowOpen && !wasOpen) {
- pushState(id);
- }
- prevTransform = t;
- });
- observer.observe(el, { attributes: true, attributeFilter: ['style'] });
- }
-
- function watchDisplayPanel(id) {
- const el = document.getElementById(id);
- if (!el) return;
- let wasOpen = (el.style.display === 'flex' || el.style.display === 'block');
- const observer = new MutationObserver(function() {
- const isOpen = (el.style.display === 'flex' || el.style.display === 'block');
- if (isOpen && !wasOpen) { pushState(id); }
- wasOpen = isOpen;
- });
- observer.observe(el, { attributes: true, attributeFilter: ['style'] });
- }
-
- function initWatchers() {
- watchDisplayPanel('detailModal');
- watchDisplayPanel('sideCart');
- watchTransformPanel('sideNav');
- watchDisplayPanel('promoPopup');
-
- // Admin panel — ouvert via classList.remove('hidden')
- const adminModal = document.getElementById('adminModal');
- if (adminModal) {
- let wasHidden = adminModal.classList.contains('hidden');
- new MutationObserver(function() {
- const isHidden = adminModal.classList.contains('hidden');
- if (wasHidden && !isHidden) { pushState('adminModal'); }
- wasHidden = isHidden;
- }).observe(adminModal, { attributes: true, attributeFilter: ['class'] });
- }
- }
-
- if (document.readyState === 'loading') {
- document.addEventListener('DOMContentLoaded', initWatchers);
- } else {
- initWatchers();
- }
- })();
- </script>
+})();
+</script>
 
 <!-- ══════════════════════════════════════════ -->
 <!-- ══  POPUP BLACK FRIDAY                  ══ -->
