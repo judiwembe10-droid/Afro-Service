@@ -4457,6 +4457,13 @@ Voir les articles
  return;
  }
 
+ // 3. Popup Black Friday
+ const bfOverlay = document.getElementById('bfOverlay');
+ if (bfOverlay && bfOverlay.style.display === 'flex') {
+ window.closeBF && window.closeBF();
+ return;
+ }
+
  const promoPopup = document.getElementById('promoPopup');
  if (promoPopup && promoPopup.style.display === 'flex') {
  window.closePromoPopup && window.closePromoPopup();
@@ -4700,6 +4707,7 @@ Voir les articles
     overlay.style.opacity = '0';
     overlay.style.transition = 'opacity 0.4s ease';
     setTimeout(() => { overlay.style.opacity = '1'; }, 50);
+    history.pushState({ panel: 'bfOverlay' }, '');
 
     // Compte à rebours
     updateCountdown();
