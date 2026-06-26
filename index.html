@@ -1922,6 +1922,9 @@ Importer tout
      total += parseInt(item.price) * item.qty;
      var unitPrice = parseInt(item.price).toLocaleString();
      var linePrice = (parseInt(item.price) * item.qty).toLocaleString();
+     var safeId = (item.id || '').replace(/'/g, "\\'");
+     /* NOTE: on utilise data-cart-id et data-cart-gi pour éviter que les guillemets
+        dans item.name (ex: 15,6" FHD) cassent l'attribut onclick HTML */
      return `<div style="display:flex;align-items:flex-start;gap:12px;background:white;border:1px solid #f1f5f9;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
        <img src="${item.img}" style="width:72px;height:72px;object-fit:cover;border-radius:10px;flex-shrink:0;background:#f4f6fa;" loading="lazy" onerror="this.src='https://i.postimg.cc/9QB2XQRM/20260329-213515.png'">
        <div style="flex:1;min-width:0;">
@@ -1929,16 +1932,52 @@ Importer tout
          <p style="font-size:11px;font-weight:600;color:#94a3b8;margin:0 0 8px;">${unitPrice} FCFA / unité</p>
          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
            <div style="display:flex;align-items:center;gap:0;background:#f1f5f9;border-radius:10px;overflow:hidden;">
-             <button onclick="window.cartQtyMinus('${item.id || ''}','${item.name}')" style="width:34px;height:34px;background:none;border:none;cursor:pointer;font-size:18px;font-weight:900;color:#101944;display:flex;align-items:center;justify-content:center;transition:background 0.15s;" onmousedown="this.style.background='#e2e8f0'" onmouseup="this.style.background='none'">−</button>
+             <button data-cart-action="minus" data-cart-id="${item.id || ''}" data-cart-gi="${gi}" style="width:34px;height:34px;background:none;border:none;cursor:pointer;font-size:18px;font-weight:900;color:#101944;display:flex;align-items:center;justify-content:center;transition:background 0.15s;" onmousedown="this.style.background='#e2e8f0'" onmouseup="this.style.background='none'">−</button>
              <span style="min-width:28px;text-align:center;font-size:14px;font-weight:900;color:#101944;">${item.qty}</span>
-             <button onclick="window.cartQtyPlus('${item.id || ''}','${item.name}')" style="width:34px;height:34px;background:none;border:none;cursor:pointer;font-size:18px;font-weight:900;color:#101944;display:flex;align-items:center;justify-content:center;transition:background 0.15s;" onmousedown="this.style.background='#e2e8f0'" onmouseup="this.style.background='none'">+</button>
+             <button data-cart-action="plus" data-cart-id="${item.id || ''}" data-cart-gi="${gi}" style="width:34px;height:34px;background:none;border:none;cursor:pointer;font-size:18px;font-weight:900;color:#101944;display:flex;align-items:center;justify-content:center;transition:background 0.15s;" onmousedown="this.style.background='#e2e8f0'" onmouseup="this.style.background='none'">+</button>
            </div>
            <p style="font-size:15px;font-weight:900;color:#bd1e24;letter-spacing:-0.3px;margin:0;">${linePrice} FCFA</p>
-           <button onclick="window.removeCartGroup('${item.id || ''}','${item.name}')" style="width:34px;height:34px;background:#fee2e2;border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" onmousedown="this.style.background='#fecaca'" onmouseup="this.style.background='#fee2e2'"><svg width="15" height="15" fill="none" stroke="#dc2626" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
+           <button data-cart-action="remove" data-cart-id="${item.id || ''}" data-cart-gi="${gi}" style="width:34px;height:34px;background:#fee2e2;border:none;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;" onmousedown="this.style.background='#fecaca'" onmouseup="this.style.background='#fee2e2'"><svg width="15" height="15" fill="none" stroke="#dc2626" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>
          </div>
        </div>
      </div>`;
    }).join('');
+
+   /* Attacher les événements via JS (pas de onclick inline) pour éviter
+      tout problème d'échappement avec les noms contenant " ou ' */
+   cartItems.querySelectorAll('[data-cart-action]').forEach(function(btn) {
+     btn.addEventListener('click', function() {
+       var action = btn.getAttribute('data-cart-action');
+       var id     = btn.getAttribute('data-cart-id');
+       var gi     = parseInt(btn.getAttribute('data-cart-gi'));
+       var grps   = _getCartGroups();
+       var grp    = grps[gi];
+       if (!grp) return;
+       var key = grp.id || grp.name;
+       if (action === 'minus') {
+         var idx = cart.findIndex(function(x){ return (x.id || x.name) === key; });
+         if (idx !== -1) {
+           var removed = cart[idx];
+           cart.splice(idx, 1);
+           updateCart();
+           var still = cart.some(function(x){ return (x.id || x.name) === key; });
+           if (!still) _showCartRemoveToast(removed.name);
+         }
+       } else if (action === 'plus') {
+         var ref = cart.find(function(x){ return (x.id || x.name) === key; });
+         if (ref) {
+           cart.push({ id: ref.id, name: ref.name, price: ref.price, img: ref.img });
+           updateCart();
+         }
+       } else if (action === 'remove') {
+         var before = cart.length;
+         var removedName = grp.name;
+         cart = cart.filter(function(x){ return (x.id || x.name) !== key; });
+         if (cart.length < before) _showCartRemoveToast(removedName);
+         updateCart();
+       }
+     });
+   });
  }
  var totalItems = cart.length;
  document.getElementById('cartTotal').innerText = total.toLocaleString() + " FCFA";
@@ -1956,14 +1995,16 @@ Importer tout
  }
  }
 
- // Supprimer tout le groupe d'un produit
+ // Supprimer tout le groupe d'un produit (conservé pour compatibilité externe)
  window.removeCartGroup = function(id, name) {
+   var key = id || name;
    var before = cart.length;
-   cart = cart.filter(function(x){ return (x.id || x.name) !== (id || name); });
-   if (cart.length < before) _showCartRemoveToast(name);
+   var removedName = name;
+   cart = cart.filter(function(x){ return (x.id || x.name) !== key; });
+   if (cart.length < before) _showCartRemoveToast(removedName);
    updateCart();
  };
- // Diminuer la quantité de 1
+ // Diminuer la quantité de 1 (conservé pour compatibilité externe)
  window.cartQtyMinus = function(id, name) {
    var key = id || name;
    var idx = cart.findIndex(function(x){ return (x.id || x.name) === key; });
@@ -1971,14 +2012,14 @@ Importer tout
      var removed = cart[idx];
      cart.splice(idx, 1);
      updateCart();
-     // Si plus d'exemplaires → toast suppression
      var still = cart.some(function(x){ return (x.id || x.name) === key; });
      if (!still) _showCartRemoveToast(removed.name);
    }
  };
- // Augmenter la quantité de 1
+ // Augmenter la quantité de 1 (conservé pour compatibilité externe)
  window.cartQtyPlus = function(id, name) {
-   var ref = cart.find(function(x){ return (x.id || x.name) === (id || name); });
+   var key = id || name;
+   var ref = cart.find(function(x){ return (x.id || x.name) === key; });
    if (ref) {
      cart.push({ id: ref.id, name: ref.name, price: ref.price, img: ref.img });
      updateCart();
@@ -2848,7 +2889,7 @@ Importer tout
  window.addToCart = function(id) {
  const p = stock.find(x => x.id === id);
  const qty = parseInt(document.getElementById('vQty')?.value || 1);
- for (let i = 0; i < qty; i++) { cart.push({ id: p.id, name: p.name, price: p.price, img: p.imgs[0] }); }
+ for (let i = 0; i < qty; i++) { cart.push({ id: p.id, name: p.name, price: p.price, img: (p.imgs && p.imgs.length) ? p.imgs[0] : '' }); }
  updateCart();
  window.closeDetail && window.closeDetail();
  window.closeMenus && window.closeMenus();
