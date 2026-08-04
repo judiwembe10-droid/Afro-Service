@@ -1599,7 +1599,7 @@ Importer tout
  if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return alert(currentLang === "fr" ? "Action non autorisée" : "Unauthorized action");
  if (admBannerImgs.length === 0) return alert(currentLang === 'fr' ? "Ajoutez au moins une image" : "Add at least one image");
  const existing = Array.isArray(adBanners) ? adBanners : [];
- const newOnes = admBannerImgs.map(url => ({ img: url, createdAt: Date.now() }));
+ const newOnes = admBannerImgs.map(url => ({ img: url, active: true, createdAt: Date.now() }));
  const merged = existing.concat(newOnes);
  set(bannersRef, merged).then(() => {
  window._toast(currentLang === 'fr' ? 'Bannières publiées !' : 'Banners published!', 'success');
@@ -1618,6 +1618,28 @@ Importer tout
  });
  };
 
+ window.toggleAdminBanner = function(idx) {
+ if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
+ const existing = Array.isArray(adBanners) ? [...adBanners] : [];
+ if (!existing[idx]) return;
+ const isActive = existing[idx].active !== false;
+ existing[idx] = { ...existing[idx], active: !isActive };
+ set(bannersRef, existing).then(() => {
+ window._toast(!isActive ? (currentLang === 'fr' ? 'Bannière activée' : 'Banner activated') : (currentLang === 'fr' ? 'Bannière désactivée' : 'Banner deactivated'), 'success');
+ }).catch(e => alert("Erreur: " + e.message));
+ };
+
+ window.moveAdminBanner = function(idx, dir) {
+ if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return;
+ const existing = Array.isArray(adBanners) ? [...adBanners] : [];
+ const target = idx + dir;
+ if (target < 0 || target >= existing.length) return;
+ const tmp = existing[idx];
+ existing[idx] = existing[target];
+ existing[target] = tmp;
+ set(bannersRef, existing).catch(e => alert("Erreur: " + e.message));
+ };
+
  function renderAdminBannersList() {
  const list = document.getElementById('adminBannersList');
  if (!list) return;
@@ -1625,14 +1647,28 @@ Importer tout
  list.innerHTML = `<p class="text-[10px] text-slate-300 italic text-center py-6">${currentLang === 'fr' ? 'Aucune bannière active' : 'No active banner'}</p>`;
  return;
  }
- list.innerHTML = adBanners.map((b, i) => `
- <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-2xl p-2.5">
+ list.innerHTML = adBanners.map((b, i) => {
+ const isActive = b.active !== false;
+ return `
+ <div class="flex items-center gap-2.5 bg-slate-50 border border-slate-200 rounded-2xl p-2.5" style="${isActive ? '' : 'opacity:0.5;'}">
+ <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
+ <button type="button" onclick="window.moveAdminBanner(${i},-1)" ${i === 0 ? 'disabled' : ''} style="width:22px;height:18px;border:none;border-radius:6px;background:${i === 0 ? '#f1f5f9' : '#e2e8f0'};display:flex;align-items:center;justify-content:center;cursor:${i === 0 ? 'default' : 'pointer'};">
+ <svg width="10" height="10" fill="none" stroke="${i === 0 ? '#cbd5e1' : '#475569'}" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+ </button>
+ <button type="button" onclick="window.moveAdminBanner(${i},1)" ${i === adBanners.length - 1 ? 'disabled' : ''} style="width:22px;height:18px;border:none;border-radius:6px;background:${i === adBanners.length - 1 ? '#f1f5f9' : '#e2e8f0'};display:flex;align-items:center;justify-content:center;cursor:${i === adBanners.length - 1 ? 'default' : 'pointer'};">
+ <svg width="10" height="10" fill="none" stroke="${i === adBanners.length - 1 ? '#cbd5e1' : '#475569'}" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+ </button>
+ </div>
  <img src="${b.img}" style="width:52px;height:52px;object-fit:cover;border-radius:10px;flex-shrink:0;" onerror="this.style.background='#fee2e2';this.src=''">
  <span class="flex-1 text-[9px] font-bold text-slate-400 truncate">${b.img}</span>
+ <button type="button" onclick="window.toggleAdminBanner(${i})" style="position:relative;width:38px;height:22px;border-radius:999px;border:none;flex-shrink:0;cursor:pointer;background:${isActive ? '#16a34a' : '#cbd5e1'};transition:background 0.2s;">
+ <span style="position:absolute;top:2px;left:${isActive ? '18px' : '2px'};width:18px;height:18px;border-radius:50%;background:white;box-shadow:0 1px 3px rgba(0,0,0,0.3);transition:left 0.2s;"></span>
+ </button>
  <button type="button" onclick="window.deleteAdminBanner(${i})" style="background:#fee2e2;color:#bd1e24;border:none;border-radius:10px;width:30px;height:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;">
  <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
  </button>
- </div>`).join('');
+ </div>`;
+ }).join('');
  }
 
  // ==================== BANNIÈRES PUBLICITAIRES (boutique) ====================
@@ -1643,7 +1679,9 @@ Importer tout
  const dots = document.getElementById('adBannerDots');
  if (!section || !container) return;
 
- if (!adBanners || adBanners.length === 0) {
+ const visibleBanners = (adBanners || []).filter(b => b && b.active !== false);
+
+ if (visibleBanners.length === 0) {
  section.style.display = 'none';
  container.innerHTML = '';
  if (dots) dots.innerHTML = '';
@@ -1656,7 +1694,7 @@ Importer tout
  section.style.paddingBottom = '12px';
  section.style.background = '#f0f4ff';
 
- container.innerHTML = adBanners.map((b, i) => `
+ container.innerHTML = visibleBanners.map((b, i) => `
  <div class="banner-item relative overflow-hidden" style="height:150px;border-radius:18px;box-shadow:0 8px 24px rgba(16,25,68,0.16);border:1px solid rgba(16,25,68,0.06);">
  <img src="${b.img}" alt="Afro Service" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
  </div>`).join('');
@@ -1666,7 +1704,7 @@ Importer tout
  }
 
  if (_adBannerAutoSlide) clearInterval(_adBannerAutoSlide);
- if (adBanners.length <= 1) return;
+ if (visibleBanners.length <= 1) return;
 
  let idx = 0;
  const items = container.querySelectorAll('.banner-item');
