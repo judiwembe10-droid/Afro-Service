@@ -1331,6 +1331,12 @@ Importer tout
  return { type: 'file', id: null, embedUrl: u, thumb: null };
  }
 
+ // Streamable
+ m = u.match(/streamable\.com\/(?:e\/)?([a-zA-Z0-9]+)/);
+ if (m) {
+ return { type: 'streamable', id: m[1], embedUrl: `https://streamable.com/e/${m[1]}?autoplay=1`, thumb: null };
+ }
+
  // Repli générique : tout autre lien http(s) valide est accepté et intégré en iframe.
  // Couvre les plateformes non listées explicitement (Vidéo hébergée sur un autre site, etc.).
  if (/^https?:\/\/[^\s]+\.[a-z]{2,}/i.test(u)) {
