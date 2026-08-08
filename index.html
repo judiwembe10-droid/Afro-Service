@@ -3565,7 +3565,7 @@ Importer tout
      var price = parseInt(p.price).toLocaleString('fr-FR');
      var promo = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
      var tags  = [p.sub, p.cat].filter(Boolean);
-     return '<div class="es-cat-card" style="padding:14px 0;" onclick="window.showDetail(\''+p.id+'\',true)">'
+     return '<div class="es-cat-card" onclick="window.showDetail(\''+p.id+'\',true)">'
        + (tags.length ? '<div class="es-cat-tags">'+tags.map(function(t){return '<span>'+t+'</span>';}).join(', ')+',</div>' : '')
        + '<p class="es-cat-name">'+p.name+'</p>'
        + '<div class="es-cat-imgwrap"><img src="'+img+'" loading="lazy" alt="'+p.name+'">'
