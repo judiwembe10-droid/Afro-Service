@@ -80,7 +80,7 @@
 .es-cat-underline{width:100%;height:1px;background:#e5e7eb;position:relative;}
 .es-cat-underline::before{content:'';position:absolute;left:0;top:0;width:44px;height:3px;background:#facc15;border-radius:2px;top:-1px;}
 .es-cat-grid{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;padding:0 16px;column-gap:16px;position:relative;}
-.es-cat-grid::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:#e5e7eb;pointer-events:none;z-index:1;}
+.es-cat-grid::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:#e5e7eb;pointer-events:none;z-index:1;transform:translateX(-50%);}
 .es-cat-card{padding:14px 0;cursor:pointer;position:relative;display:flex;flex-direction:column;}
 .es-cat-card:nth-child(odd){padding-right:14px;}
 .es-cat-card:nth-child(even){padding-left:14px;}
@@ -89,7 +89,7 @@
 .es-cat-tags span{color:#d97706;font-weight:600;}
 .es-cat-name{font-size:14px;font-weight:800;color:#111827;line-height:1.35;margin:0 0 10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px;}
 .es-cat-imgwrap{position:relative;width:100%;aspect-ratio:1/1;background:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
-.es-cat-imgwrap img{width:100%;height:100%;object-fit:contain;}
+.es-cat-imgwrap img{width:100%;height:100%;object-fit:contain;object-position:center;}
 .es-cat-badge{position:absolute;left:4px;bottom:4px;background:#16a34a;color:#fff;font-size:11px;font-weight:900;padding:3px 9px;border-radius:4px;}
 .es-cat-price{font-size:17px;font-weight:900;color:#111827;letter-spacing:-0.3px;}
 .es-cat-oldprice{font-size:12px;font-weight:700;color:#9ca3af;text-decoration:line-through;margin-left:4px;}
@@ -97,22 +97,8 @@
 .es-cat-feature{margin:0 16px 18px;background:#fff;cursor:pointer;}
 .es-cat-feature img{width:100%;height:260px;object-fit:contain;display:block;}
 
-/* ── "Profitez de nos offres" — fond crème, cartes sans fond ni ombre, défilement horizontal (style ELECTROSHOP) ── */
-#esOffersSection{background:#fdf6e3;}
-#esOffersSection .es-cat-underline{background:#e5e7eb;}
-#esOffersSection .es-cat-underline::before{display:none;}
-.es-offers-scroll{display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;padding:2px 16px 18px;scrollbar-width:none;}
-.es-offers-scroll::-webkit-scrollbar{display:none;}
-.es-offer-card{flex:0 0 auto;width:62%;max-width:230px;scroll-snap-align:start;background:transparent;border:none;border-radius:0;overflow:visible;box-shadow:none;cursor:pointer;padding:0 16px 0 0;border-right:1px solid #e5e7eb;margin-right:16px;}
-.es-offer-card:last-child{border-right:none;margin-right:0;padding-right:0;}
-.es-offer-tags{padding:0;font-size:12px;}
-.es-offer-tags span{color:#d97706;font-weight:600;}
-.es-offer-name{padding:0;font-size:14px;font-weight:800;color:#111827;line-height:1.35;margin:6px 0 10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px;}
-.es-offer-imgwrap{position:relative;width:100%;height:auto;aspect-ratio:1/1;background:transparent;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.es-offer-imgwrap img{width:100%;height:100%;object-fit:contain;}
-.es-offer-badge{position:absolute;left:4px;bottom:4px;background:#16a34a;color:#fff;font-size:11px;font-weight:900;padding:3px 9px;border-radius:4px;}
-.es-offer-price-row{padding:12px 0 0;font-size:17px;font-weight:900;color:#111827;letter-spacing:-0.3px;}
-.es-offer-oldprice{font-size:12px;font-weight:700;color:#9ca3af;text-decoration:line-through;margin-left:6px;}
+/* ── "Vos produits récemment consultés" — utilise directement .es-cat-grid / .es-cat-card (fond blanc standard, ligne de séparation identique aux autres sections) ── */
+
 
 
 /* ── Accordéons bas de page style ELECTROSHOP (Menu / Catégories) ── */
@@ -378,11 +364,10 @@ RENVOYER L'EMAIL
 <!-- ═══ "Profitez de nos offres" — défilement horizontal, fond crème, juste sous la bannière hero ═══ -->
 <section id="esOffersSection" class="es-cat-section" style="display:none;">
 <div class="es-cat-title-wrap">
-<h2 class="es-cat-title" data-fr="Profitez de nos offres" data-en="Enjoy our deals">Profitez de nos offres</h2>
+<h2 class="es-cat-title" data-fr="Vos produits récemment consultés" data-en="Your recently viewed products">Vos produits récemment consultés</h2>
 <div class="es-cat-underline"></div>
 </div>
-<div id="esOffersScroll" class="es-offers-scroll"></div>
-<button type="button" class="es-cat-seeall" onclick="window.filterAllOffers()" data-fr="Voir toutes nos offres" data-en="See all our deals">Voir toutes nos offres</button>
+<div id="esOffersScroll" class="es-cat-grid"></div>
 </section>
 
 <style>
@@ -2579,6 +2564,7 @@ Importer tout
  const p = stock.find(x => x.id === id);
  if (!p) return;
  window._detailFromCategory = !!_fromCat;
+ window._trackRecentlyViewed(id);
  // Cacher la barre de navigation du bas
  var _bnb = document.getElementById('bottomNavBar');
  if (_bnb) _bnb.style.display = 'none';
@@ -3310,6 +3296,18 @@ Importer tout
  }).join('');
  }
 
+ // Génère le mini bloc étoiles + "(n)" à partir de la note moyenne calculée (window._productRatings)
+ function _esStarsHTML(productId) {
+ const r = (window._productRatings || {})[productId];
+ const avg = r ? r.avg : 0;
+ const count = r ? r.count : 0;
+ const SF = '<svg width="11" height="11" viewBox="0 0 20 20" fill="#f97316"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>';
+ const SE = '<svg width="11" height="11" viewBox="0 0 20 20" fill="#e2e8f0"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>';
+ let stars = '';
+ for (let i = 1; i <= 5; i++) stars += i <= Math.round(avg) ? SF : SE;
+ return `<div style="display:flex;align-items:center;gap:4px;margin:2px 0 6px;">${stars}<span style="font-size:11px;color:#94a3b8;">(${count})</span></div>`;
+ }
+
  // ── Sections par catégorie style ELECTROSHOP sur l'accueil ──
  function _esCardHTML(p, lang) {
  const img   = p.imgs && p.imgs[0] ? p.imgs[0] : 'https://i.postimg.cc/9QB2XQRM/20260329-213515.png';
@@ -3324,43 +3322,44 @@ Importer tout
  <img src="${img}" loading="lazy" alt="${name}">
  ${promo > 0 ? `<span class="es-cat-badge">-${promo}%</span>` : ''}
  </div>
+ ${_esStarsHTML(p.id)}
  <div class="es-cat-price">${parseInt(p.price).toLocaleString('fr-FR')} FCFA${p.old ? `<span class="es-cat-oldprice">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</span>` : ''}</div>
  </div>`;
  }
 
- function renderEsOffers() {
+ // ── Produits récemment consultés (remplace l'ancienne section "Profitez de nos offres") ──
+ window._trackRecentlyViewed = function(productId) {
+ try {
+ let ids = JSON.parse(localStorage.getItem('afroRecentlyViewed') || '[]');
+ ids = ids.filter(id => id !== productId);
+ ids.unshift(productId);
+ ids = ids.slice(0, 10);
+ localStorage.setItem('afroRecentlyViewed', JSON.stringify(ids));
+ } catch (e) {}
+ };
+
+ function renderRecentlyViewed() {
  const section = document.getElementById('esOffersSection');
  const container = document.getElementById('esOffersScroll');
  if (!section || !container) return;
  const lang = currentLang;
+ let ids = [];
+ try { ids = JSON.parse(localStorage.getItem('afroRecentlyViewed') || '[]'); } catch (e) {}
+ const items = ids.map(id => (stock || []).find(p => p.id === id)).filter(p => p && p.imgs && p.imgs[0]);
 
- if (!stock || stock.length === 0) { section.style.display = 'none'; container.innerHTML = ''; return; }
-
- // Priorité aux meilleures promos, puis produits récents
- const promoItems = [...stock].filter(p => p.old && p.old > p.price)
- .sort((a, b) => ((b.old - b.price) / b.old) - ((a.old - a.price) / a.old));
- const rest = [...stock].reverse().filter(p => !promoItems.includes(p));
- const items = [...promoItems, ...rest].filter(p => p.imgs && p.imgs[0]).slice(0, 10);
-
- if (items.length === 0) { section.style.display = 'none'; container.innerHTML = ''; return; }
+ if (items.length === 0) {
+ section.style.display = 'none';
+ container.innerHTML = '';
+ return;
+ }
 
  section.style.display = '';
- container.innerHTML = items.map(p => {
- const img   = p.imgs[0];
- const promo = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
- const name  = (lang === 'en' && p.name_en) ? p.name_en : p.name;
- const tags  = [p.sub, p.cat].filter(Boolean);
- return `
- <div class="es-offer-card" onclick="window.showDetail('${p.id}')">
- ${tags.length ? `<div class="es-offer-tags">${tags.map(t => `<span>${t}</span>`).join(', ')},</div>` : ''}
- <p class="es-offer-name">${name}</p>
- <div class="es-offer-imgwrap">
- <img src="${img}" loading="lazy" alt="${name}">
- ${promo > 0 ? `<span class="es-offer-badge">-${promo}%</span>` : ''}
- </div>
- <div class="es-offer-price-row">${parseInt(p.price).toLocaleString('fr-FR')} FCFA${p.old ? `<span class="es-offer-oldprice">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</span>` : ''}</div>
- </div>`;
- }).join('');
+ container.innerHTML = items.map(p => _esCardHTML(p, lang)).join('');
+ }
+
+ function renderEsOffers() {
+ // Redirige vers la nouvelle section "Produits récemment consultés" (remplace l'ancienne "Profitez de nos offres")
+ renderRecentlyViewed();
  }
 
  function renderEsCatSections() {
@@ -3571,6 +3570,7 @@ Importer tout
        + '<div class="es-cat-imgwrap"><img src="'+img+'" loading="lazy" alt="'+p.name+'">'
        + (promo > 0 ? '<span class="es-cat-badge">-'+promo+'%</span>' : '')
        + '</div>'
+       + _esStarsHTML(p.id)
        + '<div class="es-cat-price">'+price+' FCFA'
        + (p.old ? '<span class="es-cat-oldprice">'+parseInt(p.old).toLocaleString('fr-FR')+' FCFA</span>' : '')
        + '</div>'
@@ -4250,6 +4250,23 @@ Importer tout
  if (adminModal && !adminModal.classList.contains('hidden') && panelBanners && !panelBanners.classList.contains('hidden')) {
  renderAdminBannersList();
  }
+ });
+
+ // ── Notes moyennes par produit (calculées depuis productReviews, pour affichage sur les cartes) ──
+ window._productRatings = {};
+ onValue(ref(db, 'productReviews'), (snapshot) => {
+ const data = snapshot.val() || {};
+ const ratings = {};
+ Object.keys(data).forEach(productId => {
+ const revs = Object.values(data[productId] || {}).filter(r => r && typeof r.note === 'number');
+ if (revs.length === 0) return;
+ const sum = revs.reduce((acc, r) => acc + r.note, 0);
+ ratings[productId] = { avg: sum / revs.length, count: revs.length };
+ });
+ window._productRatings = ratings;
+ // Rafraîchir les grilles déjà affichées pour intégrer les nouvelles notes
+ if (typeof renderEsCatSections === 'function') renderEsCatSections();
+ if (typeof _sgBuildPage === 'function' && document.getElementById('searchResultsPage') && document.getElementById('searchResultsPage').style.display !== 'none') _sgBuildPage(_sgPage);
  });
 
  onValue(reviewsRef, (snapshot) => {
