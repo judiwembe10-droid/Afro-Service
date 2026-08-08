@@ -66,6 +66,14 @@
 .hero-word{display:inline-block;opacity:1;}
 .hero-word.hero-word-anim{opacity:0;transform:translateX(-6px);filter:blur(2px);animation:heroWordAssemble 0.45s ease-out forwards;}
 @keyframes heroWordAssemble{to{opacity:1;transform:translateX(0);filter:blur(0);}}
+
+/* ── Variante B d'animation d'entrée (alterne chaque jour avec la variante A ci-dessus) ── */
+.hero-slide-tag.hero-tag-anim-b{opacity:0;transform:translateY(-10px);animation:heroTagDropB 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+@keyframes heroTagDropB{to{opacity:1;transform:translateY(0);}}
+.hero-slide-imgwrap img.hero-img-anim-b{opacity:0;transform:scale(0.75) rotate(-6deg);animation:esOfferZoomInB 0.55s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:0.05s;}
+@keyframes esOfferZoomInB{to{opacity:1;transform:scale(1) rotate(0deg);}}
+.hero-word.hero-word-anim-b{opacity:0;transform:translateY(10px);animation:heroWordRiseB 0.4s ease-out forwards;}
+@keyframes heroWordRiseB{to{opacity:1;transform:translateY(0);}}
 .hero-nav-arrow{position:absolute;top:88px;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:rgba(16,25,68,0.06);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background 0.2s;}
 .hero-nav-arrow:active{background:rgba(16,25,68,0.14);}
 .hero-nav-arrow.left{left:8px;}
@@ -2145,29 +2153,37 @@ Importer tout
  // Joue l'animation d'entrée de l'image + la recomposition du texte du slide donné.
  // Le texte est visible par défaut (opacity:1) ; l'animation n'est qu'un effet ajouté,
  // donc même si elle échoue à se déclencher, le contenu reste toujours lisible.
+ // Le style d'animation (A ou B) change chaque jour, en fonction du jour de l'année,
+ // pour renouveler l'effet visuel quotidiennement sans intervention manuelle.
  function _playSlideAnim(idx) {
  const slideEls = container.querySelectorAll('.hero-slide');
  const slideEl = slideEls[idx];
  if (!slideEl) return;
 
+ const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+ const variantB = (dayOfYear % 2 === 1);
+ const tagAnimClass  = variantB ? 'hero-tag-anim-b'  : 'hero-tag-anim';
+ const imgAnimClass  = variantB ? 'hero-img-anim-b'  : 'hero-img-anim';
+ const wordAnimClass = variantB ? 'hero-word-anim-b' : 'hero-word-anim';
+
  const img = slideEl.querySelector('.hero-slide-imgwrap img');
  if (img) {
- img.classList.remove('hero-img-anim');
+ img.classList.remove('hero-img-anim', 'hero-img-anim-b');
  void img.offsetWidth;
- img.classList.add('hero-img-anim');
+ img.classList.add(imgAnimClass);
  }
 
  const tag = slideEl.querySelector('.hero-slide-tag');
  if (tag) {
- tag.classList.remove('hero-tag-anim');
+ tag.classList.remove('hero-tag-anim', 'hero-tag-anim-b');
  void tag.offsetWidth;
- tag.classList.add('hero-tag-anim');
+ tag.classList.add(tagAnimClass);
  }
 
  const words = slideEl.querySelectorAll('.hero-word');
- words.forEach(w => w.classList.remove('hero-word-anim'));
+ words.forEach(w => w.classList.remove('hero-word-anim', 'hero-word-anim-b'));
  void slideEl.offsetWidth;
- words.forEach(w => w.classList.add('hero-word-anim'));
+ words.forEach(w => w.classList.add(wordAnimClass));
  }
 
  window._adBannerGoto = function(idx) {
@@ -3472,7 +3488,7 @@ Importer tout
  let ids = JSON.parse(localStorage.getItem('afroRecentlyViewed') || '[]');
  ids = ids.filter(id => id !== productId);
  ids.unshift(productId);
- ids = ids.slice(0, 10);
+ ids = ids.slice(0, 5);
  localStorage.setItem('afroRecentlyViewed', JSON.stringify(ids));
  } catch (e) {}
  };
