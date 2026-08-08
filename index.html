@@ -1369,6 +1369,11 @@ Importer tout
  window._playVideoThumb = function(uid) {
  const el = document.getElementById(uid);
  if (!el) return;
+ // Si cette vignette est dans la bannière hero, on stoppe le défilement automatique pendant la lecture
+ if (el.closest('.hero-slide') && window._adBannerAutoSlide) {
+ clearInterval(window._adBannerAutoSlide);
+ window._adBannerAutoSlide = null;
+ }
  const url = decodeURIComponent(el.getAttribute('data-video-url') || '');
  const info = window._parseVideoUrl(url);
  if (!info) return;
@@ -1992,6 +1997,12 @@ Importer tout
 
  // ==================== BANNIÈRE HERO ACCUEIL style ELECTROSHOP — produits vedette (admin) ou récents (auto) ====================
  let _adBannerAutoSlide = null;
+ // Exposé globalement pour permettre à _playVideoThumb de mettre en pause l'auto-slide pendant la lecture d'une vidéo bannière
+ Object.defineProperty(window, '_adBannerAutoSlide', {
+ get() { return _adBannerAutoSlide; },
+ set(v) { _adBannerAutoSlide = v; },
+ configurable: true
+ });
  window._adBannerIdx = 0;
  window._adBannerSlides = [];
 
