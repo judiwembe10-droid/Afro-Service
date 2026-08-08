@@ -999,6 +999,22 @@ Importer tout
 <div id="admImgsPreview" class="flex gap-2 flex-wrap"></div>
 <input id="admImgs" type="hidden" value="">
 </div>
+
+<!-- ── Vidéo produit (YouTube / Facebook / lien .mp4 direct) ── -->
+<div class="md:col-span-2 border-2 border-dashed border-slate-200 rounded-2xl p-4 bg-slate-50 space-y-3">
+<div class="flex items-center gap-2">
+<div style="width:28px;height:28px;background:linear-gradient(135deg,#101944,#1e3a8a);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M10 9l5 3-5 3z" fill="white" stroke="none"/></svg>
+</div>
+<p class="text-[10px] font-black uppercase text-slate-500 tracking-widest" data-fr="Vidéo du produit (optionnel)" data-en="Product video (optional)">Vidéo du produit (optionnel)</p>
+</div>
+<div class="flex gap-2">
+<input id="admVideoUrl" type="url" placeholder="Lien YouTube, Facebook ou .mp4 direct" class="flex-1 border p-2.5 rounded-xl text-xs bg-white focus:border-red-500 outline-none" style="font-size:11px;" oninput="window.previewAdminVideo()">
+<button type="button" onclick="document.getElementById('admVideoUrl').value='';window.previewAdminVideo();" class="bg-slate-200 text-slate-600 px-3 py-2 rounded-xl font-black text-[10px] uppercase flex items-center gap-1 flex-shrink-0 active:scale-95">✕</button>
+</div>
+<p class="text-[9px] text-slate-400 leading-relaxed" data-fr="Cette vidéo apparaît dans la galerie de la fiche produit et sous la description." data-en="This video appears in the product page gallery and below the description.">Cette vidéo apparaît dans la galerie de la fiche produit et sous la description.</p>
+<div id="admVideoPreviewWrap" style="max-width:260px;"></div>
+</div>
 <div class="grid grid-cols-2 gap-3">
 <input id="admColors" type="text" data-placeholder-fr="Couleurs" data-placeholder-en="Colors" placeholder="Couleurs" class="border p-3 rounded-xl text-xs">
 <input id="admMem" type="text" data-placeholder-fr="Mémoire" data-placeholder-en="Memory" placeholder="Mémoire" class="border p-3 rounded-xl text-xs">
@@ -1124,6 +1140,23 @@ Importer tout
 <p class="text-[9px] text-slate-400 leading-relaxed" data-fr="Ces images s'affichent dans le carrousel de la bannière d'accueil sans être liées à un produit précis." data-en="These images appear in the homepage banner carousel without being linked to a specific product.">Ces images s'affichent dans le carrousel de la bannière d'accueil sans être liées à un produit précis.</p>
 </div>
 
+<!-- ── Bannières vidéo (YouTube / Facebook / lien .mp4 direct) ── -->
+<div class="border-2 border-dashed border-slate-200 rounded-2xl p-4 bg-slate-50 space-y-3 mt-4">
+<div class="flex items-center gap-2">
+<div style="width:28px;height:28px;background:linear-gradient(135deg,#101944,#1e3a8a);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M10 9l5 3-5 3z" fill="white" stroke="none"/></svg>
+</div>
+<p class="text-[10px] font-black uppercase text-slate-500 tracking-widest" data-fr="Bannière vidéo" data-en="Video banner">Bannière vidéo</p>
+<span id="admBannerVideoCount" style="margin-left:auto;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:900;color:#64748b;">0 vidéo</span>
+</div>
+<div class="flex gap-2">
+<input id="admBannerVideoInput" type="url" placeholder="Lien YouTube, Facebook ou .mp4 direct" class="flex-1 border p-2.5 rounded-xl text-xs bg-white focus:border-red-500 outline-none" style="font-size:11px;" onkeydown="if(event.key==='Enter'){event.preventDefault();window.addAdminBannerVideo();}">
+<button type="button" onclick="window.addAdminBannerVideo()" class="bg-[#bd1e24] text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase flex items-center gap-1 flex-shrink-0 active:scale-95" style="white-space:nowrap;">+ Ajouter</button>
+</div>
+<div id="admBannerVideosPreview" class="flex gap-2 flex-wrap"></div>
+<p class="text-[9px] text-slate-400 leading-relaxed" data-fr="La vidéo s'affiche dans le carrousel avec un aperçu ; elle se lance quand le visiteur clique dessus." data-en="The video appears in the carousel with a preview; it plays when the visitor clicks on it.">La vidéo s'affiche dans le carrousel avec un aperçu ; elle se lance quand le visiteur clique dessus.</p>
+</div>
+
 <button onclick="window.saveBannersToFirebase()" class="w-full mt-5 bg-[#101944] text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
 <span data-fr="Publier la bannière" data-en="Publish banner">Publier la bannière</span>
@@ -1208,6 +1241,90 @@ Importer tout
  let admBannerImgs = [];
 
  let productOrderCounts = {};
+
+ // ==================== UTILITAIRE VIDÉO UNIVERSEL (YouTube / Facebook / .mp4 direct) ====================
+ // Détecte le type de lien vidéo et retourne les infos nécessaires pour l'aperçu + la lecture.
+ window._parseVideoUrl = function(url) {
+ if (!url) return null;
+ const u = url.trim();
+ // YouTube (watch?v=, youtu.be/, shorts/)
+ let m = u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{6,})/);
+ if (m) {
+ const id = m[1];
+ return { type: 'youtube', id, embedUrl: `https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1`, thumb: `https://img.youtube.com/vi/${id}/hqdefault.jpg` };
+ }
+ // Facebook (vidéos ou reels)
+ if (/facebook\.com|fb\.watch/.test(u)) {
+ return { type: 'facebook', id: null, embedUrl: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(u)}&show_text=0&autoplay=1`, thumb: null };
+ }
+ // Fichier vidéo direct (.mp4, .webm, .mov, .ogg)
+ if (/\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(u)) {
+ return { type: 'file', id: null, embedUrl: u, thumb: null };
+ }
+ return null;
+ };
+
+ // Construit le HTML d'une vignette vidéo cliquable (aperçu → lecture au clic).
+ // containerStyle permet d'adapter la taille/forme selon le contexte d'utilisation.
+ window._buildVideoThumb = function(url, opts) {
+ const info = window._parseVideoUrl(url);
+ if (!info) return '';
+ opts = opts || {};
+ const wrapStyle = opts.wrapStyle || 'position:relative;width:100%;aspect-ratio:16/9;background:#0f172a;border-radius:14px;overflow:hidden;cursor:pointer;';
+ const uid = 'vid_' + Math.random().toString(36).slice(2, 9);
+ const thumbBg = info.thumb ? `background-image:url('${info.thumb}');background-size:cover;background-position:center;` : 'background:#0f172a;';
+ return `
+ <div id="${uid}" class="afro-video-thumb" style="${wrapStyle}" data-video-url="${encodeURIComponent(url)}" onclick="window._playVideoThumb('${uid}')">
+ <div class="afro-video-poster" style="position:absolute;inset:0;${thumbBg}display:flex;align-items:center;justify-content:center;">
+ <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.35);">
+ <svg width="22" height="22" viewBox="0 0 24 24" fill="#101944"><path d="M8 5v14l11-7z"/></svg>
+ </div>
+ </div>
+ </div>`;
+ };
+
+ // Remplace la vignette d'aperçu par le lecteur réel au clic.
+ window._playVideoThumb = function(uid) {
+ const el = document.getElementById(uid);
+ if (!el) return;
+ const url = decodeURIComponent(el.getAttribute('data-video-url') || '');
+ const info = window._parseVideoUrl(url);
+ if (!info) return;
+ let playerHtml = '';
+ if (info.type === 'file') {
+ playerHtml = `<video src="${info.embedUrl}" controls autoplay playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;"></video>`;
+ } else {
+ playerHtml = `<iframe src="${info.embedUrl}" style="position:absolute;inset:0;width:100%;height:100%;border:none;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+ }
+ el.innerHTML = playerHtml;
+ el.style.cursor = 'default';
+ el.onclick = null;
+ };
+
+ // Ouvre la vidéo produit dans une lightbox plein écran (utilisé depuis la vignette de la galerie).
+ window._openProductVideoModal = function(encodedUrl) {
+ const url = decodeURIComponent(encodedUrl);
+ const info = window._parseVideoUrl(url);
+ if (!info) return;
+ let existing = document.getElementById('productVideoModal');
+ if (existing) existing.remove();
+ let playerHtml = '';
+ if (info.type === 'file') {
+ playerHtml = `<video src="${info.embedUrl}" controls autoplay playsinline style="width:100%;max-height:80vh;background:#000;border-radius:12px;"></video>`;
+ } else {
+ playerHtml = `<iframe src="${info.embedUrl}" style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+ }
+ const modal = document.createElement('div');
+ modal.id = 'productVideoModal';
+ modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;padding:20px;';
+ modal.onclick = function(e) { if (e.target === modal) modal.remove(); };
+ modal.innerHTML = `
+ <div style="width:100%;max-width:520px;position:relative;">
+ <button onclick="document.getElementById('productVideoModal').remove()" style="position:absolute;top:-42px;right:0;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;color:white;font-size:18px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+ ${playerHtml}
+ </div>`;
+ document.body.appendChild(modal);
+ };
  const NOW = Date.now();
  const MS_30_DAYS = 30 * 24 * 60 * 60 * 1000;
 
@@ -1545,6 +1662,19 @@ Importer tout
  </div>`).join('');
  }
 
+ // Aperçu en direct de la vidéo produit collée dans le champ admVideoUrl
+ window.previewAdminVideo = function() {
+ const input = document.getElementById('admVideoUrl');
+ const wrap = document.getElementById('admVideoPreviewWrap');
+ if (!input || !wrap) return;
+ const url = (input.value || '').trim();
+ if (!url) { wrap.innerHTML = ''; input.style.borderColor = ''; return; }
+ const info = window._parseVideoUrl(url);
+ if (!info) { wrap.innerHTML = '<p class="text-[9px] font-bold" style="color:#bd1e24;">Lien non reconnu (YouTube, Facebook ou .mp4 attendu)</p>'; input.style.borderColor = '#bd1e24'; return; }
+ input.style.borderColor = '#22c55e';
+ wrap.innerHTML = window._buildVideoThumb(url, { wrapStyle: 'position:relative;width:100%;aspect-ratio:16/9;background:#0f172a;border-radius:12px;overflow:hidden;cursor:pointer;' });
+ };
+
  // ==================== BANNIÈRE VEDETTE ACCUEIL (admin) — sélection de produits ====================
  window.addAdminBannerProduct = function() {
  const select = document.getElementById('admBannerProductSelect');
@@ -1646,19 +1776,69 @@ Importer tout
  </div>`).join('');
  }
 
+ // ── Bannières vidéo (YouTube / Facebook / lien .mp4 direct) ──
+ let _bannerVideoList = [];
+
+ window.addAdminBannerVideo = function() {
+ const input = document.getElementById('admBannerVideoInput');
+ const url = (input.value || '').trim();
+ if (!url) return;
+ const info = window._parseVideoUrl(url);
+ if (!info) { input.style.borderColor = '#bd1e24'; setTimeout(() => input.style.borderColor = '', 1200); return; }
+ if (_bannerVideoList.includes(url)) { input.value = ''; return; }
+ _bannerVideoList.push(url);
+ input.value = '';
+ input.style.borderColor = '#22c55e';
+ setTimeout(() => { input.style.borderColor = ''; }, 900);
+ renderAdminBannerVideoPreview();
+ };
+
+ window.removeAdminBannerVideo = function(idx) {
+ _bannerVideoList.splice(idx, 1);
+ renderAdminBannerVideoPreview();
+ };
+
+ function renderAdminBannerVideoPreview() {
+ const preview = document.getElementById('admBannerVideosPreview');
+ const counter = document.getElementById('admBannerVideoCount');
+ if (!preview) return;
+ if (counter) {
+ const n = _bannerVideoList.length;
+ counter.textContent = n === 0 ? '0 vidéo' : n === 1 ? '1 vidéo' : `${n} vidéos`;
+ counter.style.background = n > 0 ? '#f0fdf4' : '#f1f5f9';
+ counter.style.borderColor = n > 0 ? '#86efac' : '#e2e8f0';
+ counter.style.color = n > 0 ? '#15803d' : '#64748b';
+ }
+ if (_bannerVideoList.length === 0) { preview.innerHTML = '<p class="text-[9px] text-slate-300 italic">Aucune vidéo ajoutée</p>'; return; }
+ preview.innerHTML = _bannerVideoList.map((url, i) => {
+ const info = window._parseVideoUrl(url);
+ const thumbBg = info && info.thumb ? `background-image:url('${info.thumb}');background-size:cover;background-position:center;` : 'background:#0f172a;';
+ return `
+ <div class="relative group" style="width:64px;height:64px;flex-shrink:0">
+ <div style="width:64px;height:64px;border-radius:10px;border:2px solid #101944;${thumbBg}display:flex;align-items:center;justify-content:center;overflow:hidden;">
+ <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+ </div>
+ <button type="button" onclick="window.removeAdminBannerVideo(${i})" style="position:absolute;top:-6px;right:-6px;background:#bd1e24;color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">×</button>
+ </div>`;
+ }).join('');
+ }
+
  window.saveBannersToFirebase = function() {
  if (!currentUser || !adminEmails.includes(currentUser.email.toLowerCase())) return alert(currentLang === "fr" ? "Action non autorisée" : "Unauthorized action");
- if (admBannerImgs.length === 0 && _bannerCustomImgList.length === 0) return alert(currentLang === 'fr' ? "Ajoutez au moins un produit ou une image" : "Add at least one product or image");
+ if (admBannerImgs.length === 0 && _bannerCustomImgList.length === 0 && _bannerVideoList.length === 0) return alert(currentLang === 'fr' ? "Ajoutez au moins un produit, une image ou une vidéo" : "Add at least one product, image or video");
  const existing = Array.isArray(adBanners) ? adBanners : [];
  const newProductOnes = admBannerImgs.map(pid => ({ productId: pid, active: true, createdAt: Date.now() }));
  const newImgOnes = _bannerCustomImgList.map(url => ({ img: url, active: true, createdAt: Date.now() }));
- const merged = existing.concat(newProductOnes).concat(newImgOnes);
+ const newVideoOnes = _bannerVideoList.map(url => ({ video: url, active: true, createdAt: Date.now() }));
+ const merged = existing.concat(newProductOnes).concat(newImgOnes).concat(newVideoOnes);
  set(bannersRef, merged).then(() => {
  window._toast(currentLang === 'fr' ? 'Bannières publiées !' : 'Banners published!', 'success');
  admBannerImgs = [];
  _bannerCustomImgList = [];
+ _bannerVideoList = [];
  renderAdminBannerImgPreview();
  renderAdminBannerCustomImgPreview();
+ renderAdminBannerVideoPreview();
  }).catch(e => alert("Erreur: " + e.message));
  };
 
@@ -1752,6 +1932,9 @@ Importer tout
  if (b.img) {
  return { id: null, imgs: [b.img], isCustomImg: true };
  }
+ if (b.video) {
+ return { id: null, imgs: [], isVideo: true, videoUrl: b.video };
+ }
  return null;
  }).filter(Boolean);
 
@@ -1783,11 +1966,19 @@ Importer tout
  }
 
  container.innerHTML = slides.map((p, slideIdx) => {
- const img   = p.imgs[0];
  const imgDirClass = slideIdx % 2 === 0 ? '' : ' hero-img-rtl'; // alterne gauche→droite / droite→gauche
+
+ // Slide "vidéo" : vignette d'aperçu cliquable, lecture en place dans la bannière
+ if (p.isVideo) {
+ return `
+ <div class="hero-slide" style="padding:0;">
+ ${window._buildVideoThumb(p.videoUrl, { wrapStyle: 'position:relative;width:100%;height:100%;min-height:230px;background:#0f172a;cursor:pointer;' })}
+ </div>`;
+ }
 
  // Slide "image libre" : pleine image cliquable, sans titre/prix/CTA produit
  if (p.isCustomImg) {
+ const img = p.imgs[0];
  return `
  <div class="hero-slide" style="padding:0;" onclick="window._resetToHome && window._resetToHome()">
  <div style="position:relative;width:100%;height:100%;min-height:230px;">
@@ -1796,6 +1987,7 @@ Importer tout
  </div>`;
  }
 
+ const img = p.imgs[0];
  const promo = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
  const name  = (lang === 'en' && p.name_en) ? p.name_en : p.name;
  const tagText   = promo > 0 ? (lang === 'fr' ? 'RÉDUCTION SPÉCIALE' : 'SPECIAL DEAL') : (lang === 'fr' ? 'À DÉCOUVRIR' : 'DISCOVER');
@@ -1891,6 +2083,8 @@ Importer tout
  _adminImgList = [];
  const h = document.getElementById('admImgs'); if (h) h.value = '';
  const inp = document.getElementById('admImgInput'); if (inp) inp.value = '';
+ const vidInp = document.getElementById('admVideoUrl'); if (vidInp) vidInp.value = '';
+ const vidWrap = document.getElementById('admVideoPreviewWrap'); if (vidWrap) vidWrap.innerHTML = '';
  window.setAdmStock(true);
  _admStockOriginal = 'true';
  renderAdminImgPreview();
@@ -2523,10 +2717,13 @@ Importer tout
    <svg width="18" height="18" fill="none" stroke="#475569" viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
  </button>
  </div>
- <!-- MINIATURES cliquables (style Glotelho) -->
- ${imgs.length > 1 ? `
+ <!-- MINIATURES cliquables (style Glotelho) + vignette vidéo produit -->
+ ${(imgs.length > 1 || p.videoUrl) ? `
  <div id="thumbStrip" style="display:flex;gap:8px;overflow-x:auto;padding:10px 16px 4px;background:white;scrollbar-width:none;">
  ${imgs.map((img, i) => `<button onclick="window.goToSlide(${i},${imgs.length})" id="thumb_${i}" style="flex-shrink:0;width:62px;height:62px;border-radius:10px;overflow:hidden;border:2.5px solid ${i===0?'#bd1e24':'#e2e8f0'};padding:0;background:#f4f6fa;cursor:pointer;transition:border-color 0.2s;"><img src="${img}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='https://via.placeholder.com/80'"></button>`).join('')}
+ ${p.videoUrl ? `<button onclick="window._openProductVideoModal('${encodeURIComponent(p.videoUrl)}')" style="flex-shrink:0;width:62px;height:62px;border-radius:10px;overflow:hidden;border:2.5px solid #101944;padding:0;background:#0f172a;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;">
+ <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+ </button>` : ''}
  </div>` : ''}
 
  <!-- CONTENT_WRAP -->
@@ -2629,6 +2826,7 @@ Importer tout
  <div id="detailAccordionBody" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;">
  <div style="padding:18px;border-top:1.5px solid #f1f5f9;">
  <div class="rich-desc" style="font-size:13px;color:#475569;line-height:1.7;">${desc}</div>
+ ${p.videoUrl ? `<div style="margin-top:16px;">${window._buildVideoThumb(p.videoUrl, { wrapStyle: 'position:relative;width:100%;max-width:320px;aspect-ratio:16/9;background:#0f172a;border-radius:14px;overflow:hidden;cursor:pointer;margin:0 auto;' })}</div>` : ''}
  </div>
  </div>
  </div>
@@ -3557,11 +3755,12 @@ Importer tout
  const descEnEl = document.getElementById('admDescEn'); if (descEnEl) descEnEl.value = p.desc_en || '';
  const edRichEn = document.getElementById('admDescEditorEn'); if (edRichEn) { edRichEn.innerHTML = p.desc_en || ''; if (!p.desc_en) edRichEn.setAttribute('data-empty','true'); else edRichEn.removeAttribute('data-empty'); }
  document.getElementById('admColors').value = p.colors || '';
- document.getElementById('admMem').value   = p.memory || '';
- // Pré-remplir le gestionnaire d'images
+ document.getElementById('admMem').value   = p.memory || ''; // Pré-remplir le gestionnaire d'images
  _adminImgList = (p.imgs && p.imgs.length) ? p.imgs.filter(u => u && u.startsWith('http')) : [];
  document.getElementById('admImgs').value = _adminImgList.join(',');
  renderAdminImgPreview();
+ const vidInp = document.getElementById('admVideoUrl'); if (vidInp) vidInp.value = p.videoUrl || '';
+ window.previewAdminVideo();
  const catSelect = document.getElementById('admCat');
  catSelect.value = p.cat;
  window.updateAdminSubs();
@@ -3586,9 +3785,10 @@ Importer tout
  const images = document.getElementById('admImgs').value.split(',').map(i => i.trim()).filter(i => i !== "");
  const colors = document.getElementById('admColors').value.trim();
  const memory = document.getElementById('admMem').value.trim();
+ const videoUrl = document.getElementById('admVideoUrl').value.trim();
  if (!name || !price) return alert(currentLang === "fr" ? "Nom et prix requis" : "Name and price required");
  const inStock = document.getElementById('admInStock').value !== 'false';
- const productData = { name, name_en: name_en || "", price: parseInt(price), old: oldPrice ? parseInt(oldPrice) : null, desc: description || "", desc_en: desc_en || "", cat: category, sub: subCategory, subsub: subSubCategory || "", imgs: images.length ? images : ['https://via.placeholder.com/300'], colors: colors || "", memory: memory || "", inStock: inStock };
+ const productData = { name, name_en: name_en || "", price: parseInt(price), old: oldPrice ? parseInt(oldPrice) : null, desc: description || "", desc_en: desc_en || "", cat: category, sub: subCategory, subsub: subSubCategory || "", imgs: images.length ? images : ['https://via.placeholder.com/300'], colors: colors || "", memory: memory || "", videoUrl: videoUrl || "", inStock: inStock };
  if (editId) { update(ref(db, 'stock/' + editId), productData).then(() => { alert(currentLang === "fr" ? "Article mis à jour !" : "Item updated!"); editId = null; document.getElementById('admTitle').textContent = currentLang === "fr" ? "Ajouter un article" : "Add an item"; resetAdminForm(); }).catch(e => alert("Erreur: " + e.message)); }
  else { push(stockRef, productData).then(() => { window._toast(currentLang === 'fr' ? 'Article ajouté !' : 'Item added!', 'success'); resetAdminForm(); }).catch(e => alert("Erreur: " + e.message)); }
  };
