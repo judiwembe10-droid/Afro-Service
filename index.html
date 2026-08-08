@@ -79,10 +79,9 @@
 .es-cat-title{font-size:19px;font-weight:900;color:#111827;margin:0 0 8px;letter-spacing:-0.2px;}
 .es-cat-underline{width:100%;height:1px;background:#e5e7eb;position:relative;}
 .es-cat-underline::before{content:'';position:absolute;left:0;top:0;width:44px;height:3px;background:#facc15;border-radius:2px;top:-1px;}
-.es-cat-grid{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;padding:0 16px;column-gap:16px;position:relative;}
-.es-cat-grid::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:#e5e7eb;pointer-events:none;z-index:1;transform:translateX(-50%);}
-.es-cat-card{padding:14px 0;cursor:pointer;position:relative;display:flex;flex-direction:column;}
-.es-cat-card:nth-child(odd){padding-right:14px;}
+.es-cat-grid{display:grid;grid-template-columns:1fr 1fr;align-items:stretch;padding:0 16px;column-gap:0;position:relative;}
+.es-cat-card{padding:14px 0;cursor:pointer;position:relative;display:flex;flex-direction:column;align-self:stretch;}
+.es-cat-card:nth-child(odd){padding-right:14px;margin-right:16px;border-right:1px solid #e5e7eb;}
 .es-cat-card:nth-child(even){padding-left:14px;}
 .es-cat-card:nth-child(n+3){border-top:1px solid #e5e7eb;}
 .es-cat-tags{font-size:12px;margin-bottom:6px;line-height:1.4;}
@@ -98,6 +97,23 @@
 .es-cat-feature img{width:100%;height:260px;object-fit:contain;display:block;}
 
 /* ── "Vos produits récemment consultés" — utilise directement .es-cat-grid / .es-cat-card (fond blanc standard, ligne de séparation identique aux autres sections) ── */
+
+/* ── "Profitez de nos offres" — fond crème, cartes sans fond ni ombre, défilement horizontal ── */
+#esBestDealsSection{background:#fdf6e3;}
+#esBestDealsSection .es-cat-underline{background:#e5e7eb;}
+#esBestDealsSection .es-cat-underline::before{display:none;}
+.es-deals-scroll{display:flex;gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;padding:2px 16px 18px;scrollbar-width:none;}
+.es-deals-scroll::-webkit-scrollbar{display:none;}
+.es-deals-card{flex:0 0 auto;width:62%;max-width:230px;scroll-snap-align:start;background:transparent;border:none;border-radius:0;overflow:visible;box-shadow:none;cursor:pointer;padding:0 16px 0 0;border-right:1px solid #e5e7eb;margin-right:16px;}
+.es-deals-card:last-child{border-right:none;margin-right:0;padding-right:0;}
+.es-deals-tags{padding:0;font-size:12px;margin-bottom:6px;line-height:1.4;}
+.es-deals-tags span{color:#d97706;font-weight:600;}
+.es-deals-name{padding:0;font-size:14px;font-weight:800;color:#111827;line-height:1.35;margin:0 0 10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px;}
+.es-deals-imgwrap{position:relative;width:100%;height:auto;aspect-ratio:1/1;background:transparent;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:10px;}
+.es-deals-imgwrap img{width:100%;height:100%;object-fit:contain;object-position:center;}
+.es-deals-badge{position:absolute;left:4px;bottom:4px;background:#16a34a;color:#fff;font-size:11px;font-weight:900;padding:3px 9px;border-radius:4px;}
+.es-deals-price{font-size:17px;font-weight:900;color:#111827;letter-spacing:-0.3px;}
+.es-deals-oldprice{font-size:12px;font-weight:700;color:#9ca3af;text-decoration:line-through;margin-left:6px;}
 
 
 
@@ -361,13 +377,23 @@ RENVOYER L'EMAIL
 <div id="adBannerDots" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:4px 16px 14px;background:#ffffff;"></div>
 </section>
 
-<!-- ═══ "Profitez de nos offres" — défilement horizontal, fond crème, juste sous la bannière hero ═══ -->
+<!-- ═══ "Vos produits récemment consultés" — juste sous la bannière hero ═══ -->
 <section id="esOffersSection" class="es-cat-section" style="display:none;">
 <div class="es-cat-title-wrap">
 <h2 class="es-cat-title" data-fr="Vos produits récemment consultés" data-en="Your recently viewed products">Vos produits récemment consultés</h2>
 <div class="es-cat-underline"></div>
 </div>
 <div id="esOffersScroll" class="es-cat-grid"></div>
+</section>
+
+<!-- ═══ "Profitez de nos offres" — fond crème, défilement horizontal ═══ -->
+<section id="esBestDealsSection" class="es-cat-section" style="display:none;">
+<div class="es-cat-title-wrap">
+<h2 class="es-cat-title" data-fr="Profitez de nos offres" data-en="Enjoy our deals">Profitez de nos offres</h2>
+<div class="es-cat-underline"></div>
+</div>
+<div id="esBestDealsScroll" class="es-deals-scroll"></div>
+<button type="button" class="es-cat-seeall" onclick="window.filterAllOffers()" data-fr="Voir toutes nos offres" data-en="See all our deals">Voir toutes nos offres</button>
 </section>
 
 <style>
@@ -994,7 +1020,7 @@ Importer tout
 <p class="text-[10px] font-black uppercase text-slate-500 tracking-widest" data-fr="Vidéo du produit (optionnel)" data-en="Product video (optional)">Vidéo du produit (optionnel)</p>
 </div>
 <div class="flex gap-2">
-<input id="admVideoUrl" type="url" placeholder="Lien YouTube, Facebook ou .mp4 direct" class="flex-1 border p-2.5 rounded-xl text-xs bg-white focus:border-red-500 outline-none" style="font-size:11px;" oninput="window.previewAdminVideo()">
+<input id="admVideoUrl" type="url" placeholder="Lien YouTube, TikTok, Instagram, Vimeo, Facebook, .mp4..." class="flex-1 border p-2.5 rounded-xl text-xs bg-white focus:border-red-500 outline-none" style="font-size:11px;" oninput="window.previewAdminVideo()">
 <button type="button" onclick="document.getElementById('admVideoUrl').value='';window.previewAdminVideo();" class="bg-slate-200 text-slate-600 px-3 py-2 rounded-xl font-black text-[10px] uppercase flex items-center gap-1 flex-shrink-0 active:scale-95">✕</button>
 </div>
 <p class="text-[9px] text-slate-400 leading-relaxed" data-fr="Cette vidéo apparaît dans la galerie de la fiche produit et sous la description." data-en="This video appears in the product page gallery and below the description.">Cette vidéo apparaît dans la galerie de la fiche produit et sous la description.</p>
@@ -1135,7 +1161,7 @@ Importer tout
 <span id="admBannerVideoCount" style="margin-left:auto;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:900;color:#64748b;">0 vidéo</span>
 </div>
 <div class="flex gap-2">
-<input id="admBannerVideoInput" type="url" placeholder="Lien YouTube, Facebook ou .mp4 direct" class="flex-1 border p-2.5 rounded-xl text-xs bg-white focus:border-red-500 outline-none" style="font-size:11px;" onkeydown="if(event.key==='Enter'){event.preventDefault();window.addAdminBannerVideo();}">
+<input id="admBannerVideoInput" type="url" placeholder="Lien YouTube, TikTok, Instagram, Vimeo, Facebook, .mp4..." class="flex-1 border p-2.5 rounded-xl text-xs bg-white focus:border-red-500 outline-none" style="font-size:11px;" onkeydown="if(event.key==='Enter'){event.preventDefault();window.addAdminBannerVideo();}">
 <button type="button" onclick="window.addAdminBannerVideo()" class="bg-[#bd1e24] text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase flex items-center gap-1 flex-shrink-0 active:scale-95" style="white-space:nowrap;">+ Ajouter</button>
 </div>
 <div id="admBannerVideosPreview" class="flex gap-2 flex-wrap"></div>
@@ -1232,20 +1258,85 @@ Importer tout
  window._parseVideoUrl = function(url) {
  if (!url) return null;
  const u = url.trim();
- // YouTube (watch?v=, youtu.be/, shorts/)
- let m = u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{6,})/);
+
+ // YouTube (watch?v=, youtu.be/, shorts/, embed/)
+ let m = u.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{6,})/);
  if (m) {
  const id = m[1];
  return { type: 'youtube', id, embedUrl: `https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1`, thumb: `https://img.youtube.com/vi/${id}/hqdefault.jpg` };
  }
- // Facebook (vidéos ou reels)
+
+ // Facebook (vidéos, reels, watch)
  if (/facebook\.com|fb\.watch/.test(u)) {
  return { type: 'facebook', id: null, embedUrl: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(u)}&show_text=0&autoplay=1`, thumb: null };
  }
- // Fichier vidéo direct (.mp4, .webm, .mov, .ogg)
- if (/\.(mp4|webm|mov|ogg)(\?.*)?$/i.test(u)) {
+
+ // TikTok
+ m = u.match(/tiktok\.com\/(?:@[\w.-]+\/video|v)\/(\d+)/);
+ if (m) {
+ return { type: 'tiktok', id: m[1], embedUrl: `https://www.tiktok.com/embed/v2/${m[1]}`, thumb: null };
+ }
+
+ // Instagram (post, reel, tv)
+ m = u.match(/instagram\.com\/(?:reel|p|tv)\/([a-zA-Z0-9_-]+)/);
+ if (m) {
+ return { type: 'instagram', id: m[1], embedUrl: `https://www.instagram.com/${u.includes('/reel/') ? 'reel' : u.includes('/tv/') ? 'tv' : 'p'}/${m[1]}/embed`, thumb: null };
+ }
+
+ // Vimeo
+ m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+ if (m) {
+ return { type: 'vimeo', id: m[1], embedUrl: `https://player.vimeo.com/video/${m[1]}?autoplay=1`, thumb: null };
+ }
+
+ // Dailymotion
+ m = u.match(/dailymotion\.com\/video\/([a-zA-Z0-9]+)|dai\.ly\/([a-zA-Z0-9]+)/);
+ if (m) {
+ const id = m[1] || m[2];
+ return { type: 'dailymotion', id, embedUrl: `https://www.dailymotion.com/embed/video/${id}?autoplay=1`, thumb: null };
+ }
+
+ // X / Twitter
+ m = u.match(/(?:twitter\.com|x\.com)\/\w+\/status\/(\d+)/);
+ if (m) {
+ return { type: 'twitter', id: m[1], embedUrl: `https://platform.twitter.com/embed/Tweet.html?id=${m[1]}`, thumb: null };
+ }
+
+ // Snapchat (spotlight / stories publiques)
+ if (/snapchat\.com\/(spotlight|t)\//.test(u)) {
+ return { type: 'snapchat', id: null, embedUrl: u.replace('/spotlight/', '/embed/spotlight/'), thumb: null };
+ }
+
+ // Twitch (clip ou vod)
+ m = u.match(/clips\.twitch\.tv\/([A-Za-z0-9_-]+)|twitch\.tv\/videos\/(\d+)/);
+ if (m) {
+ const parentDomain = window.location.hostname || 'localhost';
+ if (m[1]) return { type: 'twitch', id: m[1], embedUrl: `https://clips.twitch.tv/embed?clip=${m[1]}&parent=${parentDomain}&autoplay=true`, thumb: null };
+ return { type: 'twitch', id: m[2], embedUrl: `https://player.twitch.tv/?video=${m[2]}&parent=${parentDomain}&autoplay=true`, thumb: null };
+ }
+
+ // LinkedIn (vidéo native intégrée)
+ if (/linkedin\.com\/(posts|embed)/.test(u)) {
+ return { type: 'linkedin', id: null, embedUrl: u.includes('/embed') ? u : u, thumb: null };
+ }
+
+ // Google Drive (fichier vidéo partagé)
+ m = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+ if (m) {
+ return { type: 'gdrive', id: m[1], embedUrl: `https://drive.google.com/file/d/${m[1]}/preview`, thumb: null };
+ }
+
+ // Fichier vidéo direct (.mp4, .webm, .mov, .ogg, .m3u8)
+ if (/\.(mp4|webm|mov|ogg|m3u8)(\?.*)?$/i.test(u)) {
  return { type: 'file', id: null, embedUrl: u, thumb: null };
  }
+
+ // Repli générique : tout autre lien http(s) valide est accepté et intégré en iframe.
+ // Couvre les plateformes non listées explicitement (Vidéo hébergée sur un autre site, etc.).
+ if (/^https?:\/\/[^\s]+\.[a-z]{2,}/i.test(u)) {
+ return { type: 'generic', id: null, embedUrl: u, thumb: null };
+ }
+
  return null;
  };
 
@@ -1655,7 +1746,7 @@ Importer tout
  const url = (input.value || '').trim();
  if (!url) { wrap.innerHTML = ''; input.style.borderColor = ''; return; }
  const info = window._parseVideoUrl(url);
- if (!info) { wrap.innerHTML = '<p class="text-[9px] font-bold" style="color:#bd1e24;">Lien non reconnu (YouTube, Facebook ou .mp4 attendu)</p>'; input.style.borderColor = '#bd1e24'; return; }
+ if (!info) { wrap.innerHTML = '<p class="text-[9px] font-bold" style="color:#bd1e24;">Lien vidéo non valide</p>'; input.style.borderColor = '#bd1e24'; return; }
  input.style.borderColor = '#22c55e';
  wrap.innerHTML = window._buildVideoThumb(url, { wrapStyle: 'position:relative;width:100%;aspect-ratio:16/9;background:#0f172a;border-radius:12px;overflow:hidden;cursor:pointer;' });
  };
@@ -1898,6 +1989,36 @@ Importer tout
  window._adBannerIdx = 0;
  window._adBannerSlides = [];
 
+ // Sélectionne `count` éléments de `pool` de façon déterministe pour la journée en cours :
+ // le tirage change chaque jour (à minuit) mais reste identique pour tous les visiteurs pendant 24h,
+ // et ne dépend pas de l'ordre de chargement (pas de Math.random à chaque rendu).
+ window._pickDailyRotation = function(pool, count) {
+ if (!pool || pool.length === 0) return [];
+ if (pool.length <= count) return pool.slice(0, count);
+
+ // Graine basée sur la date du jour (YYYY-MM-DD) → même tirage toute la journée, change le lendemain
+ const dayKey = new Date().toISOString().slice(0, 10);
+ let seed = 0;
+ for (let i = 0; i < dayKey.length; i++) seed = (seed * 31 + dayKey.charCodeAt(i)) >>> 0;
+
+ // PRNG simple et stable (mulberry32) piloté par la graine du jour
+ function rand() {
+ seed = (seed + 0x6D2B79F5) >>> 0;
+ let t = seed;
+ t = Math.imul(t ^ (t >>> 15), t | 1);
+ t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+ return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+ }
+
+ // Mélange Fisher-Yates déterministe (utilise le PRNG ci-dessus, pas Math.random)
+ const shuffled = pool.slice();
+ for (let i = shuffled.length - 1; i > 0; i--) {
+ const j = Math.floor(rand() * (i + 1));
+ [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+ }
+ return shuffled.slice(0, count);
+ };
+
  function renderAdBanners() {
  const section   = document.getElementById('adBannersSection');
  const container = document.getElementById('adBannersContainer');
@@ -1923,12 +2044,13 @@ Importer tout
  return null;
  }).filter(Boolean);
 
- // 2. Fallback automatique : produits les plus récents, priorité aux promos
+ // 2. Fallback automatique : rotation quotidienne de 5 produits (priorité aux promos, renouvelée chaque jour)
  if (slides.length === 0) {
  const promoItems = [...(stock || [])].filter(p => p.old && p.old > p.price)
  .sort((a, b) => ((b.old - b.price) / b.old) - ((a.old - a.price) / a.old));
  const rest = [...(stock || [])].reverse().filter(p => !promoItems.includes(p));
- slides = [...promoItems, ...rest].filter(p => p.imgs && p.imgs[0]).slice(0, 5);
+ const pool = [...promoItems, ...rest].filter(p => p.imgs && p.imgs[0]);
+ slides = window._pickDailyRotation(pool, 5);
  }
 
  if (slides.length === 0) {
@@ -2698,7 +2820,7 @@ Importer tout
  <!-- COMPTEUR D'IMAGES style Glotelho -->
  ${imgs.length > 1 ? `<div id="slideCounter" style="position:absolute;top:14px;right:62px;opacity:0;pointer-events:none;font-size:12px;font-weight:900;padding:4px 10px;border-radius:8px;z-index:3;letter-spacing:0.03em;transition:opacity 0.3s ease,background 0.3s ease;">1 / ${imgs.length}</div>` : ''}
  <!-- BOUTON ZOOM sur l'image (haut droite) style ELECTROSHOP -->
- <button onclick="window._showSlide(window.currentSlide)" style="position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.95);border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.18);cursor:pointer;z-index:3;transition:all 0.2s;"
+ <button onclick="window._triggerImageZoom && window._triggerImageZoom()" style="position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.95);border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.18);cursor:pointer;z-index:3;transition:all 0.2s;"
    onmousedown="this.style.transform='scale(0.88)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'" title="Zoom">
    <svg width="18" height="18" fill="none" stroke="#475569" viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
  </button>
@@ -3358,8 +3480,44 @@ Importer tout
  }
 
  function renderEsOffers() {
- // Redirige vers la nouvelle section "Produits récemment consultés" (remplace l'ancienne "Profitez de nos offres")
  renderRecentlyViewed();
+ renderBestDeals();
+ }
+
+ // ── "Profitez de nos offres" — meilleures promos du moment, défilement horizontal ──
+ function renderBestDeals() {
+ const section = document.getElementById('esBestDealsSection');
+ const container = document.getElementById('esBestDealsScroll');
+ if (!section || !container) return;
+ const lang = currentLang;
+
+ if (!stock || stock.length === 0) { section.style.display = 'none'; container.innerHTML = ''; return; }
+
+ // Priorité aux meilleures promos, puis produits récents
+ const promoItems = [...stock].filter(p => p.old && p.old > p.price)
+ .sort((a, b) => ((b.old - b.price) / b.old) - ((a.old - a.price) / a.old));
+ const rest = [...stock].reverse().filter(p => !promoItems.includes(p));
+ const items = [...promoItems, ...rest].filter(p => p.imgs && p.imgs[0]).slice(0, 10);
+
+ if (items.length === 0) { section.style.display = 'none'; container.innerHTML = ''; return; }
+
+ section.style.display = '';
+ container.innerHTML = items.map(p => {
+ const img   = p.imgs[0];
+ const promo = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
+ const name  = (lang === 'en' && p.name_en) ? p.name_en : p.name;
+ const tags  = [p.sub, p.cat].filter(Boolean);
+ return `
+ <div class="es-deals-card" onclick="window.showDetail('${p.id}')">
+ ${tags.length ? `<div class="es-deals-tags">${tags.map(t => `<span>${t}</span>`).join(', ')},</div>` : ''}
+ <p class="es-deals-name">${name}</p>
+ <div class="es-deals-imgwrap">
+ <img src="${img}" loading="lazy" alt="${name}">
+ ${promo > 0 ? `<span class="es-deals-badge">-${promo}%</span>` : ''}
+ </div>
+ <div class="es-deals-price">${parseInt(p.price).toLocaleString('fr-FR')} FCFA${p.old ? `<span class="es-deals-oldprice">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</span>` : ''}</div>
+ </div>`;
+ }).join('');
  }
 
  function renderEsCatSections() {
@@ -3646,7 +3804,7 @@ Importer tout
  if (progBar) progBar.style.display = 'none';
 
  // ── Masquer les sections de la page d'accueil ──
- const sectionsToHide = ['heroCardsSection','temuGridSection','pddListSection','adBannersSection','esOffersSection'];
+ const sectionsToHide = ['heroCardsSection','temuGridSection','pddListSection','adBannersSection','esOffersSection','esBestDealsSection'];
  sectionsToHide.forEach(id => {
    const el = document.getElementById(id);
    if (el) { el.dataset.hiddenBySearch = '1'; el.style.display = 'none'; }
@@ -3707,7 +3865,7 @@ Importer tout
    });
 
    // 4. Forcer la réaffichage des sections clés de l'accueil
-   ['welcomeBanner','adBannersSection','esOffersSection','esCatSections',
+   ['welcomeBanner','adBannersSection','esOffersSection','esBestDealsSection','esCatSections',
     'productScrollWrapper'].forEach(function(id) {
      var el = document.getElementById(id);
      if (el) { el.style.display = ''; el.removeAttribute('data-hidden-by-search'); }
@@ -3721,6 +3879,7 @@ Importer tout
 
    // 6. Relancer le carousel
    renderProducts(stock);
+   renderEsOffers();
 
    window.scrollTo({ top: 0, behavior: 'smooth' });
  };
@@ -5728,6 +5887,15 @@ window._hidePageLoader = function() {
     var dm=document.getElementById('detailModal');
     if(dm){obs.observe(dm,{childList:true,subtree:true});dm.querySelectorAll('img').forEach(attachZoom);}
   });
+
+  // Déclenche le zoom depuis le bouton loupe (haut droite de la galerie) sur l'image actuellement affichée.
+  window._triggerImageZoom = function(){
+    var idx = (typeof window.currentSlide === 'number') ? window.currentSlide : 0;
+    var img = document.getElementById('slide_' + idx);
+    if(!img) return;
+    attachZoom(img);
+    if(_zS > 1){ _zR(img); } else { _zS = 2.5; _zA(img); }
+  };
 })();
 </script>
 </html>
