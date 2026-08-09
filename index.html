@@ -828,6 +828,21 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
   flex-shrink:0;
 "></div>
 <div id="detailContent" class="flex-1 overflow-y-auto no-scrollbar" style="padding:0 0 0 0;"></div>
+<!-- Barre sticky "Ajouter au panier" — reste visible en bas pendant tout le scroll de la fiche produit -->
+<div id="detailStickyBar" style="
+flex-shrink:0;
+display:none;
+padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+background:white;
+border-top:1px solid #e5e7eb;
+box-shadow:0 -4px 16px rgba(0,0,0,0.08);
+z-index:25;
+">
+<button id="detailStickyBtn" onclick="window._detailStickyAddToCart && window._detailStickyAddToCart()" style="width:100%;background:#101944;color:white;border:none;border-radius:10px;padding:15px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(16,25,68,0.30);">
+<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3c-.63.63-.18 1.7.7 1.7H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+<span id="detailStickyBtnLabel">Ajouter au Panier</span>
+</button>
+</div>
 <!-- Bouton scroll haut/bas dans la fiche détail -->
 <button id="detailScrollBtn"
 onclick="window._handleDetailScroll && window._handleDetailScroll()"
@@ -2953,31 +2968,27 @@ Importer tout
  </button>
  </div>
 
- <!-- DESCRIPTION ACCORDÉON -->
- <div style="border:1.5px solid #eef2f7;border-radius:18px;overflow:hidden;margin-bottom:20px;">
- <button onclick="window._toggleDetailAccordion()" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 18px;background:#f8fafc;border:none;cursor:pointer;">
- <div style="display:flex;align-items:center;gap:10px;">
- <div style="width:28px;height:28px;border-radius:8px;background:#101944;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
- <svg width="14" height="14" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
- </div>
- <span style="font-size:13px;font-weight:900;color:#101944;text-transform:uppercase;letter-spacing:0.04em;">${lang === 'fr' ? 'Détail du produit' : 'Product Details'}</span>
- </div>
- <svg id="detailAccordionIcon" width="18" height="18" fill="none" stroke="#101944" viewBox="0 0 24 24" stroke-width="2.5" style="transition:transform 0.3s;transform:rotate(180deg);"><path d="M5 15l7-7 7 7"/></svg>
+ <!-- ONGLETS DESCRIPTION / AVIS (style ELECTROSHOP) -->
+ <div style="margin-bottom:20px;">
+ <div style="display:flex;border-bottom:1.5px solid #eef2f7;margin-bottom:18px;">
+ <button id="prodTabBtnDesc_${p.id}" onclick="window._switchProdTab('${p.id}','desc')" style="flex:1;background:none;border:none;padding:0 0 12px;font-size:14px;font-weight:900;color:#101944;cursor:pointer;text-align:center;position:relative;">
+ ${lang === 'fr' ? 'Description' : 'Description'}
+ <span id="prodTabUnderlineDesc_${p.id}" style="position:absolute;left:0;right:0;bottom:-1.5px;height:3px;background:#facc15;border-radius:3px 3px 0 0;"></span>
  </button>
- <div id="detailAccordionBody" style="max-height:0;overflow:hidden;transition:max-height 0.35s ease;">
- <div style="padding:18px;border-top:1.5px solid #f1f5f9;">
+ <button id="prodTabBtnAvis_${p.id}" onclick="window._switchProdTab('${p.id}','avis')" style="flex:1;background:none;border:none;padding:0 0 12px;font-size:14px;font-weight:700;color:#94a3b8;cursor:pointer;text-align:center;position:relative;">
+ ${lang === 'fr' ? 'Avis' : 'Reviews'}
+ <span id="prodTabUnderlineAvis_${p.id}" style="position:absolute;left:0;right:0;bottom:-1.5px;height:3px;background:transparent;border-radius:3px 3px 0 0;"></span>
+ </button>
+ </div>
+
+ <!-- Panneau DESCRIPTION -->
+ <div id="prodTabPanelDesc_${p.id}" style="border:1.5px solid #eef2f7;border-radius:18px;padding:18px;">
  <div class="rich-desc" style="font-size:13px;color:#475569;line-height:1.7;">${desc}</div>
  ${p.videoUrl ? `<div style="margin-top:16px;">${window._buildVideoThumb(p.videoUrl, { wrapStyle: 'position:relative;width:100%;max-width:320px;aspect-ratio:16/9;background:#0f172a;border-radius:14px;overflow:hidden;cursor:pointer;margin:0 auto;' })}</div>` : ''}
  </div>
- </div>
- </div>
 
- <!-- AVIS CLIENTS -->
- <div style="margin-bottom:10px;">
- <h3 style="font-size:15px;font-weight:900;color:#101944;display:flex;align-items:center;gap:8px;margin-bottom:16px;">
- <svg width="18" height="18" fill="#f97316" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
- ${lang === 'fr' ? 'Avis Clients' : 'Customer Reviews'}
- </h3>
+ <!-- Panneau AVIS -->
+ <div id="prodTabPanelAvis_${p.id}" style="display:none;">
 
  <div style="background:#fffbf0;border:1.5px solid #fde68a;border-radius:18px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:16px;">
  <div style="text-align:center;flex-shrink:0;">
@@ -3012,6 +3023,7 @@ Importer tout
  <svg width="14" height="14" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
  ${lang === 'fr' ? 'Envoyer mon avis' : 'Send my review'}
  </button>
+ </div>
  </div>
  </div>
 
@@ -3229,13 +3241,24 @@ Importer tout
  }).catch(() => {});
  };
 
- window._toggleDetailAccordion = function() {
- const body = document.getElementById('detailAccordionBody');
- const icon = document.getElementById('detailAccordionIcon');
- if (!body) return;
- const isOpen = body.style.maxHeight !== '0px' && body.style.maxHeight !== '0' && body.style.maxHeight !== '';
- body.style.maxHeight = isOpen ? '0' : body.scrollHeight + 'px';
- if (icon) icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+ // Bascule entre les onglets "Description" et "Avis" sur la fiche produit (style ELECTROSHOP)
+ window._switchProdTab = function(productId, tab) {
+ const panelDesc = document.getElementById('prodTabPanelDesc_' + productId);
+ const panelAvis = document.getElementById('prodTabPanelAvis_' + productId);
+ const btnDesc   = document.getElementById('prodTabBtnDesc_' + productId);
+ const btnAvis   = document.getElementById('prodTabBtnAvis_' + productId);
+ const ulDesc    = document.getElementById('prodTabUnderlineDesc_' + productId);
+ const ulAvis    = document.getElementById('prodTabUnderlineAvis_' + productId);
+ if (!panelDesc || !panelAvis) return;
+ const showDesc = tab === 'desc';
+ panelDesc.style.display = showDesc ? 'block' : 'none';
+ panelAvis.style.display = showDesc ? 'none' : 'block';
+ if (btnDesc) btnDesc.style.color = showDesc ? '#101944' : '#94a3b8';
+ if (btnDesc) btnDesc.style.fontWeight = showDesc ? '900' : '700';
+ if (btnAvis) btnAvis.style.color = showDesc ? '#94a3b8' : '#101944';
+ if (btnAvis) btnAvis.style.fontWeight = showDesc ? '700' : '900';
+ if (ulDesc) ulDesc.style.background = showDesc ? '#facc15' : 'transparent';
+ if (ulAvis) ulAvis.style.background = showDesc ? 'transparent' : '#facc15';
  };
 
  window.setProdStar = function(productId, val) {
@@ -5886,6 +5909,58 @@ window._hidePageLoader = function() {
   };
 
   document.addEventListener('DOMContentLoaded', attachDetailScroll);
+})();
+</script>
+
+<!-- ══ BARRE STICKY "AJOUTER AU PANIER" SUR LA FICHE PRODUIT ══ -->
+<script>
+(function(){
+  var _stickyCurrentId = null;
+
+  function updateStickyBar() {
+    var sc  = document.getElementById('detailContent');
+    var bar = document.getElementById('detailStickyBar');
+    if (!sc || !bar) return;
+    // Visible dès qu'on a scrollé un peu (dépassé le bouton principal en haut de fiche)
+    var visible = sc.scrollTop > 260;
+    bar.style.display = visible ? 'block' : 'none';
+  }
+
+  window._detailStickyAddToCart = function() {
+    if (_stickyCurrentId && window.addToCart) window.addToCart(_stickyCurrentId);
+  };
+
+  function attachStickyScroll() {
+    var sc = document.getElementById('detailContent');
+    if (sc) sc.addEventListener('scroll', updateStickyBar, { passive: true });
+  }
+
+  // Masquer la barre sticky à la fermeture de la fiche
+  var _origCloseDetailSticky = window.closeDetail;
+  window.closeDetail = function() {
+    _origCloseDetailSticky && _origCloseDetailSticky();
+    var bar = document.getElementById('detailStickyBar');
+    if (bar) bar.style.display = 'none';
+  };
+
+  // Hook showDetail : mémorise le produit courant, met à jour le libellé selon la langue, attache le scroll
+  var _origShowDetailSticky = window.showDetail;
+  window.showDetail = function(id) {
+    _origShowDetailSticky && _origShowDetailSticky.apply(window, arguments);
+    _stickyCurrentId = id;
+    setTimeout(function() {
+      var label = document.getElementById('detailStickyBtnLabel');
+      if (label) label.textContent = (window.currentLang === 'en') ? 'Add to Cart' : 'Ajouter au Panier';
+      var sc = document.getElementById('detailContent');
+      if (sc) {
+        sc.removeEventListener('scroll', updateStickyBar);
+        sc.addEventListener('scroll', updateStickyBar, { passive: true });
+      }
+      updateStickyBar();
+    }, 80);
+  };
+
+  document.addEventListener('DOMContentLoaded', attachStickyScroll);
 })();
 </script>
 
