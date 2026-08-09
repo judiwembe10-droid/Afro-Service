@@ -828,22 +828,8 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
   flex-shrink:0;
 "></div>
 <div id="detailContent" class="flex-1 overflow-y-auto no-scrollbar" style="padding:0 0 0 0;"></div>
-<!-- Barre sticky "Ajouter au panier" — reste visible en bas pendant tout le scroll de la fiche produit -->
-<div id="detailStickyBar" style="
-flex-shrink:0;
-display:none;
-padding:12px 16px calc(12px + env(safe-area-inset-bottom));
-background:white;
-border-top:1px solid #e5e7eb;
-box-shadow:0 -4px 16px rgba(0,0,0,0.08);
-z-index:25;
-">
-<button id="detailStickyBtn" onclick="window._detailStickyAddToCart && window._detailStickyAddToCart()" style="width:100%;background:#101944;color:white;border:none;border-radius:10px;padding:15px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 14px rgba(16,25,68,0.30);">
-<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3c-.63.63-.18 1.7.7 1.7H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-<span id="detailStickyBtnLabel">Ajouter au Panier</span>
-</button>
-</div>
 <!-- Bouton scroll haut/bas dans la fiche détail -->
+
 <button id="detailScrollBtn"
 onclick="window._handleDetailScroll && window._handleDetailScroll()"
 style="
@@ -2875,8 +2861,8 @@ Importer tout
  </div>
  <!-- MINIATURES cliquables (style Glotelho) + vignette vidéo produit -->
  ${(imgs.length > 1 || p.videoUrl) ? `
- <div id="thumbStrip" style="display:flex;gap:8px;overflow-x:auto;padding:10px 16px 4px;background:white;scrollbar-width:none;">
- ${imgs.map((img, i) => `<button onclick="window.goToSlide(${i},${imgs.length})" id="thumb_${i}" style="flex-shrink:0;width:62px;height:62px;border-radius:10px;overflow:hidden;border:2.5px solid ${i===0?'#bd1e24':'#e2e8f0'};padding:0;background:#f4f6fa;cursor:pointer;transition:border-color 0.2s;"><img src="${img}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='https://via.placeholder.com/80'"></button>`).join('')}
+ <div id="thumbStrip" style="display:flex;gap:8px;overflow-x:auto;padding:10px 16px 10px;background:white;scrollbar-width:none;">
+ ${imgs.map((img, i) => `<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;"><button onclick="window.goToSlide(${i},${imgs.length})" id="thumb_${i}" style="width:62px;height:62px;border-radius:10px;overflow:hidden;border:1.5px solid #e2e8f0;padding:0;background:#f4f6fa;cursor:pointer;"><img src="${img}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='https://via.placeholder.com/80'"></button><span id="thumb_underline_${i}" style="width:36px;height:3px;border-radius:3px;background:${i===0?'#facc15':'transparent'};"></span></div>`).join('')}
  ${p.videoUrl ? `<button onclick="window._openProductVideoModal('${encodeURIComponent(p.videoUrl)}')" style="flex-shrink:0;width:62px;height:62px;border-radius:10px;overflow:hidden;border:2.5px solid #101944;padding:0;background:#0f172a;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;">
  <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
  </button>` : ''}
@@ -3101,8 +3087,8 @@ Importer tout
      if (prevImg) { prevImg.style.display = 'none'; prevImg.style.position = 'absolute'; }
      if (nextImg) { nextImg.style.display = 'block'; nextImg.style.position = 'relative'; }
      for (var i = 0; i < _totalSlides; i++) {
-       var th = document.getElementById('thumb_' + i);
-       if (th) th.style.borderColor = i === window.currentSlide ? '#bd1e24' : '#e2e8f0';
+       var ul = document.getElementById('thumb_underline_' + i);
+       if (ul) ul.style.background = i === window.currentSlide ? '#facc15' : 'transparent';
        var dt = document.getElementById('slideDot_' + i);
        if (dt) { dt.style.width = i === window.currentSlide ? '18px' : '6px'; dt.style.background = i === window.currentSlide ? '#101944' : 'rgba(255,255,255,0.6)'; }
      }
@@ -5909,58 +5895,6 @@ window._hidePageLoader = function() {
   };
 
   document.addEventListener('DOMContentLoaded', attachDetailScroll);
-})();
-</script>
-
-<!-- ══ BARRE STICKY "AJOUTER AU PANIER" SUR LA FICHE PRODUIT ══ -->
-<script>
-(function(){
-  var _stickyCurrentId = null;
-
-  function updateStickyBar() {
-    var sc  = document.getElementById('detailContent');
-    var bar = document.getElementById('detailStickyBar');
-    if (!sc || !bar) return;
-    // Visible dès qu'on a scrollé un peu (dépassé le bouton principal en haut de fiche)
-    var visible = sc.scrollTop > 260;
-    bar.style.display = visible ? 'block' : 'none';
-  }
-
-  window._detailStickyAddToCart = function() {
-    if (_stickyCurrentId && window.addToCart) window.addToCart(_stickyCurrentId);
-  };
-
-  function attachStickyScroll() {
-    var sc = document.getElementById('detailContent');
-    if (sc) sc.addEventListener('scroll', updateStickyBar, { passive: true });
-  }
-
-  // Masquer la barre sticky à la fermeture de la fiche
-  var _origCloseDetailSticky = window.closeDetail;
-  window.closeDetail = function() {
-    _origCloseDetailSticky && _origCloseDetailSticky();
-    var bar = document.getElementById('detailStickyBar');
-    if (bar) bar.style.display = 'none';
-  };
-
-  // Hook showDetail : mémorise le produit courant, met à jour le libellé selon la langue, attache le scroll
-  var _origShowDetailSticky = window.showDetail;
-  window.showDetail = function(id) {
-    _origShowDetailSticky && _origShowDetailSticky.apply(window, arguments);
-    _stickyCurrentId = id;
-    setTimeout(function() {
-      var label = document.getElementById('detailStickyBtnLabel');
-      if (label) label.textContent = (window.currentLang === 'en') ? 'Add to Cart' : 'Ajouter au Panier';
-      var sc = document.getElementById('detailContent');
-      if (sc) {
-        sc.removeEventListener('scroll', updateStickyBar);
-        sc.addEventListener('scroll', updateStickyBar, { passive: true });
-      }
-      updateStickyBar();
-    }, 80);
-  };
-
-  document.addEventListener('DOMContentLoaded', attachStickyScroll);
 })();
 </script>
 
