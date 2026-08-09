@@ -1194,12 +1194,48 @@ Importer tout
 <div id="authModal" class="hidden fixed inset-0 bg-black/80 z-[300] flex items-center justify-center p-4 backdrop-blur-sm">
 <div class="bg-white w-full max-w-sm rounded-[32px] p-8 space-y-4 text-center">
 <h2 id="authTitle" class="text-xl font-black text-[#101944] uppercase italic" data-fr="CONNEXION" data-en="LOGIN">CONNEXION</h2>
+<div id="authFormEmail">
 <div id="signUpOnly" class="hidden"><input id="authName" type="text" data-placeholder-fr="Nom Complet" data-placeholder-en="Full Name" placeholder="Nom Complet" class="w-full border-2 p-4 rounded-2xl text-sm mb-2"></div>
 <input id="authEmail" type="email" data-placeholder-fr="Email Admin" data-placeholder-en="Admin Email" placeholder="Email Admin" class="w-full border-2 p-4 rounded-2xl text-sm">
-<input id="authPass" type="password" data-placeholder-fr="Mot de passe" data-placeholder-en="Password" placeholder="Mot de passe" class="w-full border-2 p-4 rounded-2xl text-sm">
-<button onclick="window.handleAuth && window.handleAuth()" class="w-full bg-[#bd1e24] text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-all">
+<input id="authPass" type="password" data-placeholder-fr="Mot de passe" data-placeholder-en="Password" placeholder="Mot de passe" class="w-full border-2 p-4 rounded-2xl text-sm mt-2">
+<button onclick="window.handleAuth && window.handleAuth()" class="w-full bg-[#bd1e24] text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-all mt-2">
 <span data-fr="Valider" data-en="Confirm">Valider</span>
 </button>
+</div>
+<div class="flex items-center gap-3 my-1">
+<div class="flex-1 h-px bg-slate-200"></div>
+<span class="text-[9px] font-bold text-slate-400 uppercase" data-fr="ou" data-en="or">ou</span>
+<div class="flex-1 h-px bg-slate-200"></div>
+</div>
+<button onclick="window.handleGoogleAuth && window.handleGoogleAuth()" class="w-full flex items-center justify-center gap-3 border-2 border-slate-200 text-[#101944] py-3.5 rounded-2xl font-black uppercase text-xs active:scale-95 transition-all">
+<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 01-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+<span data-fr="Continuer avec Google" data-en="Continue with Google">Continuer avec Google</span>
+</button>
+<button id="showPhoneAuthBtn" onclick="window.showPhoneAuth && window.showPhoneAuth()" class="w-full flex items-center justify-center gap-3 border-2 border-slate-200 text-[#101944] py-3.5 rounded-2xl font-black uppercase text-xs active:scale-95 transition-all mt-2">
+<svg width="16" height="16" fill="none" stroke="#101944" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+<span data-fr="Continuer avec un numéro" data-en="Continue with phone number">Continuer avec un numéro</span>
+</button>
+
+<!-- PANNEAU CONNEXION PAR TÉLÉPHONE -->
+<div id="authFormPhone" class="hidden text-left">
+<div id="phoneStepNumber">
+<label class="text-[10px] font-bold text-slate-500 uppercase block mb-1" data-fr="Numéro de téléphone" data-en="Phone number">Numéro de téléphone</label>
+<input id="authPhoneNumber" type="tel" placeholder="+237 6XX XXX XXX" class="w-full border-2 p-4 rounded-2xl text-sm text-center">
+<button onclick="window.sendPhoneCode && window.sendPhoneCode()" class="w-full bg-[#bd1e24] text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-all mt-3">
+<span data-fr="Recevoir le code" data-en="Send code">Recevoir le code</span>
+</button>
+</div>
+<div id="phoneStepCode" class="hidden">
+<label class="text-[10px] font-bold text-slate-500 uppercase block mb-1" data-fr="Code reçu par SMS" data-en="Code received by SMS">Code reçu par SMS</label>
+<input id="authPhoneCode" type="text" inputmode="numeric" maxlength="6" placeholder="123456" class="w-full border-2 p-4 rounded-2xl text-sm text-center tracking-[0.3em]">
+<button onclick="window.confirmPhoneCode && window.confirmPhoneCode()" class="w-full bg-[#bd1e24] text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-all mt-3">
+<span data-fr="Valider le code" data-en="Confirm code">Valider le code</span>
+</button>
+</div>
+<button onclick="window.hidePhoneAuth && window.hidePhoneAuth()" class="text-[10px] font-bold text-slate-400 underline uppercase mt-3 block mx-auto" data-fr="Retour" data-en="Back">Retour</button>
+</div>
+<div id="recaptchaContainer"></div>
+
 <div class="flex flex-col gap-3 mt-4">
 <button onclick="window.toggleAuthMode && window.toggleAuthMode()" class="text-[10px] font-bold text-slate-500 underline uppercase" data-fr="Créer un compte ?" data-en="Create an account?">Créer un compte ?</button>
 <button onclick="window.forgotPassword && window.forgotPassword()" class="text-[10px] font-bold text-red-600 underline uppercase italic" data-fr="Mot de passe oublié ?" data-en="Forgot password?">Mot de passe oublié ?</button>
@@ -1207,6 +1243,7 @@ Importer tout
 <button onclick="window.closeAuth && window.closeAuth()" class="block w-full text-[10px] text-slate-300 uppercase mt-4" data-fr="Fermer" data-en="Close">Fermer</button>
 </div>
 </div>
+
 
 <div id="historyModal" class="hidden fixed inset-0 bg-black/80 z-[300] flex items-center justify-center p-4 backdrop-blur-sm">
 <div class="bg-white w-full max-w-md rounded-[32px] flex flex-col max-h-[75vh] overflow-hidden">
@@ -1231,7 +1268,7 @@ Importer tout
 <script type="module">
  import { initializeApp } from "firebase/app";
  import { getDatabase, ref, push, onValue, remove, update, set, get } from "firebase/database";
- import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, sendEmailVerification, sendPasswordResetEmail } from "firebase/auth";
+ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, sendEmailVerification, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
  const firebaseConfig = {
  apiKey: "AIzaSyB0NF5a7jhUyuA1FTIjK1Iw_x3eGHcrykY",
@@ -4306,6 +4343,61 @@ Importer tout
  } catch (e) { alert((currentLang === "fr" ? "Erreur : " : "Error: ") + e.message); }
  };
 
+ window.handleGoogleAuth = async () => {
+ try {
+ const provider = new GoogleAuthProvider();
+ await signInWithPopup(auth, provider);
+ closeAuth();
+ } catch (e) {
+ if (e.code === 'auth/popup-closed-by-user') return;
+ alert((currentLang === "fr" ? "Erreur : " : "Error: ") + e.message);
+ }
+ };
+
+ // ── Connexion par numéro de téléphone (SMS) — nécessite le plan Firebase Blaze ──
+ var _phoneConfirmationResult = null;
+
+ window.showPhoneAuth = () => {
+ document.getElementById('authFormEmail').classList.add('hidden');
+ document.getElementById('authFormPhone').classList.remove('hidden');
+ document.getElementById('phoneStepNumber').classList.remove('hidden');
+ document.getElementById('phoneStepCode').classList.add('hidden');
+ };
+
+ window.hidePhoneAuth = () => {
+ document.getElementById('authFormPhone').classList.add('hidden');
+ document.getElementById('authFormEmail').classList.remove('hidden');
+ };
+
+ window.sendPhoneCode = async () => {
+ const phoneNumber = document.getElementById('authPhoneNumber').value.trim();
+ if (!phoneNumber || !phoneNumber.startsWith('+')) {
+ return alert(currentLang === 'fr' ? "Entrez votre numéro au format international, ex : +237 6XX XXX XXX." : "Enter your number in international format, e.g. +237 6XX XXX XXX.");
+ }
+ try {
+ if (!window._recaptchaVerifier) {
+ window._recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptchaContainer', { size: 'invisible' });
+ }
+ _phoneConfirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window._recaptchaVerifier);
+ document.getElementById('phoneStepNumber').classList.add('hidden');
+ document.getElementById('phoneStepCode').classList.remove('hidden');
+ } catch (e) {
+ alert((currentLang === "fr" ? "Erreur : " : "Error: ") + e.message);
+ if (window._recaptchaVerifier) { window._recaptchaVerifier.clear(); window._recaptchaVerifier = null; }
+ }
+ };
+
+ window.confirmPhoneCode = async () => {
+ const code = document.getElementById('authPhoneCode').value.trim();
+ if (!code || !_phoneConfirmationResult) return;
+ try {
+ await _phoneConfirmationResult.confirm(code);
+ closeAuth();
+ } catch (e) {
+ alert((currentLang === "fr" ? "Code invalide. Réessayez." : "Invalid code. Try again."));
+ }
+ };
+
  window.forgotPassword = async () => {
  const email = document.getElementById('authEmail').value;
  if (!email) return alert(currentLang === 'fr' ? "Entrez votre adresse e-mail." : "Enter your email address.");
@@ -4313,7 +4405,13 @@ Importer tout
  };
 
  window.openAuth   = () => currentUser ? window._confirm(currentLang==='fr'?'Se déconnecter ?':'Log out?', function(){ signOut(auth); }) : document.getElementById('authModal').classList.remove('hidden');
- window.closeAuth  = () => document.getElementById('authModal').classList.add('hidden');
+ window.closeAuth  = () => {
+ document.getElementById('authModal').classList.add('hidden');
+ var pf = document.getElementById('authFormPhone');
+ var ef = document.getElementById('authFormEmail');
+ if (pf) pf.classList.add('hidden');
+ if (ef) ef.classList.remove('hidden');
+ };
  window.toggleAuthMode = () => {
  const title     = document.getElementById('authTitle');
  const signUpDiv = document.getElementById('signUpOnly');
