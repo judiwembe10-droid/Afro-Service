@@ -1293,8 +1293,13 @@ Se connecter
 <div id="historyModal" class="hidden fixed inset-0 bg-black/80 z-[300] flex items-center justify-center p-4 backdrop-blur-sm">
 <div class="bg-white w-full max-w-md rounded-[32px] flex flex-col max-h-[75vh] overflow-hidden">
 <div class="p-6 border-b flex justify-between items-center bg-slate-50">
-<h2 class="font-black text-[#101944] uppercase italic" data-fr="Mon Historique" data-en="My History">Mon Historique</h2>
-<button onclick="window.closeHistory && window.closeHistory()" class="text-2xl font-black">&times;</button>
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-[#101944] flex items-center justify-center flex-shrink-0">
+<svg width="17" height="17" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</div>
+<h2 class="font-black text-[#101944] text-base" data-fr="Mon Historique" data-en="My History">Mon Historique</h2>
+</div>
+<button onclick="window.closeHistory && window.closeHistory()" class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-lg font-black text-slate-500">&times;</button>
 </div>
 <div id="historyContent" class="flex-1 overflow-y-auto p-6 no-scrollbar"></div>
 </div>
@@ -2249,10 +2254,23 @@ Se connecter
  left.style.pointerEvents  = 'none';
  right.style.pointerEvents = 'none';
  }
- container.addEventListener('touchstart', showArrows, { passive: true });
+ // Masquées par défaut : n'apparaissent que lors d'une interaction manuelle volontaire
+ hideArrows();
+
+ // Pause l'auto-slide pendant toute interaction manuelle (swipe, scroll, clic), reprise après 4s d'inactivité
+ let resumeTimer = null;
+ function pauseAutoSlideTemporarily() {
+ if (window._adBannerAutoSlide) { clearInterval(window._adBannerAutoSlide); window._adBannerAutoSlide = null; }
+ if (resumeTimer) clearTimeout(resumeTimer);
+ resumeTimer = setTimeout(() => {
+ if (!window._adBannerAutoSlide && window._adBannerSlides && window._adBannerSlides.length > 1) {
+ window._adBannerAutoSlide = setInterval(() => window._adBannerGoto(window._adBannerIdx + 1), 6000);
+ }
+ }, 4000);
+ }
+ container.addEventListener('touchstart', () => { showArrows(); pauseAutoSlideTemporarily(); }, { passive: true });
+ container.addEventListener('touchmove', pauseAutoSlideTemporarily, { passive: true });
  container.addEventListener('scroll', showArrows, { passive: true });
- container.addEventListener('click', showArrows);
- showArrows();
  })();
 
  function _updateDots(idx) {
@@ -4318,7 +4336,21 @@ Se connecter
  const data = snapshot.val();
  const container = document.getElementById('historyContent');
  if (!data) container.innerHTML = `<p class='text-center text-slate-400 py-10 text-[10px] font-bold uppercase italic'>${currentLang === 'fr' ? 'Aucune commande passée' : 'No orders yet'}</p>`;
- else container.innerHTML = Object.values(data).reverse().map(order => `<div class="bg-slate-50 p-4 rounded-2xl border mb-3"><p class="text-[9px] font-black text-red-600 mb-1 uppercase">${order.date}</p><div class="text-[10px] font-bold text-slate-700 leading-tight">${order.items.replace(/%0A/g, '<br>')}</div><div class="mt-2 pt-2 border-t flex justify-between font-black text-[#1d265e]"><span class="text-[9px]">TOTAL</span> <span class="text-xs">${order.total}</span></div></div>`).join('');
+ else container.innerHTML = Object.values(data).reverse().map(order => `<div style="background:white;border:1.5px solid #eef2f7;border-radius:20px;box-shadow:0 2px 10px rgba(16,25,68,0.06);margin-bottom:14px;overflow:hidden;">
+<div style="background:linear-gradient(135deg,#101944,#1d265e);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+<div style="display:flex;align-items:center;gap:8px;">
+<svg width="13" height="13" fill="none" stroke="#facc15" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+<span style="font-size:10px;font-weight:900;color:white;letter-spacing:0.02em;">${order.date}</span>
+</div>
+</div>
+<div style="padding:14px 16px;">
+<div style="font-size:12px;font-weight:600;color:#475569;line-height:1.6;">${order.items.replace(/%0A/g, '<br>')}</div>
+<div style="margin-top:12px;padding-top:12px;border-top:1.5px dashed #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+<span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;">Total</span>
+<span style="font-size:16px;font-weight:900;color:#101944;">${order.total}</span>
+</div>
+</div>
+</div>`).join('');
  document.getElementById('historyModal').classList.remove('hidden');
  });
  };
@@ -4408,11 +4440,37 @@ Se connecter
  const pass    = document.getElementById('authPass').value;
  const name    = document.getElementById('authName').value;
  const isLogin = document.getElementById('signUpOnly').classList.contains('hidden');
+ const btn     = document.getElementById('authSubmitBtn');
+ const fr      = currentLang === 'fr';
+
+ if (!email || !pass) {
+ alert(fr ? "Merci de remplir l'email et le mot de passe." : "Please fill in email and password.");
+ return;
+ }
+
+ const originalLabel = btn ? btn.textContent : '';
+ if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.textContent = fr ? 'Connexion...' : 'Signing in...'; }
+
  try {
- if (isLogin) { const res = await signInWithEmailAndPassword(auth, email, pass); if (!res.user.emailVerified) alert(currentLang === 'fr' ? "Vérifiez votre adresse e-mail." : "Please verify your email."); }
- else { const res = await createUserWithEmailAndPassword(auth, email, pass); await updateProfile(res.user, { displayName: name }); await sendEmailVerification(res.user); alert(currentLang === 'fr' ? "Compte créé ! Un e-mail de vérification vous a été envoyé." : "Account created! A verification email has been sent."); }
+ if (isLogin) {
+ const res = await signInWithEmailAndPassword(auth, email, pass);
+ if (!res.user.emailVerified) {
+ alert(fr ? "Vérifiez votre adresse e-mail." : "Please verify your email.");
+ } else {
+ alert(fr ? "Connexion réussie ! Bienvenue." : "Signed in successfully! Welcome.");
+ }
+ } else {
+ const res = await createUserWithEmailAndPassword(auth, email, pass);
+ await updateProfile(res.user, { displayName: name });
+ await sendEmailVerification(res.user);
+ alert(fr ? "Compte créé ! Un e-mail de vérification vous a été envoyé." : "Account created! A verification email has been sent.");
+ }
  closeAuth();
- } catch (e) { alert((currentLang === "fr" ? "Erreur : " : "Error: ") + e.message); }
+ } catch (e) {
+ alert((fr ? "Erreur : " : "Error: ") + e.message);
+ } finally {
+ if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = originalLabel; }
+ }
  };
 
  window.handleGoogleAuth = async () => {
