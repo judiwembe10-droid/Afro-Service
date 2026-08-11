@@ -1456,6 +1456,14 @@ Se connecter
  const wrapStyle = opts.wrapStyle || 'position:relative;width:100%;aspect-ratio:16/9;background:#0f172a;border-radius:14px;overflow:hidden;cursor:pointer;';
  const uid = 'vid_' + Math.random().toString(36).slice(2, 9);
  const thumbBg = info.thumb ? `background-image:url('${info.thumb}');background-size:cover;background-position:center;` : 'background:#0f172a;';
+ // Streamable ne fournit pas d'URL de miniature prévisible : on la récupère via son API oEmbed publique une fois la vignette insérée dans la page.
+ if (info.type === 'streamable') {
+ setTimeout(() => window._loadStreamableThumb(uid, info.id), 0);
+ }
+ // Fichier vidéo direct (.mp4 etc.) : on extrait la première frame comme aperçu, sans dépendance externe.
+ if (info.type === 'file') {
+ setTimeout(() => window._loadFileVideoThumb(uid, info.embedUrl), 0);
+ }
  return `
  <div id="${uid}" class="afro-video-thumb" style="${wrapStyle}" data-video-url="${encodeURIComponent(url)}" onclick="window._playVideoThumb('${uid}')">
  <div class="afro-video-poster" style="position:absolute;inset:0;${thumbBg}display:flex;align-items:center;justify-content:center;">
@@ -1464,6 +1472,52 @@ Se connecter
  </div>
  </div>
  </div>`;
+ };
+
+ // Va chercher la miniature réelle d'une vidéo Streamable via son API oEmbed publique, puis l'applique en fond.
+ window._loadStreamableThumb = function(uid, streamableId) {
+ fetch(`https://api.streamable.com/oembed.json?url=${encodeURIComponent('https://streamable.com/' + streamableId)}`)
+ .then(res => res.ok ? res.json() : null)
+ .then(data => {
+ if (!data || !data.thumbnail_url) return;
+ const el = document.getElementById(uid);
+ if (!el) return;
+ const poster = el.querySelector('.afro-video-poster');
+ if (!poster) return;
+ let thumbUrl = data.thumbnail_url;
+ if (thumbUrl.startsWith('//')) thumbUrl = 'https:' + thumbUrl;
+ poster.style.backgroundImage = `url('${thumbUrl}')`;
+ poster.style.backgroundSize = 'cover';
+ poster.style.backgroundPosition = 'center';
+ })
+ .catch(() => {});
+ };
+
+ // Extrait la première frame d'un fichier vidéo direct (.mp4 etc.) pour l'utiliser comme aperçu.
+ window._loadFileVideoThumb = function(uid, videoUrl) {
+ const vid = document.createElement('video');
+ vid.crossOrigin = 'anonymous';
+ vid.muted = true;
+ vid.preload = 'metadata';
+ vid.src = videoUrl;
+ vid.addEventListener('loadeddata', () => {
+ try {
+ const canvas = document.createElement('canvas');
+ canvas.width = vid.videoWidth;
+ canvas.height = vid.videoHeight;
+ const ctx = canvas.getContext('2d');
+ ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+ const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+ const el = document.getElementById(uid);
+ if (!el) return;
+ const poster = el.querySelector('.afro-video-poster');
+ if (!poster) return;
+ poster.style.backgroundImage = `url('${dataUrl}')`;
+ poster.style.backgroundSize = 'cover';
+ poster.style.backgroundPosition = 'center';
+ } catch (e) {} // Échec silencieux (ex. restriction CORS) : le fond sombre par défaut reste affiché.
+ }, { once: true });
+ vid.addEventListener('error', () => {}, { once: true });
  };
 
  // Remplace la vignette d'aperçu par le lecteur réel au clic.
