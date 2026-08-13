@@ -79,8 +79,8 @@
 .hero-nav-arrow:active{background:rgba(16,25,68,0.14);}
 .hero-nav-arrow.left{left:8px;}
 .hero-nav-arrow.right{right:8px;}
-.hero-dot{width:6px;height:6px;border-radius:50%;background:#d1d5db;transition:all 0.3s ease;}
-.hero-dot.active{width:18px;border-radius:4px;background:var(--afro-red);}
+.hero-dot{width:6px;height:6px;border-radius:2px;background:#d1d5db;transition:all 0.3s ease;}
+.hero-dot.active{width:18px;border-radius:2px;background:var(--afro-red);}
 
 /* ── Sections catégorie style ELECTROSHOP (accueil) ── */
 .es-cat-section{padding:22px 0 26px;}
@@ -2245,7 +2245,7 @@ Se connecter
  return words.map((w, i) => `<span class="hero-word" style="animation-delay:${(startDelay + i * step).toFixed(3)}s">${w}</span>`).join(' ');
  }
 
- container.innerHTML = slides.map((p, slideIdx) => {
+ function _renderSlide(p, slideIdx) {
  const imgDirClass = slideIdx % 2 === 0 ? '' : ' hero-img-rtl'; // alterne gauche→droite / droite→gauche
 
  // Slide "vidéo" : vignette d'aperçu cliquable, lecture en place dans la bannière
@@ -2285,13 +2285,31 @@ Se connecter
  </div>
  <div class="hero-slide-imgwrap"><img class="${imgDirClass.trim()}" src="${img}" loading="lazy" alt="${name}"></div>
  </div>`;
- }).join('');
+ }
+
+ // Boucle infinie sans "retraçage" visible : on ajoute un clone du dernier slide au début
+ // et un clone du premier slide à la fin. Le scroll réel se déplace donc toujours dans le
+ // même sens ; quand on atterrit sur un clone, on saute instantanément (sans animation)
+ // vers le vrai slide correspondant, une fois la transition douce terminée.
+ const useLoop = slides.length > 1;
+ const realSlidesHtml = slides.map((p, i) => _renderSlide(p, i)).join('');
+ container.innerHTML = useLoop
+ ? _renderSlide(slides[slides.length - 1], slides.length - 1) + realSlidesHtml + _renderSlide(slides[0], 0)
+ : realSlidesHtml;
 
  if (dotsWrap) {
  dotsWrap.innerHTML = slides.map((_, i) => `<span class="hero-dot${i === 0 ? ' active' : ''}" data-hero-dot="${i}"></span>`).join('');
  }
 
  window._adBannerIdx = 0;
+ window._adBannerLoop = useLoop;
+ window._adBannerJumping = false;
+
+ // Positionne le scroll sur le premier VRAI slide (index 1 si clones présents), sans animation
+ if (useLoop) {
+ const slideW0 = container.clientWidth;
+ container.scrollLeft = slideW0; // saute directement après le clone de tête
+ }
 
  // ── Masquage des flèches de navigation après quelques secondes d'inactivité ──
  (function initHeroArrowIdle() {
@@ -2313,8 +2331,13 @@ Se connecter
  left.style.pointerEvents  = 'none';
  right.style.pointerEvents = 'none';
  }
+ window._heroForceHideArrows = function() {
+ if (idleTimer) clearTimeout(idleTimer);
+ hideArrows();
+ };
  // Masquées par défaut : n'apparaissent que lors d'une interaction manuelle volontaire
  hideArrows();
+ window._heroArrowsUserInitiated = false;
 
  // Pause l'auto-slide pendant toute interaction manuelle (swipe, scroll, clic), reprise après 4s d'inactivité
  let resumeTimer = null;
@@ -2323,13 +2346,16 @@ Se connecter
  if (resumeTimer) clearTimeout(resumeTimer);
  resumeTimer = setTimeout(() => {
  if (!window._adBannerAutoSlide && window._adBannerSlides && window._adBannerSlides.length > 1) {
- window._adBannerAutoSlide = setInterval(() => window._adBannerGoto(window._adBannerIdx + 1), 6000);
+ window._adBannerAutoSlide = setInterval(() => window._adBannerGoto(window._adBannerIdx + 1, true), 6000);
  }
  }, 4000);
  }
- container.addEventListener('touchstart', () => { showArrows(); pauseAutoSlideTemporarily(); }, { passive: true });
+ container.addEventListener('touchstart', () => {
+ window._heroArrowsUserInitiated = true;
+ showArrows();
+ pauseAutoSlideTemporarily();
+ }, { passive: true });
  container.addEventListener('touchmove', pauseAutoSlideTemporarily, { passive: true });
- container.addEventListener('scroll', showArrows, { passive: true });
  })();
 
  function _updateDots(idx) {
@@ -2373,23 +2399,48 @@ Se connecter
  words.forEach(w => w.classList.add(wordAnimClass));
  }
 
- window._adBannerGoto = function(idx) {
+ window._adBannerGoto = function(idx, isAuto) {
  const total = window._adBannerSlides.length;
  if (total === 0) return;
- window._adBannerIdx = (idx + total) % total;
+ const targetIdx = (idx + total) % total; // index réel (0..total-1), pour les dots et l'animation
+ window._adBannerIdx = targetIdx;
  const slideW = container.clientWidth;
- container.scrollTo({ left: window._adBannerIdx * slideW, behavior: 'smooth' });
- _updateDots(window._adBannerIdx);
- _playSlideAnim(window._adBannerIdx);
+ const offset = window._adBannerLoop ? 1 : 0; // décalage dû au clone de tête
+ // Défilement toujours vers l'avant/arrière naturel : on utilise l'index de scroll continu
+ // (idx passé, pas targetIdx) pour que _adBannerGoto(total) avance d'un cran au lieu de sauter à 0.
+ const scrollIdx = window._adBannerLoop ? (idx + offset) : targetIdx;
+ container.scrollTo({ left: scrollIdx * slideW, behavior: 'smooth' });
+ _updateDots(targetIdx);
+ _playSlideAnim(targetIdx);
+ // Si ce changement de slide est automatique (pas une action de l'utilisateur), on s'assure que les flèches restent masquées
+ if (isAuto && window._heroForceHideArrows) window._heroForceHideArrows();
  };
 
+ let _scrollEndTimer = null;
  container.addEventListener('scroll', () => {
  const slideW = container.clientWidth || 1;
- const idx = Math.round(container.scrollLeft / slideW);
- if (idx !== window._adBannerIdx) {
- window._adBannerIdx = idx;
- _updateDots(idx);
- _playSlideAnim(idx);
+ const offset = window._adBannerLoop ? 1 : 0;
+ const rawIdx = Math.round(container.scrollLeft / slideW); // index incluant les clones
+ const total = window._adBannerSlides.length;
+ const realIdx = ((rawIdx - offset) + total) % total;
+ if (realIdx !== window._adBannerIdx) {
+ window._adBannerIdx = realIdx;
+ _updateDots(realIdx);
+ _playSlideAnim(realIdx);
+ }
+ // Une fois le défilement stabilisé, si on est sur un clone (position 0 ou dernière),
+ // on saute instantanément (sans transition visible) vers le vrai slide correspondant.
+ if (window._adBannerLoop) {
+ if (_scrollEndTimer) clearTimeout(_scrollEndTimer);
+ _scrollEndTimer = setTimeout(() => {
+ const lastCloneIdx = total + offset; // position du clone final
+ if (rawIdx === 0 || rawIdx === lastCloneIdx) {
+ window._adBannerJumping = true;
+ container.style.scrollBehavior = 'auto';
+ container.scrollLeft = (realIdx + offset) * slideW;
+ requestAnimationFrame(() => { container.style.scrollBehavior = ''; window._adBannerJumping = false; });
+ }
+ }, 120);
  }
  }, { passive: true });
 
@@ -2397,7 +2448,7 @@ Se connecter
  requestAnimationFrame(() => _playSlideAnim(0));
 
  if (slides.length > 1) {
- _adBannerAutoSlide = setInterval(() => window._adBannerGoto(window._adBannerIdx + 1), 6000);
+ _adBannerAutoSlide = setInterval(() => window._adBannerGoto(window._adBannerIdx + 1, true), 6000);
  }
  }
 
