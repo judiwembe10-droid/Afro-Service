@@ -64,26 +64,15 @@
 .hero-slide-imgwrap img.hero-img-anim{opacity:0;transform:translateX(36px) scale(0.96);animation:esOfferSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;animation-delay:0.08s;}
 .hero-slide-imgwrap img.hero-img-anim.hero-img-rtl{transform:translateX(-36px) scale(0.96);}
 @keyframes esOfferSlideIn{to{opacity:1;transform:translateX(0) scale(1);}}
-.hero-word{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:0.14em;margin-bottom:-0.14em;}
-.hero-word-inner{display:inline-block;opacity:1;transform:translate3d(0,0,0);will-change:transform,opacity;}
-.hero-word-inner.hero-word-anim{opacity:0;transform:translate3d(0,72%,0);animation:heroWordRevealA 0.72s cubic-bezier(0.19,1,0.22,1) forwards;}
-@keyframes heroWordRevealA{to{opacity:1;transform:translate3d(0,0,0);}}
+/* ── Apparition du texte en bloc entier (titre, prix, bouton) : fondu + légère translation du bas
+   vers le haut, façon ELECTROSHOP.CI — pas de découpage mot par mot. ── */
+.hero-block-anim{opacity:0;transform:translate3d(0,16px,0);animation:heroBlockReveal 0.55s cubic-bezier(0.22,1,0.36,1) forwards;}
+@keyframes heroBlockReveal{to{opacity:1;transform:translate3d(0,0,0);}}
 
-/* ── Variante B d'animation d'entrée (alterne à chaque changement de slide avec la variante A) ── */
-.hero-slide-tag.hero-tag-anim-b{opacity:0;transform:translateY(-10px);animation:heroTagDropB 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;}
-@keyframes heroTagDropB{to{opacity:1;transform:translateY(0);}}
-.hero-slide-imgwrap img.hero-img-anim-b{opacity:0;transform:scale(0.75) rotate(-6deg);animation:esOfferZoomInB 0.55s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:0.05s;}
-@keyframes esOfferZoomInB{to{opacity:1;transform:scale(1) rotate(0deg);}}
-.hero-word-inner.hero-word-anim-b{opacity:0;transform:translate3d(0,-72%,0);animation:heroWordRevealB 0.68s cubic-bezier(0.19,1,0.22,1) forwards;}
-@keyframes heroWordRevealB{to{opacity:1;transform:translate3d(0,0,0);}}
-
-/* ── Variante C : "recomposition" façon slider premium — l'image se reconstitue en bandes horizontales
-   qui remontent depuis le bas vers le haut, avec un léger flou qui se dissipe, jusqu'au rendu net final. ── */
-.hero-slide-imgwrap.hero-img-anim-c-wrap{position:relative;}
-.hero-slide-imgwrap img.hero-img-anim-c{opacity:0;}
-.hero-img-recompose-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
-.hero-img-recompose-strip{position:absolute;left:0;width:100%;background-repeat:no-repeat;opacity:0;filter:blur(6px);transform:translate3d(0,26px,0) scale(1.015);will-change:transform,opacity,filter;animation:heroRecomposeStrip 0.62s cubic-bezier(0.22,1,0.36,1) forwards;}
-@keyframes heroRecomposeStrip{60%{filter:blur(1.5px);}to{opacity:1;filter:blur(0);transform:translate3d(0,0,0) scale(1);}}
+/* ── Animation d'apparition de l'image : fondu + légère translation du bas vers le haut,
+   fluide et sobre, façon ELECTROSHOP.CI (pas de découpage, un seul mouvement d'ensemble). ── */
+.hero-slide-imgwrap img.hero-img-anim-c{opacity:0;transform:translate3d(0,28px,0) scale(1.01);animation:heroImgRevealC 0.7s cubic-bezier(0.22,1,0.36,1) forwards;}
+@keyframes heroImgRevealC{to{opacity:1;transform:translate3d(0,0,0) scale(1);}}
 .hero-nav-arrow{position:absolute;top:88px;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:rgba(16,25,68,0.06);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background 0.2s,opacity 0.4s ease;}
 .hero-nav-arrow:active{background:rgba(16,25,68,0.14);}
 .hero-nav-arrow.left{left:8px;}
@@ -2313,15 +2302,6 @@ Se connecter
  section.style.display = '';
  window._adBannerSlides = slides;
 
- // Découpe une phrase en mots, chacun encapsulé dans un span animé avec délai progressif.
- // Stagger resserré et rythmé (façon sites premium) : rapide entre les mots, cascade totale courte.
- function _splitWords(text, startDelay) {
- const words = text.split(' ');
- const maxStagger = 0.42; // durée totale de la cascade sur tout le texte
- const step = words.length > 1 ? Math.min(0.055, maxStagger / (words.length - 1)) : 0;
- return words.map((w, i) => `<span class="hero-word"><span class="hero-word-inner" style="animation-delay:${(startDelay + i * step).toFixed(3)}s">${w}</span></span>`).join(' ');
- }
-
  function _renderSlide(p, slideIdx) {
  const imgDirClass = slideIdx % 2 === 0 ? '' : ' hero-img-rtl'; // alterne gauche→droite / droite→gauche
 
@@ -2352,13 +2332,13 @@ Se connecter
  return `
  <div class="hero-slide" onclick="window.showDetail('${p.id}')">
  <div class="hero-slide-text">
- <span class="hero-slide-tag hero-tag-anim">${_splitWords(tagText, 0.22)}</span>
- <p class="hero-slide-title">${_splitWords(name, 0.34)}</p>
+ <span class="hero-slide-tag hero-tag-anim">${tagText}</span>
+ <p class="hero-slide-title hero-block-anim" style="animation-delay:0.10s">${name}</p>
  <div class="hero-slide-price-row">
- <span class="hero-slide-price">${_splitWords(priceText, 0.56)}</span>
+ <span class="hero-slide-price hero-block-anim" style="animation-delay:0.18s">${priceText}</span>
  ${p.old ? ` <span class="hero-slide-oldlabel">${lang === 'fr' ? 'au lieu de' : 'instead of'}</span> <span class="hero-slide-oldprice">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</span>` : ''}
  </div>
- <button type="button" class="hero-slide-cta" onclick="event.stopPropagation();window.showDetail('${p.id}')">${lang === 'fr' ? 'Acheter maintenant' : 'Buy now'}</button>
+ <button type="button" class="hero-slide-cta hero-block-anim" style="animation-delay:0.26s" onclick="event.stopPropagation();window.showDetail('${p.id}')">${lang === 'fr' ? 'Acheter maintenant' : 'Buy now'}</button>
  </div>
  <div class="hero-slide-imgwrap"><img class="${imgDirClass.trim()}" src="${img}" loading="lazy" alt="${name}"></div>
  </div>`;
@@ -2443,96 +2423,32 @@ Se connecter
  // Joue l'animation d'entrée de l'image + la recomposition du texte du slide donné.
  // Le texte est visible par défaut (opacity:1) ; l'animation n'est qu'un effet ajouté,
  // donc même si elle échoue à se déclencher, le contenu reste toujours lisible.
- // Le style d'animation (A ou B) change chaque jour, en fonction du jour de l'année,
- // pour renouveler l'effet visuel quotidiennement sans intervention manuelle.
  function _playSlideAnim(idx) {
  const slideEls = container.querySelectorAll('.hero-slide');
  const offset = window._adBannerLoop ? 1 : 0; // décalage dû au clone de tête inséré pour la boucle infinie
  const slideEl = slideEls[idx + offset];
  if (!slideEl) return;
 
- // Variante d'animation : rotation quotidienne parmi 3 styles, comme les articles sélectionnés automatiquement
- // (même mécanisme que _pickDailyRotation : identique pour tout le monde pendant 24h, change à minuit).
- // Un forçage manuel reste possible via window._heroForceVariant = 'a' | 'b' | 'c' (utile pour tester).
- let variant;
- if (window._heroForceVariant === 'a' || window._heroForceVariant === 'b' || window._heroForceVariant === 'c') {
- variant = window._heroForceVariant;
- } else {
- const dayKey = new Date().toISOString().slice(0, 10);
- let seed = 0;
- for (let i = 0; i < dayKey.length; i++) seed = (seed * 31 + dayKey.charCodeAt(i)) >>> 0;
- variant = ['a', 'b', 'c'][seed % 3];
- }
- const tagAnimClass  = variant === 'b' ? 'hero-tag-anim-b'  : 'hero-tag-anim';
- const wordAnimClass = variant === 'b' ? 'hero-word-anim-b' : 'hero-word-anim';
-
+ // Animation unique : fondu + légère translation du bas vers le haut, façon ELECTROSHOP.CI.
  const imgWrap = slideEl.querySelector('.hero-slide-imgwrap');
  const img = imgWrap ? imgWrap.querySelector('img') : null;
  if (img) {
  img.classList.remove('hero-img-anim', 'hero-img-anim-b', 'hero-img-anim-c');
- const oldLayer = imgWrap.querySelector('.hero-img-recompose-layer');
- if (oldLayer) oldLayer.remove();
-
- if (variant === 'c') {
- // ── Recomposition en bandes horizontales : on découpe visuellement l'image en tranches
- // via background-position, chacune remonte du bas vers le haut avec un léger flou,
- // et un décalage progressif (stagger) pour un effet de reconstitution fluide et classe.
- _playImageRecompose(imgWrap, img);
- } else {
  void img.offsetWidth;
- img.classList.add(variant === 'b' ? 'hero-img-anim-b' : 'hero-img-anim');
- }
+ img.classList.add('hero-img-anim-c');
  }
 
  const tag = slideEl.querySelector('.hero-slide-tag');
  if (tag) {
  tag.classList.remove('hero-tag-anim', 'hero-tag-anim-b');
  void tag.offsetWidth;
- tag.classList.add(tagAnimClass);
+ tag.classList.add('hero-tag-anim');
  }
 
- const words = slideEl.querySelectorAll('.hero-word-inner');
- words.forEach(w => w.classList.remove('hero-word-anim', 'hero-word-anim-b'));
+ const blocks = slideEl.querySelectorAll('.hero-block-anim');
+ blocks.forEach(b => b.classList.remove('hero-block-anim'));
  void slideEl.offsetWidth;
- words.forEach(w => w.classList.add(wordAnimClass));
- }
-
- // Construit dynamiquement N bandes superposées reproduisant l'image en background-image,
- // chacune animée en decalage (stagger) du bas vers le haut avec flou → net, pour un effet
- // de "recomposition" professionnel façon slider premium (ELECTROSHOP.CI).
- function _playImageRecompose(imgWrap, img) {
- img.classList.add('hero-img-anim-c');
- imgWrap.classList.add('hero-img-anim-c-wrap');
-
- const STRIPS = 6;
- const layer = document.createElement('div');
- layer.className = 'hero-img-recompose-layer';
-
- const src = img.getAttribute('src');
- const build = () => {
- layer.innerHTML = '';
- const stripH = 100 / STRIPS;
- for (let i = 0; i < STRIPS; i++) {
- const strip = document.createElement('div');
- strip.className = 'hero-img-recompose-strip';
- // Ordre de reconstitution : du bas vers le haut (dernière bande = bas de l'image en premier)
- const fromBottomIdx = STRIPS - 1 - i;
- strip.style.top = (fromBottomIdx * stripH) + '%';
- strip.style.height = stripH + '%';
- strip.style.backgroundImage = `url("${src}")`;
- strip.style.backgroundSize = '100% ' + (STRIPS * 100) + '%';
- strip.style.backgroundPosition = '0 ' + (fromBottomIdx * (100 / (STRIPS - 1))) + '%';
- strip.style.animationDelay = (i * 0.055) + 's';
- layer.appendChild(strip);
- }
- };
- build();
- imgWrap.appendChild(layer);
-
- // Si l'image n'est pas encore chargée (dimensions inconnues), reconstruire une fois chargée
- if (!img.complete) {
- img.addEventListener('load', build, { once: true });
- }
+ blocks.forEach(b => b.classList.add('hero-block-anim'));
  }
 
  window._adBannerGoto = function(idx, isAuto) {
