@@ -460,6 +460,15 @@ RENVOYER L'EMAIL
 <div id="adBannerDots" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:4px 16px 14px;background:#ffffff;"></div>
 </section>
 
+<!-- ═══ Catégories — bulles de navigation rapide par rayon ═══ -->
+<section id="categoriesSection" class="es-cat-section cat-bubble-wrap" style="display:none;">
+<div class="es-cat-title-wrap">
+<h2 class="es-cat-title" data-fr="Catégories" data-en="Categories">Catégories</h2>
+<div class="es-cat-underline"></div>
+</div>
+<div id="categoryBubbles"></div>
+</section>
+
 <!-- ═══ "Vos produits récemment consultés" — juste sous la bannière hero ═══ -->
 <section id="esOffersSection" class="es-cat-section" style="display:none;">
 <div class="es-cat-title-wrap">
@@ -2446,13 +2455,18 @@ Se connecter
  const slideEl = slideEls[idx + offset];
  if (!slideEl) return;
 
- // Variante d'animation : alterne à CHAQUE changement de slide (et non plus par jour, pour que
- // les deux variantes soient réellement visibles/testables en naviguant dans le carrousel).
+ // Variante d'animation : rotation quotidienne, comme les articles sélectionnés automatiquement
+ // (même mécanisme que _pickDailyRotation : identique pour tout le monde pendant 24h, change à minuit).
  // Un forçage manuel reste possible via window._heroForceVariant = 'a' | 'b' (utile pour tester).
  let variantB;
  if (window._heroForceVariant === 'a') variantB = false;
  else if (window._heroForceVariant === 'b') variantB = true;
- else variantB = (idx % 2 === 1);
+ else {
+ const dayKey = new Date().toISOString().slice(0, 10);
+ let seed = 0;
+ for (let i = 0; i < dayKey.length; i++) seed = (seed * 31 + dayKey.charCodeAt(i)) >>> 0;
+ variantB = (seed % 2 === 1);
+ }
  const tagAnimClass  = variantB ? 'hero-tag-anim-b'  : 'hero-tag-anim';
  const imgAnimClass  = variantB ? 'hero-img-anim-b'  : 'hero-img-anim';
  const wordAnimClass = variantB ? 'hero-word-anim-b' : 'hero-word-anim';
@@ -2912,11 +2926,13 @@ Se connecter
  function cardHTML(p) {
  const promo = p.old ? Math.round(((p.old - p.price) / p.old) * 100) : 0;
  const img   = p.imgs && p.imgs[0] ? p.imgs[0] : 'https://via.placeholder.com/300';
- return `<div class="product-card-container" onclick="window.showDetail('${p.id}')">
+ const outOfStock = p.inStock === false;
+ return `<div class="product-card-container" onclick="window.showDetail('${p.id}')" style="${outOfStock ? 'opacity:0.6;' : ''}">
  <div class="product-card-inner">
  <div class="product-card-img-wrap">
- <img src="${img}" loading="lazy" alt="${p.name}">
- ${promo > 0 ? `<span class="product-card-promo">-${promo}%</span>` : ''}
+ <img src="${img}" loading="lazy" alt="${p.name}" onerror="this.onerror=null;this.src='https://via.placeholder.com/300';">
+ ${promo > 0 && !outOfStock ? `<span class="product-card-promo">-${promo}%</span>` : ''}
+ ${outOfStock ? `<span class="product-card-promo" style="right:auto;left:8px;background:#475569;">${currentLang === 'fr' ? 'Rupture' : 'Out of stock'}</span>` : ''}
  </div>
  <div class="product-card-body">
  <div class="product-card-name">${(currentLang === 'en' && p.name_en) ? p.name_en : p.name}</div>
@@ -2925,10 +2941,10 @@ Se connecter
  ${p.old ? `<span class="product-card-oldprice">${parseInt(p.old).toLocaleString()} FCFA</span>` : ''}
  </div>
  </div>
- <button onclick="event.stopPropagation();window.addToCart('${p.id}')" style="position:absolute;bottom:8px;right:8px;width:34px;height:34px;background:#101944;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(16,25,68,0.35);border:none;cursor:pointer;z-index:3;transition:background 0.2s,transform 0.15s;" onmousedown="this.style.transform='scale(0.85)';this.style.background='#bd1e24'" onmouseup="this.style.transform='scale(1)';this.style.background='#101944'" onmouseleave="this.style.transform='scale(1)';this.style.background='#101944'">
+ ${outOfStock ? '' : `<button onclick="event.stopPropagation();window.addToCart('${p.id}')" style="position:absolute;bottom:8px;right:8px;width:34px;height:34px;background:#101944;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(16,25,68,0.35);border:none;cursor:pointer;z-index:3;transition:background 0.2s,transform 0.15s;" onmousedown="this.style.transform='scale(0.85)';this.style.background='#bd1e24'" onmouseup="this.style.transform='scale(1)';this.style.background='#101944'" onmouseleave="this.style.transform='scale(1)';this.style.background='#101944'">
  <svg width="14" height="14" fill="none" stroke="white" viewBox="0 0 24 24" stroke-width="2.2" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
  <span style="position:absolute;top:-5px;right:-5px;background:#bd1e24;color:white;font-size:10px;font-weight:900;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1;border:1.5px solid white;">+</span>
- </button>
+ </button>`}
  </div>
  </div>`;
  }
@@ -3225,10 +3241,15 @@ Se connecter
  </div>
 
  <!-- CTA BUTTONS -->
- <button onclick="window.addToCart('${p.id}')" class="${_fromCat ? 'btn-commander-shimmer' : ''}" style="width:100%;background:#101944;color:white;border:none;border-radius:10px;padding:17px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;box-shadow:0 6px 20px rgba(16,25,68,0.30);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.97)';this.style.background='#0d1538'" onmouseup="this.style.transform='scale(1)';this.style.background='#101944'" onmouseleave="this.style.transform='scale(1)';this.style.background='#101944'">
+ ${p.inStock === false
+ ? `<button disabled style="width:100%;background:#cbd5e1;color:#64748b;border:none;border-radius:10px;padding:17px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;cursor:not-allowed;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;">
+ <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+ ${lang === 'fr' ? 'Rupture de stock' : 'Out of Stock'}
+ </button>`
+ : `<button onclick="window.addToCart('${p.id}')" class="${_fromCat ? 'btn-commander-shimmer' : ''}" style="width:100%;background:#101944;color:white;border:none;border-radius:10px;padding:17px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;box-shadow:0 6px 20px rgba(16,25,68,0.30);transition:all 0.2s;" onmousedown="this.style.transform='scale(0.97)';this.style.background='#0d1538'" onmouseup="this.style.transform='scale(1)';this.style.background='#101944'" onmouseleave="this.style.transform='scale(1)';this.style.background='#101944'">
  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3c-.63.63-.18 1.7.7 1.7H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
  ${lang === 'fr' ? 'Ajouter au Panier' : 'Add to Cart'}
- </button>
+ </button>`}
 
 
 
@@ -3345,10 +3366,14 @@ Se connecter
  <div id="dtlStickyPrice" data-base="${p.price}" style="font-size:20px;font-weight:900;color:#101944;line-height:1;letter-spacing:-0.5px;">${parseInt(p.price).toLocaleString('fr-FR')} <span style="font-size:11px;font-weight:700;">FCFA</span></div>
  ${p.old ? `<div style="font-size:11px;color:#94a3b8;text-decoration:line-through;line-height:1;margin-top:2px;">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</div>` : ''}
  </div>
- <button onclick="window.addToCart('${p.id}')" class="${_fromCat ? 'btn-commander-shimmer' : ''}" style="background:#101944;color:white;border:none;border-radius:8px;padding:13px 22px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(16,25,68,0.30);transition:all 0.2s;white-space:nowrap;" onmousedown="this.style.transform='scale(0.96)';this.style.background='#0d1538'" onmouseup="this.style.transform='scale(1)';this.style.background='#101944'" onmouseleave="this.style.transform='scale(1)';this.style.background='#101944'">
+ ${p.inStock === false
+ ? `<button disabled style="background:#cbd5e1;color:#64748b;border:none;border-radius:8px;padding:13px 22px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:not-allowed;display:flex;align-items:center;gap:8px;white-space:nowrap;">
+ ${lang === 'fr' ? 'Rupture' : 'Out of stock'}
+ </button>`
+ : `<button onclick="window.addToCart('${p.id}')" class="${_fromCat ? 'btn-commander-shimmer' : ''}" style="background:#101944;color:white;border:none;border-radius:8px;padding:13px 22px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(16,25,68,0.30);transition:all 0.2s;white-space:nowrap;" onmousedown="this.style.transform='scale(0.96)';this.style.background='#0d1538'" onmouseup="this.style.transform='scale(1)';this.style.background='#101944'" onmouseleave="this.style.transform='scale(1)';this.style.background='#101944'">
  <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.3 2.3c-.63.63-.18 1.7.7 1.7H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
  ${lang === 'fr' ? 'Ajouter' : 'Add'}
- </button>
+ </button>`}
  </div>`;
 
  const _dm = document.getElementById('detailModal');
@@ -3518,6 +3543,8 @@ Se connecter
 
  window.addToCart = function(id) {
  const p = stock.find(x => x.id === id);
+ if (!p) { window._toast && window._toast(currentLang === 'fr' ? "Cet article n'est plus disponible" : 'This item is no longer available', 'error'); return; }
+ if (p.inStock === false) { window._toast && window._toast(currentLang === 'fr' ? 'Article en rupture de stock' : 'Item out of stock', 'error'); return; }
  const qty = parseInt(document.getElementById('vQty')?.value || 1);
  for (let i = 0; i < qty; i++) { cart.push({ id: p.id, name: p.name, price: p.price, img: (p.imgs && p.imgs.length) ? p.imgs[0] : '' }); }
  updateCart();
@@ -3761,14 +3788,16 @@ Se connecter
 
  function renderCategoryBubbles() {
  const container = document.getElementById('categoryBubbles');
- if (!container || !categories || categories.length === 0) return;
+ const section = document.getElementById('categoriesSection');
+ if (!container || !categories || categories.length === 0) { if (section) section.style.display = 'none'; return; }
+ if (section) section.style.display = '';
  container.innerHTML = categories.map(cat => {
 
  const prods = stock.filter(p => p.cat === cat.name && p.imgs && p.imgs[0]);
  const imgSrc = prods.length ? prods[0].imgs[0] : 'https://i.postimg.cc/9QB2XQRM/20260329-213515.png';
  return `<div class="category-bubble" onclick="window.filterItems('${cat.name}', '', '')">
  <div class="bubble-img-container">
- <img src="${imgSrc}" alt="${cat.name}" loading="lazy">
+ <img src="${imgSrc}" alt="${cat.name}" loading="lazy" onerror="this.onerror=null;this.src='https://i.postimg.cc/9QB2XQRM/20260329-213515.png';">
  </div>
  <span class="bubble-text">${cat.name}</span>
  </div>`;
@@ -3798,7 +3827,7 @@ Se connecter
  ${tags.length ? `<div class="es-cat-tags">${tags.map(t => `<span>${t}</span>`).join(', ')},</div>` : ''}
  <p class="es-cat-name">${name}</p>
  <div class="es-cat-imgwrap">
- <img src="${img}" loading="lazy" alt="${name}">
+ <img src="${img}" loading="lazy" alt="${name}" onerror="this.onerror=null;this.src='https://i.postimg.cc/9QB2XQRM/20260329-213515.png';">
  ${promo > 0 ? `<span class="es-cat-badge">-${promo}%</span>` : ''}
  </div>
  ${_esStarsHTML(p.id)}
@@ -3875,7 +3904,7 @@ Se connecter
  ${tags.length ? `<div class="es-deals-tags">${tags.map(t => `<span>${t}</span>`).join(', ')},</div>` : ''}
  <p class="es-deals-name">${name}</p>
  <div class="es-deals-imgwrap">
- <img src="${img}" loading="lazy" alt="${name}">
+ <img src="${img}" loading="lazy" alt="${name}" onerror="this.onerror=null;this.src='https://i.postimg.cc/9QB2XQRM/20260329-213515.png';">
  ${promo > 0 ? `<span class="es-deals-badge">-${promo}%</span>` : ''}
  </div>
  <div class="es-deals-price">${parseInt(p.price).toLocaleString('fr-FR')} FCFA${p.old ? `<span class="es-deals-oldprice">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</span>` : ''}</div>
@@ -3907,7 +3936,7 @@ Se connecter
  <div class="es-cat-underline"></div>
  </div>
  <div class="es-cat-feature" onclick="window.showDetail('${feature.id}')">
- <img src="${feature.imgs[0]}" loading="lazy" alt="${feature.name}">
+ <img src="${feature.imgs[0]}" loading="lazy" alt="${feature.name}" onerror="this.onerror=null;this.src='https://i.postimg.cc/9QB2XQRM/20260329-213515.png';">
  </div>
  <div class="es-cat-grid">
  ${picks.map(p => _esCardHTML(p, lang)).join('')}
@@ -4167,7 +4196,7 @@ Se connecter
  if (progBar) progBar.style.display = 'none';
 
  // ── Masquer les sections de la page d'accueil ──
- const sectionsToHide = ['heroCardsSection','temuGridSection','pddListSection','adBannersSection','esOffersSection','esBestDealsSection'];
+ const sectionsToHide = ['heroCardsSection','temuGridSection','pddListSection','adBannersSection','categoriesSection','esOffersSection','esBestDealsSection'];
  sectionsToHide.forEach(id => {
    const el = document.getElementById(id);
    if (el) { el.dataset.hiddenBySearch = '1'; el.style.display = 'none'; }
@@ -4228,7 +4257,7 @@ Se connecter
    });
 
    // 4. Forcer la réaffichage des sections clés de l'accueil
-   ['welcomeBanner','adBannersSection','esOffersSection','esBestDealsSection','esCatSections',
+   ['welcomeBanner','adBannersSection','categoriesSection','esOffersSection','esBestDealsSection','esCatSections',
     'productScrollWrapper'].forEach(function(id) {
      var el = document.getElementById(id);
      if (el) { el.style.display = ''; el.removeAttribute('data-hidden-by-search'); }
@@ -4550,6 +4579,15 @@ Se connecter
  const tel   = document.getElementById('cTel').value.trim();
  const loc   = document.getElementById('cQuartier').value.trim();
  if (!name || !tel || !loc || !cart.length) return alert(currentLang === 'fr' ? "Veuillez remplir vos informations." : "Please fill in your information.");
+ // Validation du numéro de téléphone (format Cameroun : 9 chiffres, avec ou sans indicatif +237,
+ // et tolère le "0" initial que beaucoup de clients tapent par habitude, ex: 0658562104)
+ let telDigits = tel.replace(/[^0-9]/g, '').replace(/^237/, '');
+ if (telDigits.length === 10 && telDigits.startsWith('0')) telDigits = telDigits.slice(1);
+ if (!/^[26]\d{8}$/.test(telDigits)) {
+ return alert(currentLang === 'fr'
+ ? "Numéro de téléphone invalide. Veuillez entrer un numéro camerounais valide (9 chiffres)."
+ : "Invalid phone number. Please enter a valid Cameroon phone number (9 digits).");
+ }
  const delivery  = (document.querySelector('input[name="deliveryType"]:checked') || {}).value || (currentLang === 'fr' ? 'Livraison à domicile' : 'Home delivery');
  const remarques = (document.getElementById('cRemarques') || {}).value ? document.getElementById('cRemarques').value.trim() : '';
  const total     = cart.reduce((sum, item) => sum + parseInt(item.price), 0);
@@ -5268,9 +5306,11 @@ Voir les articles
  }
 
  function tryShowPopup(user) {
- // Chaque visite est comptée UNE SEULE FOIS par session (évite double-comptage)
- if (sessionStorage.getItem('afroVisitCounted')) return;
- sessionStorage.setItem('afroVisitCounted', '1');
+ // Chaque CHARGEMENT DE PAGE compte comme une visite (protection anti-double-appel dans le
+ // même chargement uniquement, via une variable en mémoire — pas sessionStorage, qui bloquait
+ // le comptage pendant toute la durée de l'onglet resté ouvert, empêchant le popup de revenir).
+ if (window._afroVisitCountedThisLoad) return;
+ window._afroVisitCountedThisLoad = true;
 
  if (!user) {
  // ── Client non inscrit ──
@@ -5627,7 +5667,7 @@ Voir les articles
           style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #1e1e1e;cursor:pointer;align-items:center;transition:transform 0.15s ease,opacity 0.15s ease;${i === products.length - 1 ? 'border-bottom:none;' : ''}"
           onmousedown="this.style.transform='scale(0.98)';this.style.opacity='0.85';" onmouseup="this.style.transform='';this.style.opacity='';" ontouchstart="this.style.transform='scale(0.98)';this.style.opacity='0.85';" ontouchend="this.style.transform='';this.style.opacity='';">
           <div style="position:relative;flex-shrink:0;">
-            <img src="${img}" alt="${p.name}" style="width:64px;height:64px;border-radius:10px;object-fit:cover;background:#1a1a1a;">
+            <img src="${img}" alt="${p.name}" style="width:64px;height:64px;border-radius:10px;object-fit:cover;background:#1a1a1a;" onerror="this.onerror=null;this.src='https://via.placeholder.com/64';">
             <div style="position:absolute;top:-5px;left:-5px;background:#FFD700;color:#0a0a0a;font-size:8px;font-weight:900;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;letter-spacing:-0.5px;">-10%</div>
           </div>
           <div style="flex:1;min-width:0;">
