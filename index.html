@@ -61,18 +61,17 @@
 .hero-slide-cta{display:inline-flex;align-items:center;gap:6px;background:#facc15;color:var(--afro-blue);font-size:12px;font-weight:900;padding:11px 20px;border-radius:999px;text-transform:none;box-shadow:0 4px 12px rgba(250,204,21,0.4);border:none;cursor:pointer;}
 .hero-slide-imgwrap{flex:0 0 42%;max-width:190px;height:190px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .hero-slide-imgwrap img{width:100%;height:100%;object-fit:contain;opacity:1;}
-.hero-slide-imgwrap img.hero-img-anim{opacity:0;transform:translateX(36px) scale(0.96);animation:esOfferSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;animation-delay:0.08s;}
-.hero-slide-imgwrap img.hero-img-anim.hero-img-rtl{transform:translateX(-36px) scale(0.96);}
-@keyframes esOfferSlideIn{to{opacity:1;transform:translateX(0) scale(1);}}
-/* ── Apparition du texte en bloc entier (titre, prix, bouton) : fondu + légère translation du bas
-   vers le haut, façon ELECTROSHOP.CI — pas de découpage mot par mot. ── */
-.hero-block-anim{opacity:0;transform:translate3d(0,16px,0);animation:heroBlockReveal 0.55s cubic-bezier(0.22,1,0.36,1) forwards;}
-@keyframes heroBlockReveal{to{opacity:1;transform:translate3d(0,0,0);}}
-
-/* ── Animation d'apparition de l'image : fondu + légère translation du bas vers le haut,
-   fluide et sobre, façon ELECTROSHOP.CI (pas de découpage, un seul mouvement d'ensemble). ── */
-.hero-slide-imgwrap img.hero-img-anim-c{opacity:0;transform:translate3d(0,28px,0) scale(1.01);animation:heroImgRevealC 0.7s cubic-bezier(0.22,1,0.36,1) forwards;}
+/* ── Apparition du texte ET de l'image sur le MÊME axe horizontal, dans le MÊME sens que le
+   défilement du slide (gauche→droite par défaut, inversé via .hero-img-rtl côté image et
+   .hero-text-rtl côté texte). Tout le contenu d'un slide entre depuis le même côté,
+   façon ELECTROSHOP.CI — plus de mélange haut/bas + gauche/droite. ── */
+.hero-slide-imgwrap img.hero-img-anim-c{opacity:0;transform:translate3d(36px,0,0) scale(0.97);animation:heroImgRevealC 0.6s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:0.08s;}
+.hero-slide-imgwrap img.hero-img-anim-c.hero-img-rtl{transform:translate3d(-36px,0,0) scale(0.97);}
 @keyframes heroImgRevealC{to{opacity:1;transform:translate3d(0,0,0) scale(1);}}
+
+.hero-block-anim{opacity:0;transform:translate3d(24px,0,0);animation:heroBlockReveal 0.55s cubic-bezier(0.22,1,0.36,1) forwards;}
+.hero-block-anim.hero-text-rtl{transform:translate3d(-24px,0,0);}
+@keyframes heroBlockReveal{to{opacity:1;transform:translate3d(0,0,0);}}
 .hero-nav-arrow{position:absolute;top:88px;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:rgba(16,25,68,0.06);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background 0.2s,opacity 0.4s ease;}
 .hero-nav-arrow:active{background:rgba(16,25,68,0.14);}
 .hero-nav-arrow.left{left:8px;}
@@ -2303,7 +2302,8 @@ Se connecter
  window._adBannerSlides = slides;
 
  function _renderSlide(p, slideIdx) {
- const imgDirClass = slideIdx % 2 === 0 ? '' : ' hero-img-rtl'; // alterne gauche→droite / droite→gauche
+ const imgDirClass  = slideIdx % 2 === 0 ? '' : ' hero-img-rtl';  // image : alterne gauche→droite / droite→gauche
+ const textDirClass = slideIdx % 2 === 0 ? '' : ' hero-text-rtl'; // texte : suit le même sens que l'image sur ce slide
 
  // Slide "vidéo" : vignette d'aperçu cliquable, lecture en place dans la bannière
  if (p.isVideo) {
@@ -2333,14 +2333,14 @@ Se connecter
  <div class="hero-slide" onclick="window.showDetail('${p.id}')">
  <div class="hero-slide-text">
  <span class="hero-slide-tag hero-tag-anim">${tagText}</span>
- <p class="hero-slide-title hero-block-anim" style="animation-delay:0.10s">${name}</p>
+ <p class="hero-slide-title hero-block-anim${textDirClass}" style="animation-delay:0.10s">${name}</p>
  <div class="hero-slide-price-row">
- <span class="hero-slide-price hero-block-anim" style="animation-delay:0.18s">${priceText}</span>
+ <span class="hero-slide-price hero-block-anim${textDirClass}" style="animation-delay:0.18s">${priceText}</span>
  ${p.old ? ` <span class="hero-slide-oldlabel">${lang === 'fr' ? 'au lieu de' : 'instead of'}</span> <span class="hero-slide-oldprice">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</span>` : ''}
  </div>
- <button type="button" class="hero-slide-cta hero-block-anim" style="animation-delay:0.26s" onclick="event.stopPropagation();window.showDetail('${p.id}')">${lang === 'fr' ? 'Acheter maintenant' : 'Buy now'}</button>
+ <button type="button" class="hero-slide-cta hero-block-anim${textDirClass}" style="animation-delay:0.26s" onclick="event.stopPropagation();window.showDetail('${p.id}')">${lang === 'fr' ? 'Acheter maintenant' : 'Buy now'}</button>
  </div>
- <div class="hero-slide-imgwrap"><img class="${imgDirClass.trim()}" src="${img}" loading="lazy" alt="${name}"></div>
+ <div class="hero-slide-imgwrap"><img class="hero-img-anim-c${imgDirClass}" src="${img}" loading="lazy" alt="${name}"></div>
  </div>`;
  }
 
