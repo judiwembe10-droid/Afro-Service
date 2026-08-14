@@ -76,6 +76,14 @@
 @keyframes esOfferZoomInB{to{opacity:1;transform:scale(1) rotate(0deg);}}
 .hero-word-inner.hero-word-anim-b{opacity:0;transform:translate3d(0,-72%,0);animation:heroWordRevealB 0.68s cubic-bezier(0.19,1,0.22,1) forwards;}
 @keyframes heroWordRevealB{to{opacity:1;transform:translate3d(0,0,0);}}
+
+/* ── Variante C : "recomposition" façon slider premium — l'image se reconstitue en bandes horizontales
+   qui remontent depuis le bas vers le haut, avec un léger flou qui se dissipe, jusqu'au rendu net final. ── */
+.hero-slide-imgwrap.hero-img-anim-c-wrap{position:relative;}
+.hero-slide-imgwrap img.hero-img-anim-c{opacity:0;}
+.hero-img-recompose-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.hero-img-recompose-strip{position:absolute;left:0;width:100%;background-repeat:no-repeat;opacity:0;filter:blur(6px);transform:translate3d(0,26px,0) scale(1.015);will-change:transform,opacity,filter;animation:heroRecomposeStrip 0.62s cubic-bezier(0.22,1,0.36,1) forwards;}
+@keyframes heroRecomposeStrip{60%{filter:blur(1.5px);}to{opacity:1;filter:blur(0);transform:translate3d(0,0,0) scale(1);}}
 .hero-nav-arrow{position:absolute;top:88px;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:rgba(16,25,68,0.06);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background 0.2s,opacity 0.4s ease;}
 .hero-nav-arrow:active{background:rgba(16,25,68,0.14);}
 .hero-nav-arrow.left{left:8px;}
@@ -457,15 +465,6 @@ RENVOYER L'EMAIL
 <svg width="16" height="16" fill="none" stroke="#101944" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
 </button>
 <div id="adBannerDots" style="display:flex;justify-content:center;align-items:center;gap:6px;padding:4px 16px 14px;background:#ffffff;"></div>
-</section>
-
-<!-- ═══ Catégories — bulles de navigation rapide par rayon ═══ -->
-<section id="categoriesSection" class="es-cat-section cat-bubble-wrap" style="display:none;">
-<div class="es-cat-title-wrap">
-<h2 class="es-cat-title" data-fr="Catégories" data-en="Categories">Catégories</h2>
-<div class="es-cat-underline"></div>
-</div>
-<div id="categoryBubbles"></div>
 </section>
 
 <!-- ═══ "Vos produits récemment consultés" — juste sous la bannière hero ═══ -->
@@ -2452,27 +2451,37 @@ Se connecter
  const slideEl = slideEls[idx + offset];
  if (!slideEl) return;
 
- // Variante d'animation : rotation quotidienne, comme les articles sélectionnés automatiquement
+ // Variante d'animation : rotation quotidienne parmi 3 styles, comme les articles sélectionnés automatiquement
  // (même mécanisme que _pickDailyRotation : identique pour tout le monde pendant 24h, change à minuit).
- // Un forçage manuel reste possible via window._heroForceVariant = 'a' | 'b' (utile pour tester).
- let variantB;
- if (window._heroForceVariant === 'a') variantB = false;
- else if (window._heroForceVariant === 'b') variantB = true;
- else {
+ // Un forçage manuel reste possible via window._heroForceVariant = 'a' | 'b' | 'c' (utile pour tester).
+ let variant;
+ if (window._heroForceVariant === 'a' || window._heroForceVariant === 'b' || window._heroForceVariant === 'c') {
+ variant = window._heroForceVariant;
+ } else {
  const dayKey = new Date().toISOString().slice(0, 10);
  let seed = 0;
  for (let i = 0; i < dayKey.length; i++) seed = (seed * 31 + dayKey.charCodeAt(i)) >>> 0;
- variantB = (seed % 2 === 1);
+ variant = ['a', 'b', 'c'][seed % 3];
  }
- const tagAnimClass  = variantB ? 'hero-tag-anim-b'  : 'hero-tag-anim';
- const imgAnimClass  = variantB ? 'hero-img-anim-b'  : 'hero-img-anim';
- const wordAnimClass = variantB ? 'hero-word-anim-b' : 'hero-word-anim';
+ const tagAnimClass  = variant === 'b' ? 'hero-tag-anim-b'  : 'hero-tag-anim';
+ const wordAnimClass = variant === 'b' ? 'hero-word-anim-b' : 'hero-word-anim';
 
- const img = slideEl.querySelector('.hero-slide-imgwrap img');
+ const imgWrap = slideEl.querySelector('.hero-slide-imgwrap');
+ const img = imgWrap ? imgWrap.querySelector('img') : null;
  if (img) {
- img.classList.remove('hero-img-anim', 'hero-img-anim-b');
+ img.classList.remove('hero-img-anim', 'hero-img-anim-b', 'hero-img-anim-c');
+ const oldLayer = imgWrap.querySelector('.hero-img-recompose-layer');
+ if (oldLayer) oldLayer.remove();
+
+ if (variant === 'c') {
+ // ── Recomposition en bandes horizontales : on découpe visuellement l'image en tranches
+ // via background-position, chacune remonte du bas vers le haut avec un léger flou,
+ // et un décalage progressif (stagger) pour un effet de reconstitution fluide et classe.
+ _playImageRecompose(imgWrap, img);
+ } else {
  void img.offsetWidth;
- img.classList.add(imgAnimClass);
+ img.classList.add(variant === 'b' ? 'hero-img-anim-b' : 'hero-img-anim');
+ }
  }
 
  const tag = slideEl.querySelector('.hero-slide-tag');
@@ -2486,6 +2495,44 @@ Se connecter
  words.forEach(w => w.classList.remove('hero-word-anim', 'hero-word-anim-b'));
  void slideEl.offsetWidth;
  words.forEach(w => w.classList.add(wordAnimClass));
+ }
+
+ // Construit dynamiquement N bandes superposées reproduisant l'image en background-image,
+ // chacune animée en decalage (stagger) du bas vers le haut avec flou → net, pour un effet
+ // de "recomposition" professionnel façon slider premium (ELECTROSHOP.CI).
+ function _playImageRecompose(imgWrap, img) {
+ img.classList.add('hero-img-anim-c');
+ imgWrap.classList.add('hero-img-anim-c-wrap');
+
+ const STRIPS = 6;
+ const layer = document.createElement('div');
+ layer.className = 'hero-img-recompose-layer';
+
+ const src = img.getAttribute('src');
+ const build = () => {
+ layer.innerHTML = '';
+ const stripH = 100 / STRIPS;
+ for (let i = 0; i < STRIPS; i++) {
+ const strip = document.createElement('div');
+ strip.className = 'hero-img-recompose-strip';
+ // Ordre de reconstitution : du bas vers le haut (dernière bande = bas de l'image en premier)
+ const fromBottomIdx = STRIPS - 1 - i;
+ strip.style.top = (fromBottomIdx * stripH) + '%';
+ strip.style.height = stripH + '%';
+ strip.style.backgroundImage = `url("${src}")`;
+ strip.style.backgroundSize = '100% ' + (STRIPS * 100) + '%';
+ strip.style.backgroundPosition = '0 ' + (fromBottomIdx * (100 / (STRIPS - 1))) + '%';
+ strip.style.animationDelay = (i * 0.055) + 's';
+ layer.appendChild(strip);
+ }
+ };
+ build();
+ imgWrap.appendChild(layer);
+
+ // Si l'image n'est pas encore chargée (dimensions inconnues), reconstruire une fois chargée
+ if (!img.complete) {
+ img.addEventListener('load', build, { once: true });
+ }
  }
 
  window._adBannerGoto = function(idx, isAuto) {
@@ -3784,21 +3831,8 @@ Se connecter
  };
 
  function renderCategoryBubbles() {
- const container = document.getElementById('categoryBubbles');
- const section = document.getElementById('categoriesSection');
- if (!container || !categories || categories.length === 0) { if (section) section.style.display = 'none'; return; }
- if (section) section.style.display = '';
- container.innerHTML = categories.map(cat => {
-
- const prods = stock.filter(p => p.cat === cat.name && p.imgs && p.imgs[0]);
- const imgSrc = prods.length ? prods[0].imgs[0] : 'https://i.postimg.cc/9QB2XQRM/20260329-213515.png';
- return `<div class="category-bubble" onclick="window.filterItems('${cat.name}', '', '')">
- <div class="bubble-img-container">
- <img src="${imgSrc}" alt="${cat.name}" loading="lazy" onerror="this.onerror=null;this.src='https://i.postimg.cc/9QB2XQRM/20260329-213515.png';">
- </div>
- <span class="bubble-text">${cat.name}</span>
- </div>`;
- }).join('');
+ // Section "Catégories" (bulles) supprimée de l'accueil — doublon avec la page Catégories dédiée.
+ return;
  }
 
  // Génère le mini bloc étoiles + "(n)" à partir de la note moyenne calculée (window._productRatings)
