@@ -51,8 +51,8 @@
 .hero-slide:active{opacity:0.88;}
 .hero-slide-text{flex:1;min-width:0;}
 .hero-slide-tag{display:inline-block;background:var(--afro-red);color:#fff;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;padding:4px 10px;border-radius:4px;margin-bottom:10px;opacity:1;transform:scale(1);}
-.hero-slide-tag.hero-tag-anim{opacity:0;transform:scale(0.85);animation:heroTagPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;}
-@keyframes heroTagPop{to{opacity:1;transform:scale(1);}}
+.hero-slide-tag.hero-tag-anim{opacity:0;transform:scale(0.85) translateY(6px);animation:heroTagPop 0.5s cubic-bezier(0.16,1,0.3,1) forwards;}
+@keyframes heroTagPop{to{opacity:1;transform:scale(1) translateY(0);}}
 .hero-slide-title{color:var(--afro-blue);font-size:17px;font-weight:900;line-height:1.28;margin:0 0 10px;letter-spacing:-0.01em;}
 .hero-slide-price-row{margin-bottom:16px;line-height:1.5;}
 .hero-slide-price{color:var(--afro-blue);font-size:19px;font-weight:900;letter-spacing:-0.3px;}
@@ -61,20 +61,22 @@
 .hero-slide-cta{display:inline-flex;align-items:center;gap:6px;background:#facc15;color:var(--afro-blue);font-size:12px;font-weight:900;padding:11px 20px;border-radius:999px;text-transform:none;box-shadow:0 4px 12px rgba(250,204,21,0.4);border:none;cursor:pointer;}
 .hero-slide-imgwrap{flex:0 0 42%;max-width:190px;height:190px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .hero-slide-imgwrap img{width:100%;height:100%;object-fit:contain;opacity:1;}
-.hero-slide-imgwrap img.hero-img-anim{opacity:0;transform:translateX(36px);animation:esOfferSlideIn 0.6s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:0.05s;}
-.hero-slide-imgwrap img.hero-img-anim.hero-img-rtl{transform:translateX(-36px);}
-@keyframes esOfferSlideIn{to{opacity:1;transform:translateX(0);}}
-.hero-word{display:inline-block;opacity:1;}
-.hero-word.hero-word-anim{opacity:0;transform:translateX(-6px);filter:blur(2px);animation:heroWordAssemble 0.45s ease-out forwards;}
-@keyframes heroWordAssemble{to{opacity:1;transform:translateX(0);filter:blur(0);}}
+.hero-slide-imgwrap img.hero-img-anim{opacity:0;transform:translateX(36px) scale(0.96);animation:esOfferSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;animation-delay:0.08s;}
+.hero-slide-imgwrap img.hero-img-anim.hero-img-rtl{transform:translateX(-36px) scale(0.96);}
+@keyframes esOfferSlideIn{to{opacity:1;transform:translateX(0) scale(1);}}
+.hero-word{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:0.12em;margin-bottom:-0.12em;}
+.hero-word-inner{display:inline-block;opacity:1;transform:translate3d(0,0,0);}
+.hero-word-inner.hero-word-anim{opacity:0;transform:translate3d(0,58%,0) rotate(4deg);animation:heroWordRevealA 0.62s cubic-bezier(0.16,1,0.3,1) forwards;}
+@keyframes heroWordRevealA{60%{filter:blur(0);}to{opacity:1;transform:translate3d(0,0,0) rotate(0deg);}}
 
-/* ── Variante B d'animation d'entrée (alterne chaque jour avec la variante A ci-dessus) ── */
+/* ── Variante B d'animation d'entrée (alterne à chaque changement de slide avec la variante A) ── */
 .hero-slide-tag.hero-tag-anim-b{opacity:0;transform:translateY(-10px);animation:heroTagDropB 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;}
 @keyframes heroTagDropB{to{opacity:1;transform:translateY(0);}}
 .hero-slide-imgwrap img.hero-img-anim-b{opacity:0;transform:scale(0.75) rotate(-6deg);animation:esOfferZoomInB 0.55s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:0.05s;}
 @keyframes esOfferZoomInB{to{opacity:1;transform:scale(1) rotate(0deg);}}
-.hero-word.hero-word-anim-b{opacity:0;transform:translateY(10px);animation:heroWordRiseB 0.4s ease-out forwards;}
-@keyframes heroWordRiseB{to{opacity:1;transform:translateY(0);}}
+.hero-word-inner.hero-word-anim-b{opacity:0;transform:translate3d(0,-58%,0);}
+.hero-word-inner.hero-word-anim-b{animation:heroWordRevealB 0.58s cubic-bezier(0.16,1,0.3,1) forwards;}
+@keyframes heroWordRevealB{to{opacity:1;transform:translate3d(0,0,0);}}
 .hero-nav-arrow{position:absolute;top:88px;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:rgba(16,25,68,0.06);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background 0.2s,opacity 0.4s ease;}
 .hero-nav-arrow:active{background:rgba(16,25,68,0.14);}
 .hero-nav-arrow.left{left:8px;}
@@ -2308,9 +2310,11 @@ Se connecter
  // Le délai est plafonné pour rester sobre même sur les titres longs (pas d'effet chaotique).
  function _splitWords(text, startDelay) {
  const words = text.split(' ');
- const maxStagger = 0.28; // durée totale de la cascade, quel que soit le nombre de mots
- const step = words.length > 1 ? Math.min(0.045, maxStagger / (words.length - 1)) : 0;
- return words.map((w, i) => `<span class="hero-word" style="animation-delay:${(startDelay + i * step).toFixed(3)}s">${w}</span>`).join(' ');
+ // Cascade plus marquée et lisible : pas plus généreux entre chaque mot, plafond de délai total
+ // relevé pour que la décomposition/recomposition reste visible même sur les titres longs.
+ const maxStagger = 0.65; // durée totale de la cascade sur tout le texte
+ const step = words.length > 1 ? Math.min(0.075, maxStagger / (words.length - 1)) : 0;
+ return words.map((w, i) => `<span class="hero-word"><span class="hero-word-inner" style="animation-delay:${(startDelay + i * step).toFixed(3)}s">${w}</span></span>`).join(' ');
  }
 
  function _renderSlide(p, slideIdx) {
@@ -2467,7 +2471,7 @@ Se connecter
  tag.classList.add(tagAnimClass);
  }
 
- const words = slideEl.querySelectorAll('.hero-word');
+ const words = slideEl.querySelectorAll('.hero-word-inner');
  words.forEach(w => w.classList.remove('hero-word-anim', 'hero-word-anim-b'));
  void slideEl.offsetWidth;
  words.forEach(w => w.classList.add(wordAnimClass));
