@@ -887,6 +887,19 @@ transition:opacity 0.4s ease, transform 0.18s ease, background 0.25s ease;
 
 <a href="#" id="dynamicWA" target="_blank" class="whatsapp-float"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.445 0 .081 5.391.079 11.99c0 2.112.553 4.177 1.6 6.002L0 24l6.163-1.617a11.831 11.831 0 005.883 1.562h.005c6.604 0 11.967-5.391 11.97-11.991a11.856 11.856 0 00-3.486-8.452z"/></svg></a>
 
+<!-- ══ VISUALISEUR ZOOM PLEIN ÉCRAN (lightbox) — ouvert par le bouton loupe de la galerie produit ══ -->
+<div id="imgZoomLightbox" style="display:none;position:fixed;inset:0;width:100%;height:100%;background:rgba(10,14,30,0.97);z-index:9999;touch-action:none;overscroll-behavior:contain;">
+  <button id="imgZoomCloseBtn" onclick="window._closeImageZoom && window._closeImageZoom()" aria-label="Fermer" style="position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.14);border:none;display:flex;align-items:center;justify-content:center;z-index:2;">
+    <svg width="20" height="20" fill="none" stroke="#fff" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div id="imgZoomHint" style="position:absolute;bottom:22px;left:0;right:0;text-align:center;color:rgba(255,255,255,0.7);font-size:12px;font-weight:600;letter-spacing:0.02em;z-index:2;pointer-events:none;transition:opacity 0.4s ease;">Pincez ou double-tapez pour zoomer</div>
+  <div id="imgZoomViewport" style="position:absolute;inset:0;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+    <img id="imgZoomImg" src="" alt="" style="max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;transform-origin:center center;will-change:transform;">
+  </div>
+</div>
+
+
+
 <div id="detailModal" class="fixed inset-0 w-full flex flex-col" style="
   background:white;
   display:none;
@@ -6318,51 +6331,121 @@ window._hidePageLoader = function() {
 })();
 </script>
 
-<!-- ══ ZOOM PINCH-TO-ZOOM ══ -->
+<!-- ══ VISUALISEUR ZOOM PLEIN ÉCRAN — pinch-to-zoom + pan libre + double-tap ══ -->
 <script>
 (function(){
-  var _zS=1,_zLD=0,_zSX=0,_zSY=0,_zTX=0,_zTY=0,_zEl=null;
-  function _zA(el){el.style.transform='scale('+_zS+') translate('+_zTX+'px,'+_zTY+'px)';el.style.transformOrigin='center center';}
-  function _zR(el){_zS=1;_zTX=0;_zTY=0;el.style.transform='';}
-  function _zD(t){var dx=t[0].clientX-t[1].clientX,dy=t[0].clientY-t[1].clientY;return Math.sqrt(dx*dx+dy*dy);}
-  function attachZoom(img){
-    if(img._z)return; img._z=true; img.style.transition='transform 0.1s ease';
-    img.addEventListener('touchstart',function(e){
-      if(e.touches.length===2){e.preventDefault();_zEl=img;_zLD=_zD(e.touches);}
-      else if(e.touches.length===1&&_zS>1){_zSX=e.touches[0].clientX-_zTX;_zSY=e.touches[0].clientY-_zTY;}
-    },{passive:false});
-    img.addEventListener('touchmove',function(e){
-      if(!_zEl)return;
-      if(e.touches.length===2){e.preventDefault();var d=_zD(e.touches);_zS=Math.min(4,Math.max(1,_zS*(d/_zLD)));_zLD=d;_zA(img);}
-      else if(e.touches.length===1&&_zS>1){e.preventDefault();_zTX=e.touches[0].clientX-_zSX;_zTY=e.touches[0].clientY-_zSY;_zA(img);}
-    },{passive:false});
-    img.addEventListener('touchend',function(e){
-      if(e.touches.length<2){_zLD=0;}
-      if(e.touches.length===0){_zEl=null;if(_zS<1.05)_zR(img);}
-    });
-    var _lt=0;
-    img.addEventListener('touchend',function(e){
-      var now=Date.now();
-      if(now-_lt<300){e.preventDefault();if(_zS>1){_zR(img);}else{_zS=2.5;_zA(img);}}
-      _lt=now;
-    });
-  }
-  var obs=new MutationObserver(function(){
-    var dm=document.getElementById('detailModal');
-    if(dm)dm.querySelectorAll('img').forEach(attachZoom);
-  });
-  document.addEventListener('DOMContentLoaded',function(){
-    var dm=document.getElementById('detailModal');
-    if(dm){obs.observe(dm,{childList:true,subtree:true});dm.querySelectorAll('img').forEach(attachZoom);}
-  });
+  var _zS=1,_zLD=0,_zSX=0,_zSY=0,_zTX=0,_zTY=0,_zMaxTX=0,_zMaxTY=0;
+  var lightbox, viewport, img, hint, hintTimer;
 
-  // Déclenche le zoom depuis le bouton loupe (haut droite de la galerie) sur l'image actuellement affichée.
+  function clampPan(){
+    // Empêche l'image de partir hors-champ : borne le déplacement en fonction du zoom courant.
+    var vw = viewport.clientWidth, vh = viewport.clientHeight;
+    var iw = img.clientWidth * _zS, ih = img.clientHeight * _zS;
+    _zMaxTX = Math.max(0, (iw - vw) / 2 / _zS);
+    _zMaxTY = Math.max(0, (ih - vh) / 2 / _zS);
+    _zTX = Math.min(_zMaxTX, Math.max(-_zMaxTX, _zTX));
+    _zTY = Math.min(_zMaxTY, Math.max(-_zMaxTY, _zTY));
+  }
+  function apply(){
+    clampPan();
+    img.style.transform = 'scale(' + _zS + ') translate(' + _zTX + 'px,' + _zTY + 'px)';
+  }
+  function reset(){ _zS=1; _zTX=0; _zTY=0; img.style.transform=''; }
+  function dist(t){ var dx=t[0].clientX-t[1].clientX, dy=t[0].clientY-t[1].clientY; return Math.sqrt(dx*dx+dy*dy); }
+
+  function hideHint(){ if(hint){ hint.style.opacity='0'; } }
+
+  function initOnce(){
+    if (lightbox) return;
+    lightbox = document.getElementById('imgZoomLightbox');
+    viewport = document.getElementById('imgZoomViewport');
+    img      = document.getElementById('imgZoomImg');
+    hint     = document.getElementById('imgZoomHint');
+    if (!lightbox || !viewport || !img) return;
+
+    img.style.transition = 'transform 0.08s ease';
+
+    viewport.addEventListener('touchstart', function(e){
+      hideHint();
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        _zLD = dist(e.touches);
+      } else if (e.touches.length === 1) {
+        _zSX = e.touches[0].clientX - _zTX * _zS;
+        _zSY = e.touches[0].clientY - _zTY * _zS;
+      }
+    }, { passive: false });
+
+    viewport.addEventListener('touchmove', function(e){
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        var d = dist(e.touches);
+        if (_zLD > 0) { _zS = Math.min(5, Math.max(1, _zS * (d / _zLD))); }
+        _zLD = d;
+        apply();
+      } else if (e.touches.length === 1 && _zS > 1) {
+        e.preventDefault();
+        _zTX = (e.touches[0].clientX - _zSX) / _zS;
+        _zTY = (e.touches[0].clientY - _zSY) / _zS;
+        apply();
+      }
+    }, { passive: false });
+
+    viewport.addEventListener('touchend', function(e){
+      if (e.touches.length < 2) _zLD = 0;
+      if (e.touches.length === 0 && _zS < 1.05) reset();
+    });
+
+    // Double-tap pour zoomer/dézoomer rapidement
+    var lastTap = 0;
+    viewport.addEventListener('touchend', function(e){
+      var now = Date.now();
+      if (now - lastTap < 300 && e.touches.length === 0) {
+        e.preventDefault();
+        if (_zS > 1) { reset(); } else { _zS = 2.5; apply(); }
+      }
+      lastTap = now;
+    });
+
+    // Souris (desktop) : molette pour zoomer, glisser pour déplacer
+    viewport.addEventListener('wheel', function(e){
+      e.preventDefault();
+      hideHint();
+      _zS = Math.min(5, Math.max(1, _zS + (e.deltaY < 0 ? 0.25 : -0.25)));
+      if (_zS <= 1) reset(); else apply();
+    }, { passive: false });
+    var dragging = false, dragSX = 0, dragSY = 0;
+    viewport.addEventListener('mousedown', function(e){
+      if (_zS <= 1) return;
+      dragging = true; dragSX = e.clientX - _zTX * _zS; dragSY = e.clientY - _zTY * _zS;
+    });
+    window.addEventListener('mousemove', function(e){
+      if (!dragging) return;
+      _zTX = (e.clientX - dragSX) / _zS; _zTY = (e.clientY - dragSY) / _zS; apply();
+    });
+    window.addEventListener('mouseup', function(){ dragging = false; });
+  }
+
+  // Ouvre le visualiseur plein écran sur l'image actuellement affichée dans la galerie produit.
   window._triggerImageZoom = function(){
+    initOnce();
+    if (!lightbox) return;
     var idx = (typeof window.currentSlide === 'number') ? window.currentSlide : 0;
-    var img = document.getElementById('slide_' + idx);
-    if(!img) return;
-    attachZoom(img);
-    if(_zS > 1){ _zR(img); } else { _zS = 2.5; _zA(img); }
+    var srcImg = document.getElementById('slide_' + idx);
+    if (!srcImg) return;
+    reset();
+    img.src = srcImg.src;
+    img.alt = srcImg.alt || '';
+    lightbox.style.display = 'block';
+    if (hint) { hint.style.opacity = '1'; clearTimeout(hintTimer); hintTimer = setTimeout(hideHint, 2600); }
+    document.body.classList.add('no-scroll');
+  };
+
+  window._closeImageZoom = function(){
+    if (!lightbox) return;
+    reset();
+    lightbox.style.display = 'none';
+    document.body.classList.remove('no-scroll');
   };
 })();
 </script>
