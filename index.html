@@ -52,7 +52,7 @@
 .hero-slide-text{flex:1;min-width:0;}
 .hero-slide-tag{display:inline-block;background:var(--afro-red);color:#fff;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;padding:4px 10px;border-radius:4px;margin-bottom:10px;opacity:1;transform:scale(1);}
 /* ── Tag "RÉDUCTION SPÉCIALE" : sort visiblement du HAUT du cadre blanc de la bannière. ── */
-.hero-slide-tag.hero-tag-anim{opacity:0;transform:translate3d(0,-70px,0);animation:heroTagPop 0.55s cubic-bezier(0.22,1,0.36,1) forwards;}
+.hero-slide-tag.hero-tag-anim{opacity:0;transform:translate3d(0,-70px,0);animation:heroTagPop 0.8s cubic-bezier(0.22,1,0.36,1) forwards;}
 @keyframes heroTagPop{to{opacity:1;transform:translate3d(0,0,0);}}
 .hero-slide-title{color:var(--afro-blue);font-size:15.5px;font-weight:900;line-height:1.32;margin:0 0 8px;letter-spacing:-0.01em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .hero-slide-price-row{margin-bottom:16px;line-height:1.5;}
@@ -64,18 +64,20 @@
 .hero-slide-imgwrap img{width:100%;height:100%;object-fit:contain;opacity:1;}
 
 /* ── Transition entre slides : FONDU pur sur place (pas de glissement horizontal du slide
-   entier). Le slide sortant s'efface, le slide entrant s'affiche au même endroit. ── */
+   entier). Le slide sortant s'efface, le slide entrant s'affiche au même endroit.
+   Vitesse normale pour bien laisser le temps de voir le mouvement. ── */
 #adBannersContainer.hero-fade-mode{position:relative;overflow:hidden;}
-#adBannersContainer.hero-fade-mode .hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity 0.45s ease;z-index:1;}
+#adBannersContainer.hero-fade-mode .hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity 0.6s ease;z-index:1;}
 #adBannersContainer.hero-fade-mode .hero-slide.hero-slide-active{opacity:1;pointer-events:auto;position:relative;z-index:2;}
 
-/* ── Texte (titre, prix, bouton) : sort visiblement du BAS du cadre blanc de la bannière. ── */
-.hero-block-anim{opacity:0;transform:translate3d(0,90px,0);animation:heroBlockReveal 0.55s cubic-bezier(0.22,1,0.36,1) forwards;}
+/* ── Texte (titre, prix, bouton) : UN SEUL bloc qui sort du BAS du cadre, d'un seul
+   mouvement d'ensemble (rien ne bouge en cascade). Vitesse normale et fluide. ── */
+.hero-block-anim{opacity:0;transform:translate3d(0,90px,0);animation:heroBlockReveal 0.9s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:0.15s;}
 @keyframes heroBlockReveal{to{opacity:1;transform:translate3d(0,0,0);}}
 
 /* ── Image produit : arrive horizontalement depuis la gauche ou la droite (alterne par
-   slide via .hero-img-rtl), indépendamment du texte. ── */
-.hero-slide-imgwrap img.hero-img-anim-c{opacity:0;transform:translate3d(40px,0,0) scale(0.96);animation:heroImgRevealC 0.6s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:0.1s;}
+   slide via .hero-img-rtl), indépendamment du texte. Même vitesse que le texte. ── */
+.hero-slide-imgwrap img.hero-img-anim-c{opacity:0;transform:translate3d(40px,0,0) scale(0.96);animation:heroImgRevealC 0.9s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:0.15s;}
 .hero-slide-imgwrap img.hero-img-anim-c.hero-img-rtl{transform:translate3d(-40px,0,0) scale(0.96);}
 @keyframes heroImgRevealC{to{opacity:1;transform:translate3d(0,0,0) scale(1);}}
 .hero-nav-arrow{position:absolute;top:88px;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:rgba(16,25,68,0.06);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background 0.2s,opacity 0.4s ease;}
@@ -83,7 +85,7 @@
 .hero-nav-arrow.left{left:8px;}
 .hero-nav-arrow.right{right:8px;}
 .hero-dot{width:6px;height:6px;border-radius:0;background:#d1d5db;transition:all 0.3s ease;}
-.hero-dot.active{width:16px;height:6px;border-radius:0;background:var(--afro-red);}
+.hero-dot.active{background:var(--afro-red);}
 
 /* ── Sections catégorie style ELECTROSHOP (accueil) ── */
 .es-cat-section{padding:22px 0 26px;}
@@ -2338,12 +2340,14 @@ Se connecter
  <div class="hero-slide" onclick="window.showDetail('${p.id}')">
  <div class="hero-slide-text">
  <span class="hero-slide-tag hero-tag-anim">${tagText}</span>
- <p class="hero-slide-title hero-block-anim" style="animation-delay:0.10s">${name}</p>
+ <div class="hero-block-anim">
+ <p class="hero-slide-title">${name}</p>
  <div class="hero-slide-price-row">
- <span class="hero-slide-price hero-block-anim" style="animation-delay:0.18s">${priceText}</span>
+ <span class="hero-slide-price">${priceText}</span>
  ${p.old ? ` <span class="hero-slide-oldlabel">${lang === 'fr' ? 'au lieu de' : 'instead of'}</span> <span class="hero-slide-oldprice">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</span>` : ''}
  </div>
- <button type="button" class="hero-slide-cta hero-block-anim" style="animation-delay:0.26s" onclick="event.stopPropagation();window.showDetail('${p.id}')">${lang === 'fr' ? 'Acheter maintenant' : 'Buy now'}</button>
+ <button type="button" class="hero-slide-cta" onclick="event.stopPropagation();window.showDetail('${p.id}')">${lang === 'fr' ? 'Acheter maintenant' : 'Buy now'}</button>
+ </div>
  </div>
  <div class="hero-slide-imgwrap"><img class="hero-img-anim-c${imgDirClass}" src="${img}" loading="lazy" alt="${name}"></div>
  </div>`;
