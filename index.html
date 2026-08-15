@@ -61,17 +61,22 @@
 .hero-slide-cta{display:inline-flex;align-items:center;gap:6px;background:#facc15;color:var(--afro-blue);font-size:12px;font-weight:900;padding:11px 20px;border-radius:999px;text-transform:none;box-shadow:0 4px 12px rgba(250,204,21,0.4);border:none;cursor:pointer;}
 .hero-slide-imgwrap{flex:0 0 42%;max-width:190px;height:190px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .hero-slide-imgwrap img{width:100%;height:100%;object-fit:contain;opacity:1;}
-/* ── Apparition du texte ET de l'image sur le MÊME axe horizontal, dans le MÊME sens que le
-   défilement du slide (gauche→droite par défaut, inversé via .hero-img-rtl côté image et
-   .hero-text-rtl côté texte). Tout le contenu d'un slide entre depuis le même côté,
-   façon ELECTROSHOP.CI — plus de mélange haut/bas + gauche/droite. ── */
-.hero-slide-imgwrap img.hero-img-anim-c{opacity:0;transform:translate3d(36px,0,0) scale(0.97);animation:heroImgRevealC 0.6s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:0.08s;}
-.hero-slide-imgwrap img.hero-img-anim-c.hero-img-rtl{transform:translate3d(-36px,0,0) scale(0.97);}
-@keyframes heroImgRevealC{to{opacity:1;transform:translate3d(0,0,0) scale(1);}}
 
-.hero-block-anim{opacity:0;transform:translate3d(24px,0,0);animation:heroBlockReveal 0.55s cubic-bezier(0.22,1,0.36,1) forwards;}
-.hero-block-anim.hero-text-rtl{transform:translate3d(-24px,0,0);}
+/* ── Transition entre slides : FONDU pur sur place (pas de glissement horizontal du slide
+   entier). Le slide sortant s'efface, le slide entrant s'affiche au même endroit. ── */
+#adBannersContainer.hero-fade-mode{position:relative;overflow:hidden;}
+#adBannersContainer.hero-fade-mode .hero-slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity 0.45s ease;z-index:1;}
+#adBannersContainer.hero-fade-mode .hero-slide.hero-slide-active{opacity:1;pointer-events:auto;position:relative;z-index:2;}
+
+/* ── Texte (titre, prix, bouton) : apparaît en montant du bas vers le haut. ── */
+.hero-block-anim{opacity:0;transform:translate3d(0,22px,0);animation:heroBlockReveal 0.5s cubic-bezier(0.22,1,0.36,1) forwards;}
 @keyframes heroBlockReveal{to{opacity:1;transform:translate3d(0,0,0);}}
+
+/* ── Image produit : arrive horizontalement depuis la gauche ou la droite (alterne par
+   slide via .hero-img-rtl), indépendamment du texte. ── */
+.hero-slide-imgwrap img.hero-img-anim-c{opacity:0;transform:translate3d(40px,0,0) scale(0.96);animation:heroImgRevealC 0.6s cubic-bezier(0.22,1,0.36,1) forwards;animation-delay:0.1s;}
+.hero-slide-imgwrap img.hero-img-anim-c.hero-img-rtl{transform:translate3d(-40px,0,0) scale(0.96);}
+@keyframes heroImgRevealC{to{opacity:1;transform:translate3d(0,0,0) scale(1);}}
 .hero-nav-arrow{position:absolute;top:88px;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:rgba(16,25,68,0.06);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background 0.2s,opacity 0.4s ease;}
 .hero-nav-arrow:active{background:rgba(16,25,68,0.14);}
 .hero-nav-arrow.left{left:8px;}
@@ -445,7 +450,7 @@ RENVOYER L'EMAIL
 
 <!-- ══ BANNIÈRE HERO style ELECTROSHOP — produits vedette (admin) ou récents (auto) ══ -->
 <section id="adBannersSection" style="position:relative;background:#ffffff;overflow:hidden;display:none;">
-<div id="adBannersContainer" style="display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;"></div>
+<div id="adBannersContainer" class="hero-fade-mode" style="min-height:260px;"></div>
 <button id="heroNavLeft" type="button" class="hero-nav-arrow left" onclick="window._adBannerGoto(window._adBannerIdx-1)" aria-label="Précédent">
 <svg width="16" height="16" fill="none" stroke="#101944" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
 </button>
@@ -2302,8 +2307,7 @@ Se connecter
  window._adBannerSlides = slides;
 
  function _renderSlide(p, slideIdx) {
- const imgDirClass  = slideIdx % 2 === 0 ? '' : ' hero-img-rtl';  // image : alterne gauche→droite / droite→gauche
- const textDirClass = slideIdx % 2 === 0 ? '' : ' hero-text-rtl'; // texte : suit le même sens que l'image sur ce slide
+ const imgDirClass = slideIdx % 2 === 0 ? '' : ' hero-img-rtl'; // image : alterne gauche→droite / droite→gauche
 
  // Slide "vidéo" : vignette d'aperçu cliquable, lecture en place dans la bannière
  if (p.isVideo) {
@@ -2333,40 +2337,28 @@ Se connecter
  <div class="hero-slide" onclick="window.showDetail('${p.id}')">
  <div class="hero-slide-text">
  <span class="hero-slide-tag hero-tag-anim">${tagText}</span>
- <p class="hero-slide-title hero-block-anim${textDirClass}" style="animation-delay:0.10s">${name}</p>
+ <p class="hero-slide-title hero-block-anim" style="animation-delay:0.10s">${name}</p>
  <div class="hero-slide-price-row">
- <span class="hero-slide-price hero-block-anim${textDirClass}" style="animation-delay:0.18s">${priceText}</span>
+ <span class="hero-slide-price hero-block-anim" style="animation-delay:0.18s">${priceText}</span>
  ${p.old ? ` <span class="hero-slide-oldlabel">${lang === 'fr' ? 'au lieu de' : 'instead of'}</span> <span class="hero-slide-oldprice">${parseInt(p.old).toLocaleString('fr-FR')} FCFA</span>` : ''}
  </div>
- <button type="button" class="hero-slide-cta hero-block-anim${textDirClass}" style="animation-delay:0.26s" onclick="event.stopPropagation();window.showDetail('${p.id}')">${lang === 'fr' ? 'Acheter maintenant' : 'Buy now'}</button>
+ <button type="button" class="hero-slide-cta hero-block-anim" style="animation-delay:0.26s" onclick="event.stopPropagation();window.showDetail('${p.id}')">${lang === 'fr' ? 'Acheter maintenant' : 'Buy now'}</button>
  </div>
  <div class="hero-slide-imgwrap"><img class="hero-img-anim-c${imgDirClass}" src="${img}" loading="lazy" alt="${name}"></div>
  </div>`;
  }
 
- // Boucle infinie sans "retraçage" visible : on ajoute un clone du dernier slide au début
- // et un clone du premier slide à la fin. Le scroll réel se déplace donc toujours dans le
- // même sens ; quand on atterrit sur un clone, on saute instantanément (sans animation)
- // vers le vrai slide correspondant, une fois la transition douce terminée.
- const useLoop = slides.length > 1;
- const realSlidesHtml = slides.map((p, i) => _renderSlide(p, i)).join('');
- container.innerHTML = useLoop
- ? _renderSlide(slides[slides.length - 1], slides.length - 1) + realSlidesHtml + _renderSlide(slides[0], 0)
- : realSlidesHtml;
+ // Pas de scroll horizontal, pas de clones : chaque slide est empilé (position:absolute)
+ // dans #adBannersContainer (classe .hero-fade-mode) et seul le slide actif est visible.
+ // Le changement de slide = fondu (opacity) géré par .hero-slide-active en CSS.
+ container.innerHTML = slides.map((p, i) => _renderSlide(p, i)).join('');
 
  if (dotsWrap) {
  dotsWrap.innerHTML = slides.map((_, i) => `<span class="hero-dot${i === 0 ? ' active' : ''}" data-hero-dot="${i}"></span>`).join('');
  }
 
  window._adBannerIdx = 0;
- window._adBannerLoop = useLoop;
- window._adBannerJumping = false;
-
- // Positionne le scroll sur le premier VRAI slide (index 1 si clones présents), sans animation
- if (useLoop) {
- const slideW0 = container.clientWidth;
- container.scrollLeft = slideW0; // saute directement après le clone de tête
- }
+ window._adBannerLoop = slides.length > 1;
 
  // ── Masquage des flèches de navigation après quelques secondes d'inactivité ──
  (function initHeroArrowIdle() {
@@ -2396,7 +2388,7 @@ Se connecter
  hideArrows();
  window._heroArrowsUserInitiated = false;
 
- // Pause l'auto-slide pendant toute interaction manuelle (swipe, scroll, clic), reprise après 4s d'inactivité
+ // Pause l'auto-slide pendant toute interaction manuelle (swipe, clic), reprise après 4s d'inactivité
  let resumeTimer = null;
  function pauseAutoSlideTemporarily() {
  if (window._adBannerAutoSlide) { clearInterval(window._adBannerAutoSlide); window._adBannerAutoSlide = null; }
@@ -2407,12 +2399,28 @@ Se connecter
  }
  }, 4000);
  }
- container.addEventListener('touchstart', () => {
+
+ // ── Swipe tactile : remplace le scroll natif (supprimé) pour permettre de naviguer
+ // au doigt tout en gardant la transition en fondu (pas de glissement du doigt visible). ──
+ let touchStartX = 0, touchStartY = 0, touchMoved = false;
+ container.addEventListener('touchstart', (e) => {
  window._heroArrowsUserInitiated = true;
  showArrows();
  pauseAutoSlideTemporarily();
+ touchStartX = e.touches[0].clientX;
+ touchStartY = e.touches[0].clientY;
+ touchMoved = false;
  }, { passive: true });
- container.addEventListener('touchmove', pauseAutoSlideTemporarily, { passive: true });
+ container.addEventListener('touchmove', () => { touchMoved = true; pauseAutoSlideTemporarily(); }, { passive: true });
+ container.addEventListener('touchend', (e) => {
+ if (!touchMoved) return;
+ const dx = e.changedTouches[0].clientX - touchStartX;
+ const dy = e.changedTouches[0].clientY - touchStartY;
+ if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+ if (dx < 0) window._adBannerGoto(window._adBannerIdx + 1);
+ else window._adBannerGoto(window._adBannerIdx - 1);
+ }
+ }, { passive: true });
  })();
 
  function _updateDots(idx) {
@@ -2420,27 +2428,26 @@ Se connecter
  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
  }
 
- // Joue l'animation d'entrée de l'image + la recomposition du texte du slide donné.
+ // Joue l'animation d'entrée du slide donné : le texte remonte du bas, l'image glisse
+ // depuis le côté (gauche/droite selon le slide) — les deux indépendamment l'un de l'autre.
  // Le texte est visible par défaut (opacity:1) ; l'animation n'est qu'un effet ajouté,
  // donc même si elle échoue à se déclencher, le contenu reste toujours lisible.
  function _playSlideAnim(idx) {
  const slideEls = container.querySelectorAll('.hero-slide');
- const offset = window._adBannerLoop ? 1 : 0; // décalage dû au clone de tête inséré pour la boucle infinie
- const slideEl = slideEls[idx + offset];
+ const slideEl = slideEls[idx];
  if (!slideEl) return;
 
- // Animation unique : fondu + légère translation du bas vers le haut, façon ELECTROSHOP.CI.
  const imgWrap = slideEl.querySelector('.hero-slide-imgwrap');
  const img = imgWrap ? imgWrap.querySelector('img') : null;
  if (img) {
- img.classList.remove('hero-img-anim', 'hero-img-anim-b', 'hero-img-anim-c');
+ img.classList.remove('hero-img-anim-c');
  void img.offsetWidth;
  img.classList.add('hero-img-anim-c');
  }
 
  const tag = slideEl.querySelector('.hero-slide-tag');
  if (tag) {
- tag.classList.remove('hero-tag-anim', 'hero-tag-anim-b');
+ tag.classList.remove('hero-tag-anim');
  void tag.offsetWidth;
  tag.classList.add('hero-tag-anim');
  }
@@ -2451,53 +2458,27 @@ Se connecter
  blocks.forEach(b => b.classList.add('hero-block-anim'));
  }
 
+ // Affiche le slide ciblé en fondu (retire .hero-slide-active de l'ancien, l'ajoute au nouveau)
+ // et déclenche ses animations internes (texte + image).
+ function _showSlide(idx) {
+ const slideEls = container.querySelectorAll('.hero-slide');
+ slideEls.forEach((el, i) => el.classList.toggle('hero-slide-active', i === idx));
+ _playSlideAnim(idx);
+ }
+
  window._adBannerGoto = function(idx, isAuto) {
  const total = window._adBannerSlides.length;
  if (total === 0) return;
- const targetIdx = (idx + total) % total; // index réel (0..total-1), pour les dots et l'animation
+ const targetIdx = (idx + total) % total;
  window._adBannerIdx = targetIdx;
- const slideW = container.clientWidth;
- const offset = window._adBannerLoop ? 1 : 0; // décalage dû au clone de tête
- // Défilement toujours vers l'avant/arrière naturel : on utilise l'index de scroll continu
- // (idx passé, pas targetIdx) pour que _adBannerGoto(total) avance d'un cran au lieu de sauter à 0.
- const scrollIdx = window._adBannerLoop ? (idx + offset) : targetIdx;
- container.scrollTo({ left: scrollIdx * slideW, behavior: 'smooth' });
+ _showSlide(targetIdx);
  _updateDots(targetIdx);
- _playSlideAnim(targetIdx);
  // Si ce changement de slide est automatique (pas une action de l'utilisateur), on s'assure que les flèches restent masquées
  if (isAuto && window._heroForceHideArrows) window._heroForceHideArrows();
  };
 
- let _scrollEndTimer = null;
- container.addEventListener('scroll', () => {
- const slideW = container.clientWidth || 1;
- const offset = window._adBannerLoop ? 1 : 0;
- const rawIdx = Math.round(container.scrollLeft / slideW); // index incluant les clones
- const total = window._adBannerSlides.length;
- const realIdx = ((rawIdx - offset) + total) % total;
- if (realIdx !== window._adBannerIdx) {
- window._adBannerIdx = realIdx;
- _updateDots(realIdx);
- _playSlideAnim(realIdx);
- }
- // Une fois le défilement stabilisé, si on est sur un clone (position 0 ou dernière),
- // on saute instantanément (sans transition visible) vers le vrai slide correspondant.
- if (window._adBannerLoop) {
- if (_scrollEndTimer) clearTimeout(_scrollEndTimer);
- _scrollEndTimer = setTimeout(() => {
- const lastCloneIdx = total + offset; // position du clone final
- if (rawIdx === 0 || rawIdx === lastCloneIdx) {
- window._adBannerJumping = true;
- container.style.scrollBehavior = 'auto';
- container.scrollLeft = (realIdx + offset) * slideW;
- requestAnimationFrame(() => { container.style.scrollBehavior = ''; window._adBannerJumping = false; });
- }
- }, 120);
- }
- }, { passive: true });
-
- // Joue l'animation du premier slide dès l'affichage initial
- requestAnimationFrame(() => _playSlideAnim(0));
+ // Affiche le premier slide dès le rendu initial (fondu + animations internes)
+ requestAnimationFrame(() => _showSlide(0));
 
  if (slides.length > 1) {
  _adBannerAutoSlide = setInterval(() => window._adBannerGoto(window._adBannerIdx + 1, true), 6000);
