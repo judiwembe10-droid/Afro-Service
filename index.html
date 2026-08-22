@@ -3126,7 +3126,7 @@ Se connecter
  <!-- IMAGE GALLERY — images superposées, apparition instantanée. Le cadre s'adapte à
  n'importe quel ratio d'image (carrée, verticale, panoramique) : l'image reste toujours
  entière et lisible, jamais coupée, avec un fond doux et soigné autour si besoin. -->
- <div style="position:relative;background:linear-gradient(135deg,#f8fafc,#eef1f6);margin:0;border-radius:0;overflow:hidden;">
+ <div style="position:relative;background:#ffffff;margin:0;border-radius:0;overflow:hidden;">
  <!-- Image principale : conteneur à hauteur fixe, swipe directement ici -->
  <div id="slideTrack" style="position:relative;width:100%;aspect-ratio:1/1;"
    ontouchstart="window._swX=event.touches[0].clientX"
@@ -3154,7 +3154,7 @@ Se connecter
  <!-- MINIATURES cliquables (style Glotelho) + vignette vidéo produit -->
  ${(imgs.length > 1 || p.videoUrl) ? `
  <div id="thumbStrip" style="display:flex;gap:8px;overflow-x:auto;padding:10px 16px 10px;background:white;scrollbar-width:none;">
- ${imgs.map((img, i) => `<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;"><button onclick="window.goToSlide(${i},${imgs.length})" id="thumb_${i}" style="width:62px;height:62px;border-radius:10px;overflow:hidden;border:none;padding:0;background:#f4f6fa;cursor:pointer;"><img src="${img}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.src='https://via.placeholder.com/80'"></button><span id="thumb_underline_${i}" style="width:36px;height:3px;border-radius:3px;background:${i===0?'#facc15':'transparent'};"></span></div>`).join('')}
+ ${imgs.map((img, i) => `<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;"><button onclick="window.goToSlide(${i},${imgs.length})" id="thumb_${i}" style="width:62px;height:62px;border-radius:10px;overflow:hidden;border:none;padding:0;background:transparent;cursor:pointer;"><img src="${img}" style="width:100%;height:100%;object-fit:contain;display:block;" loading="lazy" onerror="this.src='https://via.placeholder.com/80'"></button><span id="thumb_underline_${i}" style="width:36px;height:3px;border-radius:3px;background:${i===0?'#facc15':'transparent'};"></span></div>`).join('')}
  ${p.videoUrl ? `<button onclick="window._openProductVideoModal('${encodeURIComponent(p.videoUrl)}')" style="flex-shrink:0;width:62px;height:62px;border-radius:10px;overflow:hidden;border:2.5px solid #101944;padding:0;background:#0f172a;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;">
  <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
  </button>` : ''}
